@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- PWA -->
+
+  <!-- PWA CONFIG -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#00eaff">
   <script>
@@ -12,21 +13,35 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GELM — Sistema PMT 2026</title>
-  <link rel="stylesheet" href="menu.css">
-</head>
 
+  <title>GELM — Sistema PMT 2026</title>
+
+  <!-- CSS GOD MODE -->
+  <link rel="stylesheet" href="styles.css">
+
+</head>
 <body>
 
 <div class="container">
 
   <header class="top-header">
       <img src="icons/icon-192.png" class="logo">
-      <h1 class="titulo">SISTEMA PMT 2026</h1>
-      <h2 class="sub">Unidad de Transportes — PMT Chimaltenango</h2>
-      <h3 class="by">== BY GELM ==</h3>
+
+      <h1 class="titulo neon-text">
+        SISTEMA PMT 2026
+      </h1>
+
+      <h2 class="sub neon-soft">
+        Unidad de Transportes — PMT Chimaltenango
+      </h2>
+
+      <h3 class="by">
+        == BY GELM ==
+      </h3>
   </header>
 
+
+  <!-- MENU PRINCIPAL -->
   <div class="grid-menu">
 
     <!-- AGENDA -->
@@ -49,7 +64,7 @@
       <span class="mini">En desarrollo</span>
     </div>
 
-    <!-- BUSCADOR DE PLACAS -->
+    <!-- BUSCADOR -->
     <div class="card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
       <span class="icon">🔎</span>
       <span class="label">Buscar placas / DPI</span>
@@ -74,6 +89,7 @@
     </div>
 
   </div>
+
 
   <footer class="pie">
     <div>© 2026 — GELM</div>
