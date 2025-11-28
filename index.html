@@ -1,47 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-
-  <!-- PWA CONFIG -->
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#00eaff">
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
-
+  <!-- PWA -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00eaff">
+
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- ÍCONO (opcional, si tienes uno tipo favicon) -->
+  <link rel="icon" type="image/png" href="icons/icon-192.png">
 
   <title>GELM — Sistema PMT 2026</title>
 
-  <!-- CSS GOD MODE -->
+  <!-- ESTILOS GOD MODE -->
   <link rel="stylesheet" href="styles.css">
 
+  <!-- Registro del Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(reg => console.log('SW registrado 🔥', reg.scope))
+          .catch(err => console.log('Error SW 😢', err));
+      });
+    }
+  </script>
 </head>
+
 <body>
 
 <div class="container">
 
   <header class="top-header">
-      <img src="icons/icon-192.png" class="logo">
-
-      <h1 class="titulo neon-text">
-        SISTEMA PMT 2026
-      </h1>
-
-      <h2 class="sub neon-soft">
-        Unidad de Transportes — PMT Chimaltenango
-      </h2>
-
-      <h3 class="by">
-        == BY GELM ==
-      </h3>
+    <img src="icons/icon-192.png" class="logo" alt="GELM">
+    <h1 class="titulo neon-text">SISTEMA PMT 2026</h1>
+    <h2 class="sub neon-soft">Unidad de Transportes — PMT Chimaltenango</h2>
+    <h3 class="by">== BY GELM ==</h3>
   </header>
 
-
-  <!-- MENU PRINCIPAL -->
   <div class="grid-menu">
 
     <!-- AGENDA -->
@@ -64,7 +61,7 @@
       <span class="mini">En desarrollo</span>
     </div>
 
-    <!-- BUSCADOR -->
+    <!-- BUSCADOR DE PLACAS / DPI -->
     <div class="card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
       <span class="icon">🔎</span>
       <span class="label">Buscar placas / DPI</span>
@@ -89,7 +86,6 @@
     </div>
 
   </div>
-
 
   <footer class="pie">
     <div>© 2026 — GELM</div>
