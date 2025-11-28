@@ -1,218 +1,142 @@
-/* ============================================
-   AGENDA 2026 PRO — ESTILO OFICIAL GELM
-   ============================================ */
-
+/* ======= FONDO FUTURISTA MIXTO (Cian + Violeta + Verde) ======= */
 body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  background: radial-gradient(circle at 20% 0%, rgba(0,255,255,0.25), transparent 50%),
-              radial-gradient(circle at 80% 0%, rgba(255,0,255,0.25), transparent 55%),
-              #05010a;
-  background-attachment: fixed;
-  color: #e8ffff;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: radial-gradient(circle at top left, #00eaff55, #2b0047 40%, #000000 80%);
+    background-attachment: fixed;
+    color: #ffffff;
+    overflow-x: hidden;
 }
 
-/* CONTENEDOR PRINCIPAL */
-.contenedor {
-  max-width: 1100px;
-  margin: 30px auto;
-  padding: 25px;
-  background: rgba(0, 0, 0, 0.72);
-  border-radius: 18px;
-  box-shadow:
-      0 0 20px rgba(0,255,255,0.4),
-      0 0 60px rgba(0,0,0,1),
-      inset 0 0 18px rgba(0,255,255,0.15);
-  border: 1px solid rgba(0,255,255,0.45);
+/* CONTENEDOR */
+.container {
+    max-width: 950px;
+    margin: auto;
+    padding: 20px;
 }
 
-/* ENCABEZADO */
-.header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
+/* ======= HEADER ======= */
+.top-header {
+    text-align: center;
+    margin-bottom: 40px;
 }
 
 .logo {
-  width: 100px;
-  filter: drop-shadow(0 0 10px #00ffc8);
+    width: 130px;
+    height: auto;
+    filter: drop-shadow(0 0 10px #00eaff);
 }
 
-.titulos {
-  text-align: center;
+.titulo {
+    font-size: 2.8em;
+    margin: 10px 0 0;
+    letter-spacing: 2px;
+    font-weight: bold;
 }
 
-.titulos h1 {
-  margin: 0;
-  font-size: 28px;
-  letter-spacing: 1px;
-  color: #00ffe5;
-  text-shadow: 0 0 10px #00ffff, 0 0 25px #0044ff;
+.neon-text {
+    text-shadow:
+      0 0 8px #00eaff,
+      0 0 15px #00eaff,
+      0 0 30px #7b00ff;
 }
 
-.titulos p {
-  font-size: 14px;
-  margin-top: 4px;
-  color: #ffd86b;
+.sub {
+    font-size: 1.2em;
+    margin-top: 5px;
 }
 
-/* BOTÓN VOLVER */
-.btn-volver {
-  background: rgba(0,255,255,0.15);
-  padding: 8px 18px;
-  color: #00ffee;
-  border-radius: 10px;
-  border: 1px solid #00ffee;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: 0.25s;
+.neon-soft {
+    text-shadow: 0 0 7px #8a2be2;
 }
 
-.btn-volver:hover {
-  background: rgba(0,255,255,0.35);
+.by {
+    margin-top: 10px;
+    opacity: 0.8;
 }
 
-/* SUBTITULO */
-.subtitulo {
-  color: #00ffe5;
-  margin-bottom: 10px;
-  text-shadow: 0 0 10px #00ffff;
+/* ======= GRID MENU ======= */
+
+.grid-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 15px;
 }
 
-/* FORMULARIO */
-.formulario {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
-  background: rgba(0,0,0,0.55);
-  padding: 15px;
-  border: 1px solid rgba(0,255,255,0.4);
-  border-radius: 14px;
-  box-shadow: 0 0 20px rgba(0,255,255,0.25);
+/* ======= TARJETAS ======= */
+.card {
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+    border-radius: 14px;
+    padding: 25px 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid #00eaff66;
+    box-shadow: 0 0 12px #00eaff33;
+    transition: all 0.25s ease;
 }
 
-.formulario label {
-  font-size: 13px;
-  color: #aafaff;
+/* HOVER GOD MODE */
+.card:hover {
+    transform: translateY(-6px) scale(1.05);
+    border-color: #7b00ff;
+    box-shadow:
+        0 0 10px #00eaff,
+        0 0 20px #7b00ff,
+        0 0 35px #39ff14;
 }
 
-.formulario input,
-.formulario select,
-.formulario textarea {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 10px;
-  border: 1px solid #00ffe5;
-  background: #040b14;
-  color: #aaffff;
-  box-shadow: 0 0 10px rgba(0,255,255,0.3);
-  outline: none;
+.card .icon {
+    font-size: 2.3em;
+    display: block;
+    margin-bottom: 5px;
 }
 
-textarea {
-  grid-column: span 5;
-  height: 70px;
+.card .label {
+    font-size: 1.1em;
+    font-weight: bold;
 }
 
-/* BOTÓN AGREGAR */
-.btn-accion {
-  grid-column: span 5;
-  margin-top: 10px;
-  padding: 12px;
-  font-size: 16px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #0ff, #5800ff);
-  color: #000;
-  font-weight: bold;
-  border: none;
-  box-shadow:
-      0 0 14px rgba(0,255,255,0.7),
-      0 0 25px rgba(0,0,0,1);
-  cursor: pointer;
-  transition: 0.25s;
+.card .mini {
+    display: block;
+    font-size: 0.75em;
+    opacity: 0.6;
 }
 
-.btn-accion:hover {
-  filter: brightness(1.15);
+/* DESACTIVADOS */
+.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+    border-color: #555;
+}
+.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: #555;
 }
 
-/* FILTROS */
-.filtros {
-  margin-top: 25px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.filtros select {
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid #0ff;
-  background: #041018;
-  color: #b5ffff;
-  box-shadow: 0 0 10px rgba(0,255,255,0.3);
-}
-
-/* EXPORTAR / BORRAR */
-.btn-excel {
-  padding: 10px 20px;
-  background: #00ffc8;
-  border: none;
-  border-radius: 12px;
-  color: #000;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 0 15px rgba(0,255,255,0.6);
-}
-
-.btn-excel:hover {
-  filter: brightness(1.1);
-}
-
-.btn-peligro {
-  padding: 10px 20px;
-  background: #ff0033;
-  border: none;
-  border-radius: 12px;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 0 15px rgba(255,0,0,0.5);
-}
-
-.btn-peligro:hover {
-  filter: brightness(1.1);
-}
-
-/* TABLA */
-.tabla {
-  width: 100%;
-  margin-top: 15px;
-  border-collapse: collapse;
-  background: rgba(0,0,0,0.75);
-}
-
-.tabla th {
-  background: #00ffc8;
-  color: #000;
-  padding: 10px;
-}
-
-.tabla td {
-  padding: 8px;
-  border: 1px solid #333;
-}
-
-.tabla tr:nth-child(even) td {
-  background: #061419;
-}
-
-/* PIE */
+/* ======= FOOTER ======= */
 .pie {
-  margin-top: 22px;
-  text-align: center;
-  font-size: 13px;
-  color: #00ffe5;
+    text-align: center;
+    margin-top: 50px;
+    font-size: 0.9em;
+    opacity: 0.8;
+    text-shadow: 0 0 5px #00eaff;
+}
+
+/* ======= RESPONSIVE ======= */
+@media (max-width: 600px) {
+    .titulo {
+        font-size: 2.1em;
+    }
+
+    .logo {
+        width: 110px;
+    }
+
+    .grid-menu {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
