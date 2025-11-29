@@ -1,130 +1,47 @@
-/* ===========================
-   FONDO RADIAL NEON
-=========================== */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: radial-gradient(circle at top left, #33cfff, #180020, #000000);
-    color: #e6ffff;
-    text-align: center;
-}
+<div class="menu-container">
+  <div class="menu-grid">
 
-/* ===========================
-   TOP BAR (LOGOS + TÍTULO)
-=========================== */
-.top-bar {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 25px 40px;
-}
+    <div class="menu-card" onclick="location.href='agen2026.html'">
+        <img src="icons/icon-192.png">
+        <div class="menu-title">Agenda 2026</div>
+        <div class="menu-sub">Programación mensual</div>
+    </div>
 
-.logo-left,
-.logo-right {
-    width: 110px;
-    filter: drop-shadow(0 0 15px #00eaff);
-}
+    <div class="menu-card" onclick="location.href='transportes.html'">
+        <img src="icons/icon-operativos.png">
+        <div class="menu-title">Operativos</div>
+        <div class="menu-sub">Licencias, vehículos, observaciones</div>
+    </div>
 
-/* CONTENEDOR TITULOS */
-.title-box {
-    text-align: center;
-}
+    <div class="menu-card" onclick="location.href='denuncias.html'">
+        <img src="icons/icon-denuncias.png">
+        <div class="menu-title">Denuncias</div>
+        <div class="menu-sub">Control y evidencia</div>
+    </div>
 
-.title {
-    margin: 0;
-    font-size: 40px;
-    font-weight: bold;
-    color: #00eaff;
-    text-shadow: 0 0 20px #00eaff, 0 0 40px #00aaff;
-}
+    <div class="menu-card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
+        <img src="icons/icon-search.png">
+        <div class="menu-title">Buscar placas / DPI</div>
+        <div class="menu-sub">Módulo externo GELM</div>
+    </div>
 
-.subtitle {
-    margin-top: 5px;
-    font-size: 20px;
-    color: #e6ffff;
-    text-shadow: 0 0 12px #00eaff;
-}
+    <div class="menu-card" onclick="location.href='respaldo.html'">
+        <img src="icons/icon-respaldo.png">
+        <div class="menu-title">Respaldos</div>
+        <div class="menu-sub">Consolidado histórico</div>
+    </div>
 
-/* ===========================
-   MENÚ PRINCIPAL
-=========================== */
-.menu-container {
-    margin-top: 40px;
-}
+    <div class="menu-card">
+        <img src="icons/icon-report.png">
+        <div class="menu-title">Reportes</div>
+        <div class="menu-sub">Próximamente</div>
+    </div>
 
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 35px;
-    max-width: 1500px;
-    margin: auto;
-}
+    <div class="menu-card">
+        <img src="icons/icon-config.png">
+        <div class="menu-title">Configuración</div>
+        <div class="menu-sub">Modo GOD & más</div>
+    </div>
 
-/* CUADRO / CARD */
-.menu-card {
-    background: rgba(255,255,255,0.08);
-    border-radius: 16px;
-    padding: 25px 20px;
-    border: 2px solid rgba(0,255,255,0.3);
-    box-shadow: 0 0 18px rgba(0,255,255,0.3);
-    cursor: pointer;
-    transition: 0.25s ease;
-}
-
-.menu-card:hover {
-    transform: translateY(-8px);
-    border-color: #00eaff;
-    box-shadow: 0 0 20px #00eaff, 0 0 50px #00bfff;
-}
-
-.menu-card img {
-    width: 40px;
-    margin-bottom: 10px;
-}
-
-/* Texto dentro del cuadro */
-.menu-title {
-    font-size: 18px;
-    color: #e6ffff;
-    font-weight: bold;
-}
-
-.menu-sub {
-    font-size: 14px;
-    color: #c8faff;
-}
-
-/* ===========================
-   FOOTER
-=========================== */
-footer {
-    margin-top: 40px;
-    font-size: 14px;
-    color: #bdf7ff;
-    text-shadow: 0 0 10px #00eaff;
-    line-height: 20px;
-}
-
-/* ===========================
-   RESPONSIVE
-=========================== */
-@media (max-width: 700px) {
-
-    .logo-left,
-    .logo-right {
-        width: 80px;
-    }
-
-    .title {
-        font-size: 28px;
-    }
-
-    .subtitle {
-        font-size: 15px;
-    }
-
-    .menu-grid {
-        gap: 20px;
-    }
-}
+  </div>
+</div>
