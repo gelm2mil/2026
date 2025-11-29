@@ -3,16 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SISTEMA de GELM 2026</title>
+<title>SISTEMA DE GELM 2026</title>
 
 <link rel="stylesheet" href="styles.css">
-
-<!-- PWA -->
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#00eaff">
 
 <script>
-if ("serviceWorker" in navigator) {
+if("serviceWorker" in navigator){
     navigator.serviceWorker.register("service-worker.js");
 }
 </script>
@@ -20,134 +17,103 @@ if ("serviceWorker" in navigator) {
 </head>
 <body>
 
-<div class="home-wrapper">
+<header class="home-top-bar">
 
-    <!-- ===========================
-         TOP BAR
-    ============================ -->
-    <header class="home-top-bar">
+    <div class="home-logo-left">
+        <img src="icons/YO.png">
+    </div>
 
-        <!-- LOGO IZQUIERDO -->
-        <div class="home-logo-left">
-            <img src="icons/YO.png" alt="">
-        </div>
+    <div class="player-wrapper-top">
+        <div id="gelm-player">
+            <audio id="audioPlayer"></audio>
 
-        <!-- MINI REPRODUCTOR SUPERIOR -->
-        <div class="player-mini">
-            <div id="gelm-player">
-
-                <audio id="audioPlayer"></audio>
-
-                <div class="player-buttons">
-                    <button onclick="prevSong()">⏮️</button>
-                    <button onclick="playPause()">⏯️</button>
-                    <button onclick="nextSong()">⏭️</button>
-                </div>
-
-                <input type="range" id="playerBar" min="0" max="100" value="0">
-
-                <div class="volume-box">
-                    <span class="volume-icon">🔊</span>
-                    <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
-                </div>
-
-                <div id="songName">Reproducción detenida</div>
-
+            <div class="player-buttons">
+                <button onclick="prevSong()">⏮️</button>
+                <button onclick="playPause()">⏯️</button>
+                <button onclick="nextSong()">⏭️</button>
             </div>
-        </div>
 
-        <!-- TITULOS CENTRALES -->
-        <div class="home-title-box">
-            <h1 class="home-title">SISTEMA de GELM 2026</h1>
-            <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
-            <h3 class="home-subtitle2">== BY GELM ==</h3>
-        </div>
+            <input type="range" id="playerBar" min="0" max="100" value="0">
 
-        <!-- LOGO DERECHO -->
-        <div class="home-logo-right">
-            <img src="icons/YO.png" alt="">
-        </div>
-
-    </header>
-
-
-
-    <!-- ===========================
-         MENÚ PRINCIPAL (SPA)
-    ============================ -->
-    <main class="home-main">
-        <section class="home-menu-section">
-            <div class="home-menu-grid">
-
-                <a class="home-card" onclick="cargarModulo('agen2026.html')">
-                    <div class="home-card-icon"><img src="icons/agenda.jpg"></div>
-                    <div class="home-card-text">Agenda 2026</div>
-                </a>
-
-                <a class="home-card" onclick="cargarModulo('operativos.html')">
-                    <div class="home-card-icon"><img src="icons/operativos.jpg"></div>
-                    <div class="home-card-text">Operativos</div>
-                </a>
-
-                <a class="home-card" onclick="cargarModulo('denuncias.html')">
-                    <div class="home-card-icon"><img src="icons/denuncias.jpg"></div>
-                    <div class="home-card-text">Denuncias</div>
-                </a>
-
-                <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/gelm/')">
-                    <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
-                    <div class="home-card-text">Registro Transportes</div>
-                </a>
-
-                <a class="home-card" onclick="cargarModulo('respaldo.html')">
-                    <div class="home-card-icon"><img src="icons/respaldo.jpg"></div>
-                    <div class="home-card-text">Respaldos</div>
-                </a>
-
-                <a class="home-card" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html')">
-                    <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
-                    <div class="home-card-text">Buscar Multas</div>
-                </a>
-
-                <a class="home-card" onclick="cargarModulo('config.html')">
-                    <div class="home-card-icon"><img src="icons/configuracion.png"></div>
-                    <div class="home-card-text">Configuración</div>
-                </a>
-
+            <div class="volume-box">
+                🔊 <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="1">
             </div>
-        </section>
-    </main>
 
+            <div id="songName">Cargando…</div>
+        </div>
+    </div>
 
-    <!-- ===========================
-         ZONA SPA
-    ============================ -->
-    <section id="moduloSPA" class="home-module-zone">
-        <iframe id="iframeSPA" src=""></iframe>
-    </section>
+    <div class="home-title-box">
+        <h1 class="home-title">SISTEMA de GELM 2026</h1>
+        <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
+        <h3 class="home-subtitle2">== BY GELM ==</h3>
+    </div>
 
+    <div class="home-logo-right">
+        <img src="icons/YO.png">
+    </div>
+</header>
 
-    <!-- FOOTER -->
-    <footer class="home-footer">
-        © 2026 — Todos los derechos reservados — BY GELM<br>
-        Policía Municipal de Tránsito — Chimaltenango. Presente.
-    </footer>
+<main class="home-main">
 
-</div>
+<section class="home-menu-section">
+    <div class="home-menu-grid">
 
+        <a class="home-card" onclick="cargarModulo('agen2026.html')">
+            <div class="home-card-icon"><img src="icons/agenda.jpg"></div>
+            <div class="home-card-text">Agenda 2026</div>
+        </a>
 
-<!-- CONTROL SPA + REPRODUCTOR -->
+        <a class="home-card" onclick="cargarModulo('operativos.html')">
+            <div class="home-card-icon"><img src="icons/operativos.jpg"></div>
+            <div class="home-card-text">Operativos</div>
+        </a>
+
+        <a class="home-card" onclick="cargarModulo('denuncias.html')">
+            <div class="home-card-icon"><img src="icons/denuncias.jpg"></div>
+            <div class="home-card-text">Denuncias</div>
+        </a>
+
+        <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/gelm/')">
+            <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
+            <div class="home-card-text">Registro Transportes</div>
+        </a>
+
+        <a class="home-card" onclick="cargarModulo('respaldo.html')">
+            <div class="home-card-icon"><img src="icons/respaldo.jpg"></div>
+            <div class="home-card-text">Respaldos</div>
+        </a>
+
+        <a class="home-card" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html')">
+            <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
+            <div class="home-card-text">Buscar Multas</div>
+        </a>
+
+        <a class="home-card" onclick="cargarModulo('config.html')">
+            <div class="home-card-icon"><img src="icons/configuracion.png"></div>
+            <div class="home-card-text">Configuración</div>
+        </a>
+
+    </div>
+</section>
+
+<section id="moduloSPA" class="home-module-zone">
+    <iframe id="iframeSPA"></iframe>
+</section>
+
+<footer class="home-footer">
+© 2026 — BY GELM — PMT Chimaltenango
+</footer>
+
+</main>
+
 <script src="app.js"></script>
 
 <script>
 function cargarModulo(url){
-    const zona = document.getElementById("moduloSPA");
-    const frame = document.getElementById("iframeSPA");
-
-    zona.classList.add("activo");
-    frame.src = url;
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.getElementById("moduloSPA").classList.add("activo");
+    document.getElementById("iframeSPA").src = url;
+    window.scrollTo({top:0,behavior:"smooth"});
 }
 </script>
 
