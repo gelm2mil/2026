@@ -1,5 +1,5 @@
 /* ===========================
-   FONDO GENERAL NEON
+   FONDO GENERAL NEÓN
 =========================== */
 body {
   margin: 0;
@@ -13,14 +13,14 @@ body {
 
 /* WRAPPER PRINCIPAL DEL HOME */
 .home-wrapper {
-  min-height: 100vh;
+  /* antes: min-height: 100vh;  -> lo quitamos para que el player suba */
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
 /* ===========================
-   TOP BAR COMPACTA (OPCIÓN A)
+   TOP BAR COMPACTA
 =========================== */
 .home-top-bar {
   display: flex;
@@ -48,7 +48,7 @@ body {
   height: auto;
 }
 
-/* TITULOS */
+/* TÍTULOS CENTRADOS */
 .home-title-box {
   text-align: center;
   flex: 1 1 auto;
@@ -80,11 +80,13 @@ body {
 /* ===========================
    MENÚ PRINCIPAL
 =========================== */
+
 .home-main {
   flex: 1 0 auto;
   display: flex;
+  align-items: flex-start;
   justify-content: center;
-  padding: 15px 10px 20px;
+  padding: 15px 10px 0;
 }
 
 .home-menu-section {
@@ -98,6 +100,7 @@ body {
   gap: 22px;
 }
 
+/* TARJETA / CAJA DEL MENÚ */
 .home-card {
   display: flex;
   flex-direction: column;
@@ -122,12 +125,15 @@ body {
     0 0 50px rgba(0,0,0,0.95);
 }
 
+/* ICONOS PEQUEÑOS */
 .home-card-icon img {
   width: 42px;
   height: 42px;
+  object-fit: contain;
   margin-bottom: 8px;
 }
 
+/* TEXTO DEL BOTÓN */
 .home-card-text {
   font-size: 15px;
   font-weight: 600;
@@ -136,7 +142,7 @@ body {
 }
 
 /* ===========================
-   FOOTER SUBIDO Y CENTRADO
+   FOOTER
 =========================== */
 
 .home-footer {
@@ -144,62 +150,97 @@ body {
   font-size: 12px;
   color: #bdf7ff;
   text-shadow: 0 0 10px #00eaff;
-  
-  margin-top: 40px; /* distancia hacia arriba */
+  padding: 10px 8px 4px;
 }
 
 /* ===========================
-   REPRODUCTOR FINAL GELM
+   ZONA DEL REPRODUCTOR
 =========================== */
 
 .home-player-zone {
-  margin-top: -10px;
-  padding-bottom: 20px;
+  /* lo acercamos al footer */
+  margin-top: 4px;
+  padding: 0 0 20px;
 }
 
+.player-wrapper {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Marco del reproductor, estilo compacto dentro de un “cuadro” */
 #gelm-player {
-  margin-top: 5px;
-  padding: 15px;
-  background: rgba(0, 255, 255, 0.05);
-  border: 1px solid rgba(0,255,255,0.3);
-  box-shadow: 0 0 20px rgba(0,255,255,0.3);
-  border-radius: 14px;
-  width: 92%;
-  max-width: 420px;
-  margin-left: auto;
-  margin-right: auto;
+  background: rgba(0, 0, 0, 0.85);
+  border-radius: 18px;
+  border: 1px solid rgba(0,255,255,0.4);
+  box-shadow:
+      0 0 16px rgba(0,255,255,0.8),
+      0 0 40px rgba(0,0,0,1);
+  padding: 12px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
+/* Fila superior: botones + volumen */
+.player-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 8px;
+}
+
+/* Botones de reproducción */
 .player-buttons {
   display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-bottom: 10px;
+  gap: 12px;
 }
 
 .player-buttons button {
-  padding: 10px;
+  padding: 10px 14px;
   border-radius: 50%;
   border: none;
   background: #011114;
   color: #00eaff;
   box-shadow: 0 0 12px #00eaff;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 22px;
   transition: 0.2s ease-out;
 }
 
 .player-buttons button:hover {
-  transform: scale(1.18);
+  transform: scale(1.15);
   box-shadow: 0 0 25px #00eaff;
 }
 
+/* Volumen a la derecha de los botones */
+.volume-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.volume-icon {
+  font-size: 18px;
+  color: #00eaff;
+  text-shadow: 0 0 8px #00eaff;
+}
+
+#volumeRange {
+  width: 110px;
+  accent-color: #00eaff;
+}
+
+/* Barra de progreso */
 #playerBar {
   width: 100%;
   margin-top: 6px;
+  accent-color: #00eaff;
 }
 
-/* TEXTO DE CANCIÓN */
+/* Texto de la canción */
 #songName {
   margin-top: 6px;
   color: #aaffff;
@@ -208,28 +249,7 @@ body {
 }
 
 /* ===========================
-   CONTROL DE VOLUMEN
-=========================== */
-.volume-box {
-  margin-top: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  justify-content: center;
-}
-
-#volumeRange {
-  width: 140px;
-}
-
-.volume-icon {
-  font-size: 22px;
-  color: #00eaff;
-  text-shadow: 0 0 12px #00eaff;
-}
-
-/* ===========================
-   RESPONSIVE MÓVIL
+   RESPONSIVE (CELULAR)
 =========================== */
 @media (max-width: 768px) {
 
@@ -247,7 +267,65 @@ body {
     font-size: 22px;
   }
 
+  .home-subtitle {
+    font-size: 13px;
+  }
+
+  .home-subtitle2 {
+    font-size: 12px;
+  }
+
   .home-menu-grid {
-    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .home-card {
+    padding: 14px 10px;
+  }
+
+  .home-card-icon img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .home-card-text {
+    font-size: 14px;
+  }
+
+  /* En móvil hacemos el player aún más compacto */
+  #gelm-player {
+    padding: 10px 10px 12px;
+  }
+
+  .player-top-row {
+    gap: 10px;
+  }
+
+  #volumeRange {
+    width: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  .home-title {
+    font-size: 20px;
+  }
+
+  .player-top-row {
+    flex-direction: column;
+  }
+
+  .volume-box {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #volumeRange {
+    width: 140px;
   }
 }
