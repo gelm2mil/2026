@@ -1,161 +1,228 @@
-/* ============================================================
-   FONDO NEON RADIAL
-============================================================ */
+/* ===========================
+   FONDO GENERAL NEON
+=========================== */
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: radial-gradient(circle at 20% 0%, rgba(0,255,255,0.18), transparent 55%),
-                radial-gradient(circle at 80% 0%, rgba(255,0,255,0.15), transparent 60%),
-                #05010a;
-    background-attachment: fixed;
-    color: #e6ffff;
-    text-align: center;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #e6ffff;
+  background: radial-gradient(circle at 20% 0%, #27c5f5, transparent 55%),
+              radial-gradient(circle at 80% 0%, #3c003c, transparent 55%),
+              #050011;
+  background-attachment: fixed;
 }
 
-/* ============================================================
-   TOP COMPACTO (LOGOS + TITULOS CENTRADOS)
-============================================================ */
-.top-compact {
-    width: 100%;
-    padding: 15px 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* WRAPPER PRINCIPAL DEL HOME */
+.home-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-.logo-mini {
-    width: 70px;
-    height: auto;
-    filter: drop-shadow(0 0 12px #00eaff);
+/* ===========================
+   TOP BAR COMPACTA (OPCIÓN A)
+=========================== */
+.home-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 26px;
 }
 
-.titulo-centro {
-    flex: 1;
-    text-align: center;
+.home-logo-left,
+.home-logo-right {
+  flex: 0 0 auto;
+  padding: 4px;
+  border-radius: 14px;
+  background: radial-gradient(circle at 30% 0, rgba(0,255,180,0.2), rgba(0,255,255,0.05));
+  box-shadow:
+      0 0 8px rgba(0,255,180,0.8),
+      0 0 22px rgba(0,0,0,0.9);
+  border: 1px solid rgba(0,255,200,0.7);
 }
 
-/* TITULOS */
-.t1 {
-    margin: 0;
-    font-size: 28px;
-    font-weight: bold;
-    color: #00eaff;
-    text-shadow: 0 0 10px #00eaff, 0 0 20px #0088ff;
-}
-.t2 {
-    margin: 4px 0 0;
-    font-size: 15px;
-    color: #c5f8ff;
-}
-.t3 {
-    margin: 4px 0 0;
-    font-size: 14px;
-    color: #aaffff;
-    text-shadow: 0 0 10px #00ffee;
+.home-logo-left img,
+.home-logo-right img {
+  display: block;
+  width: 70px;
+  height: auto;
 }
 
-/* ============================================================
-   MENU COMPACTO GRID RESPONSIVE
-============================================================ */
-.menu-compacto {
-    margin-top: 20px;
-    width: 100%;
-    max-width: 1100px;
-    margin-left: auto;
-    margin-right: auto;
-
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 25px;
-    padding: 0 15px;
+/* AL CENTRO LOS TÍTULOS */
+.home-title-box {
+  text-align: center;
+  flex: 1 1 auto;
+  padding: 0 10px;
 }
 
-/* BOTONES */
-.btn-box {
-    background: rgba(0,0,0,0.55);
-    border: 1px solid rgba(0,255,255,0.35);
-    border-radius: 16px;
-    padding: 15px 10px;
-    text-decoration: none;
-    color: #dfffff;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    box-shadow: 0 0 12px rgba(0,255,255,0.4);
-    transition: 0.25s ease-in-out;
+.home-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: #00eaff;
+  text-shadow: 0 0 16px #00eaff, 0 0 36px #0080ff;
+  letter-spacing: 1px;
 }
 
-.btn-box:hover {
-    transform: translateY(-6px);
-    filter: brightness(1.2);
-    box-shadow: 0 0 18px rgba(0,255,255,0.9);
+.home-subtitle {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #f3ffcc;
 }
 
-.btn-box img {
-    width: 42px;
-    height: auto;
-    margin-bottom: 10px;
-    filter: drop-shadow(0 0 10px #00f0ff);
+.home-subtitle2 {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #a7ffe7;
+  text-shadow: 0 0 10px #00ffc8;
 }
 
-.b1 {
-    font-size: 16px;
-    font-weight: bold;
-    color: #e6ffff;
-    text-shadow: 0 0 6px #00ffff;
+/* ===========================
+   MENÚ PRINCIPAL
+=========================== */
+
+.home-main {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 15px 10px 40px;
 }
 
-.b2 {
-    font-size: 13px;
-    color: #bbffff;
+.home-menu-section {
+  width: 100%;
+  max-width: 1200px;
 }
 
-/* ============================================================
+.home-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 22px;
+}
+
+/* TARJETA / CAJA DEL MENÚ */
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 12px;
+  border-radius: 18px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(0,255,255,0.35);
+  box-shadow:
+    0 0 16px rgba(0,255,255,0.5),
+    0 0 30px rgba(0,0,0,0.9);
+  text-decoration: none;
+  transition: 0.25s ease-in-out;
+}
+
+.home-card:hover {
+  transform: translateY(-5px);
+  filter: brightness(1.15);
+  box-shadow:
+    0 0 22px rgba(0,255,255,0.95),
+    0 0 50px rgba(0,0,0,0.95);
+}
+
+/* ICONOS PEQUEÑOS */
+.home-card-icon img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+/* TEXTO DEL BOTÓN */
+.home-card-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #e6ffff;
+  text-shadow: 0 0 8px #00ffff;
+}
+
+/* ===========================
    FOOTER
-============================================================ */
-footer {
-    margin-top: 35px;
-    margin-bottom: 30px;
+=========================== */
+
+.home-footer {
+  text-align: center;
+  font-size: 12px;
+  color: #bdf7ff;
+  text-shadow: 0 0 10px #00eaff;
+  padding: 12px 8px 6px;
+}
+
+/* ===========================
+   REPRODUCTOR ABAJO
+=========================== */
+
+.home-player-zone {
+  padding: 8px 0 16px;
+}
+
+.player-wrapper {
+  max-width: 520px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Si tu player ya tiene sus propias clases, puedes dejar esto vacío
+   y solo usar player-wrapper para centrarlo. */
+
+
+/* ===========================
+   RESPONSIVE (CELULAR)
+=========================== */
+@media (max-width: 768px) {
+
+  .home-top-bar {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-logo-left img,
+  .home-logo-right img {
+    width: 60px;
+  }
+
+  .home-title {
+    font-size: 22px;
+  }
+
+  .home-subtitle {
     font-size: 13px;
-    color: #99fdff;
-    text-shadow: 0 0 10px #00eaff;
-    line-height: 20px;
+  }
+
+  .home-subtitle2 {
+    font-size: 12px;
+  }
+
+  .home-menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .home-card {
+    padding: 14px 10px;
+  }
+
+  .home-card-icon img {
+    width: 34px;
+    height: 34px;
+  }
+
+  .home-card-text {
+    font-size: 14px;
+  }
 }
 
-/* ============================================================
-   RESPONSIVE OPTIMIZADO
-============================================================ */
+@media (max-width: 480px) {
+  .home-menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
 
-/* MOVIL MUY PEQUEÑO */
-@media (max-width: 430px) {
-    .logo-mini {
-        width: 60px;
-    }
-
-    .t1 { font-size: 22px; }
-    .t2 { font-size: 13px; }
-    .t3 { font-size: 12px; }
-
-    .menu-compacto {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 18px;
-    }
-}
-
-/* TABLET */
-@media (max-width: 850px) {
-    .logo-mini {
-        width: 65px;
-    }
-    .t1 { font-size: 24px; }
-}
-
-/* PC GRANDE */
-@media (min-width: 1300px) {
-    .menu-compacto {
-        max-width: 1200px;
-        grid-template-columns: repeat(5, 1fr);
-    }
+  .home-title {
+    font-size: 20px;
+  }
 }
