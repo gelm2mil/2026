@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
@@ -10,6 +10,7 @@
     <meta name="theme-color" content="#00eaff" />
 
     <script>
+      // Registrar Service Worker
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("service-worker.js");
       }
@@ -19,9 +20,12 @@
 </head>
 <body>
 
+  <!-- CONTENEDOR GENERAL -->
   <div class="home-wrapper">
 
-    <!-- TOP BAR -->
+    <!-- =============================
+         TOP BAR
+    ============================== -->
     <header class="home-top-bar">
       <div class="home-logo-left">
         <img src="icons/icon-192.png" alt="GELM" />
@@ -29,8 +33,12 @@
 
       <div class="home-title-box">
         <h1 class="home-title">SISTEMA PMT 2026</h1>
-        <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
-        <h3 class="home-subtitle2">== BY ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬ ==</h3>
+        <h2 class="home-subtitle">
+          Unidad de Transportes — PMT Chimaltenango
+        </h2>
+        <h3 class="home-subtitle2">
+          == BY ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬ ==
+        </h3>
       </div>
 
       <div class="home-logo-right">
@@ -38,7 +46,10 @@
       </div>
     </header>
 
-    <!-- MENÚ PRINCIPAL -->
+
+    <!-- =============================
+         MENÚ PRINCIPAL
+    ============================== -->
     <main class="home-main">
       <section class="home-menu-section">
         <div class="home-menu-grid">
@@ -51,8 +62,8 @@
             <div class="home-card-text">Agenda 2026</div>
           </a>
 
-          <!-- OPERATIVOS (archivo no existe aún, temporal) -->
-          <a class="home-card" href="transportes.html">
+          <!-- OPERATIVOS -->
+          <a class="home-card" href="operativos.html">
             <div class="home-card-icon">
               <img src="icons/operativos.jpg" alt="Operativos" />
             </div>
@@ -67,7 +78,7 @@
             <div class="home-card-text">Denuncias</div>
           </a>
 
-          <!-- BUSCAR PLACAS -->
+          <!-- BUSCAR / DPI -->
           <a class="home-card" href="https://gelm2mil.github.io/gelm/" target="_blank">
             <div class="home-card-icon">
               <img src="icons/buscar.jpg" alt="Buscar" />
@@ -83,18 +94,18 @@
             <div class="home-card-text">Respaldos</div>
           </a>
 
-          <!-- REPORTES (temporal) -->
-          <a class="home-card" href="transportes.html">
+          <!-- REPORTES -->
+          <a class="home-card" href="reportes.html">
             <div class="home-card-icon">
               <img src="icons/reporte.jpg" alt="Reportes" />
             </div>
             <div class="home-card-text">Reportes</div>
           </a>
 
-          <!-- CONFIGURACIÓN (temporal) -->
-          <a class="home-card" href="transportes.html">
+          <!-- CONFIGURACIÓN -->
+          <a class="home-card" href="config.html">
             <div class="home-card-icon">
-              <img src="icons/config.png" alt="Configuración" />
+              <img src="icons/pngtree-neon-glowing-3d-gear-configuration-icon-png-image_7999020.png" alt="Config" />
             </div>
             <div class="home-card-text">Configuración</div>
           </a>
@@ -103,37 +114,47 @@
       </section>
     </main>
 
-    <!-- FOOTER -->
+
+    <!-- =============================
+         FOOTER
+    ============================== -->
     <footer class="home-footer">
       <div>© 2026 — Todos los derechos reservados — BY GELM</div>
       <div>Policía Municipal de Tránsito — Chimaltenango. Presente.</div>
     </footer>
-  </div>
 
-  <!-- REPRODUCTOR ABAJO -->
+  </div><!-- FIN WRAPPER -->
+
+
+  <!-- =============================
+       REPRODUCTOR GLOBAL
+  ============================== -->
   <section class="home-player-zone">
     <div class="player-wrapper">
 
-        <div id="gelm-player">
+      <div id="gelm-player">
 
-            <audio id="audio"></audio>
+          <audio id="audio"></audio>
 
-            <div class="player-buttons">
-                <button id="prevBtn">⏮️</button>
-                <button id="playBtn">▶️</button>
-                <button id="pauseBtn">⏸️</button>
-                <button id="nextBtn">⏭️</button>
-            </div>
+          <div class="player-buttons">
+              <button id="prevBtn">⏮️</button>
+              <button id="playBtn">▶️</button>
+              <button id="pauseBtn">⏸️</button>
+              <button id="nextBtn">⏭️</button>
+          </div>
 
-            <input type="range" id="playerBar" min="0" max="100" value="0">
-            <div id="songName">Reproduciendo: nova.mp3</div>
+          <input type="range" id="playerBar" min="0" max="100" value="0">
 
-        </div>
+          <div id="songName">Reproduciendo música…</div>
+
+      </div>
 
     </div>
   </section>
 
+
+  <!-- APP -->
   <script src="app.js"></script>
+
 </body>
 </html>
-
