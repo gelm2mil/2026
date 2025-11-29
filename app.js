@@ -45,4 +45,24 @@ document.getElementById("playerBar").addEventListener("input", (e) => {
 document.getElementById("volumeRange").addEventListener("input", function () {
   audio.volume = this.value;
 });
+// =============================
+// SPA: cargar módulos en iframe
+// =============================
+function cargarModulo(url) {
+  const zona = document.getElementById("moduloZona");
+  const frame = document.getElementById("moduleFrame");
+
+  if (!zona || !frame) return;
+
+  frame.src = url;
+  zona.classList.add("activo");
+
+  // Opcional: hacer scroll suave al módulo
+  try {
+    zona.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (e) {
+    // Navegadores viejos simplemente lo ignoran
+  }
+}
+
 
