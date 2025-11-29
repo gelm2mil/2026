@@ -1,72 +1,130 @@
-/* ---------------------------------
-   CARDS DEL MENÚ PRINCIPAL (NEON)
-----------------------------------*/
+/* ===========================
+   FONDO RADIAL NEON
+=========================== */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at top left, #33cfff, #180020, #000000);
+    color: #e6ffff;
+    text-align: center;
+}
 
-.menu-container {
+/* ===========================
+   TOP BAR (LOGOS + TÍTULO)
+=========================== */
+.top-bar {
     width: 100%;
-    margin-top: 40px;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 40px;
+}
+
+.logo-left,
+.logo-right {
+    width: 110px;
+    filter: drop-shadow(0 0 15px #00eaff);
+}
+
+/* CONTENEDOR TITULOS */
+.title-box {
+    text-align: center;
+}
+
+.title {
+    margin: 0;
+    font-size: 40px;
+    font-weight: bold;
+    color: #00eaff;
+    text-shadow: 0 0 20px #00eaff, 0 0 40px #00aaff;
+}
+
+.subtitle {
+    margin-top: 5px;
+    font-size: 20px;
+    color: #e6ffff;
+    text-shadow: 0 0 12px #00eaff;
+}
+
+/* ===========================
+   MENÚ PRINCIPAL
+=========================== */
+.menu-container {
+    margin-top: 40px;
 }
 
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 35px;
-    width: 90%;
     max-width: 1500px;
+    margin: auto;
 }
 
-/* CARD / CUADRO */
+/* CUADRO / CARD */
 .menu-card {
     background: rgba(255,255,255,0.08);
     border-radius: 16px;
-    padding: 30px 20px;
+    padding: 25px 20px;
+    border: 2px solid rgba(0,255,255,0.3);
+    box-shadow: 0 0 18px rgba(0,255,255,0.3);
     cursor: pointer;
-    border: 2px solid rgba(0,255,255,0.35);
-    box-shadow: 0 0 25px rgba(0,255,255,0.30);
-    backdrop-filter: blur(4px);
     transition: 0.25s ease;
-    text-align: center;
 }
 
 .menu-card:hover {
     transform: translateY(-8px);
     border-color: #00eaff;
-    box-shadow: 0 0 25px #00eaff, 0 0 50px #00c8ff;
+    box-shadow: 0 0 20px #00eaff, 0 0 50px #00bfff;
 }
 
-/* Ícono dentro del menú */
 .menu-card img {
     width: 40px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-/* Texto principal */
+/* Texto dentro del cuadro */
 .menu-title {
     font-size: 18px;
+    color: #e6ffff;
     font-weight: bold;
-    color: #e2faff;
-    margin-bottom: 6px;
-    text-shadow: 0 0 8px #00eaff;
 }
 
-/* Subtexto */
 .menu-sub {
     font-size: 14px;
-    color: #dff9ff;
-    opacity: 0.8;
+    color: #c8faff;
 }
 
-/* RESPONSIVE */
-@media (max-width: 600px) {
-    .menu-card {
-        padding: 22px;
+/* ===========================
+   FOOTER
+=========================== */
+footer {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #bdf7ff;
+    text-shadow: 0 0 10px #00eaff;
+    line-height: 20px;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+@media (max-width: 700px) {
+
+    .logo-left,
+    .logo-right {
+        width: 80px;
     }
-    .menu-title {
-        font-size: 16px;
+
+    .title {
+        font-size: 28px;
     }
-    .menu-sub {
-        font-size: 13px;
+
+    .subtitle {
+        font-size: 15px;
+    }
+
+    .menu-grid {
+        gap: 20px;
     }
 }
