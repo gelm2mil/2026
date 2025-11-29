@@ -1,5 +1,5 @@
 // Nombre de la caché (cámbialo cuando hagas cambios grandes)
-const CACHE_NAME = "gelm-pmt-2026-v1";
+const CACHE_NAME = "gelm-pmt-2026-v2";
 
 // Archivos que se cachean para trabajar offline
 const OFFLINE_URLS = [
@@ -72,3 +72,4 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
