@@ -1,93 +1,104 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Transportes 2026 — GELM</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistema PMT 2026 — GELM</title>
 
-    <link rel="stylesheet" href="styles.css">
-
-    <!-- PWA -->
+    <!-- MANIFEST + SERVICE WORKER -->
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#00eaff">
+
     <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.register("service-worker.js");
         }
     </script>
+
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<header class="top-bar">
+    <!-- ========================================= -->
+    <!-- TOP BAR con ICONO IZQUIERDA - TITULO - ICONO DERECHA -->
+    <!-- ========================================= -->
+    <header class="top-bar">
 
-    <!-- LOGO IZQUIERDO -->
-    <img src="icons/icon-192.png" class="logo-left" alt="GELM">
+        <!-- ICONO PEQUEÑO IZQUIERDO -->
+        <img src="icons/icon-192.png" class="logo-left" alt="GELM">
 
-    <!-- TITULOS CENTRADOS -->
-    <div class="title-box">
-        <h1 class="title">SISTEMA DE TRANSPORTES 2026</h1>
-        <h2 class="subtitle">BY — ▬■▪┼▪▪[ĢзŁМ]▪▪┼▪■▬</h2>
-    </div>
-
-    <!-- LOGO DERECHO -->
-    <img src="icons/YO.png" class="logo-right" alt="YO">
-
-</header>
-
-<!-- MENÚ PRINCIPAL -->
-<div class="menu-container">
-    <div class="menu-grid">
-
-        <div class="menu-card" onclick="location.href='agen2026.html'">
-            <img src="icons/agenda.png">
-            <div class="menu-title">Agenda 2026</div>
-            <div class="menu-sub">Programación mensual</div>
+        <!-- TITULOS CENTRADOS -->
+        <div class="title-box">
+            <h1 class="title">SISTEMA PMT 2026</h1>
+            <h2 class="subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
+            <h3 class="subtitle">== BY ▬■▪┼▪▪[GэLM]▪▪┼▪■▬ ==</h3>
         </div>
 
-        <div class="menu-card" onclick="location.href='transportes.html'">
-            <img src="icons/operativos.png">
-            <div class="menu-title">Operativos</div>
-            <div class="menu-sub">Licencias, vehículos<br>observaciones</div>
+        <!-- ICONO PEQUEÑO DERECHO -->
+        <img src="icons/YO.png" class="logo-right" alt="YO">
+    </header>
+
+    <!-- ========================================= -->
+    <!-- MENÚ PRINCIPAL -->
+    <!-- ========================================= -->
+    <section class="menu-container">
+
+        <div class="menu-grid">
+
+            <a href="agen2026.html" class="menu-card">
+                <img src="icons/icon-192.png">
+                <div class="menu-title">Agenda 2026</div>
+                <div class="menu-sub">Programación mensual</div>
+            </a>
+
+            <a href="transportes.html" class="menu-card">
+                <img src="icons/icon-192.png">
+                <div class="menu-title">Operativos</div>
+                <div class="menu-sub">Próximamente</div>
+            </a>
+
+            <a href="denuncias.html" class="menu-card">
+                <img src="icons/icon-192.png">
+                <div class="menu-title">Denuncias</div>
+                <div class="menu-sub">Registro con evidencia</div>
+            </a>
+
+            <a href="https://gelm2mil.github.io/gelm/" class="menu-card">
+                <img src="icons/icon-192.png">
+                <div class="menu-title">Buscar placas / DPI</div>
+                <div class="menu-sub">Módulo externo GELM</div>
+            </a>
+
+            <a href="respaldo.html" class="menu-card">
+                <img src="icons/icon-192.png">
+                <div class="menu-title">Respaldos</div>
+                <div class="menu-sub">Consolidado histórico</div>
+            </a>
+
+            <a href="#" class="menu-card">
+                <img src="icons/icon-192.png">
+                <div class="menu-title">Reportes</div>
+                <div class="menu-sub">Próximamente</div>
+            </a>
+
+            <a href="#" class="menu-card">
+                <img src="icons/icon-192.png">
+                <div class="menu-title">Configuración</div>
+                <div class="menu-sub">Modo GOD & más</div>
+            </a>
+
         </div>
+    </section>
 
-        <div class="menu-card" onclick="location.href='denuncias.html'">
-            <img src="icons/denuncias.png">
-            <div class="menu-title">Denuncias</div>
-            <div class="menu-sub">Control y evidencia</div>
-        </div>
-
-        <div class="menu-card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
-            <img src="icons/buscar.png">
-            <div class="menu-title">Buscar placas / DPI</div>
-            <div class="menu-sub">Módulo externo GELM</div>
-        </div>
-
-        <div class="menu-card" onclick="location.href='respaldo.html'">
-            <img src="icons/respaldo.png">
-            <div class="menu-title">Respaldos</div>
-            <div class="menu-sub">Consolidado histórico</div>
-        </div>
-
-        <div class="menu-card" onclick="alert('Próximamente...')">
-            <img src="icons/reportes.png">
-            <div class="menu-title">Reportes</div>
-            <div class="menu-sub">Próximamente</div>
-        </div>
-
-        <div class="menu-card" onclick="alert('Modo GOD pronto disponible...')">
-            <img src="icons/god.png">
-            <div class="menu-title">Configuración</div>
-            <div class="menu-sub">Modo GOD & más</div>
-        </div>
-
-    </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-    © 2026 — Todos los derechos reservados — <b>BY GELM</b><br>
-    Policía Municipal de Tránsito — Chimaltenango. Presente.
-</footer>
+    <!-- ========================================= -->
+    <!-- FOOTER -->
+    <!-- ========================================= -->
+    <footer>
+        © 2026 — Todos los derechos reservados — <b>BY GELM</b><br>
+        Policía Municipal de Tránsito — Chimaltenango. Presente.
+    </footer>
 
 </body>
 </html>
