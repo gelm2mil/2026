@@ -1,112 +1,90 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#00eaff">
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", () => {
-        navigator.serviceWorker.register("service-worker.js");
-      });
-    }
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Transportes 2026 — GELM</title>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Transportes 2026 — GELM</title>
-  <link rel="stylesheet" href="styles.css">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#00eaff">
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("service-worker.js");
+        }
+    </script>
+
+    <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<div class="app-shell">
+<header class="top-bar">
 
-  <!-- HEADER PRO -->
-  <header class="top-header">
-    <!-- Logo izquierdo GELM neon -->
-    <div class="brand brand-left">
-      <img src="icons/icon-512.png" alt="GELM" class="brand-logo">
+    <!-- LOGO IZQUIERDO -->
+    <img src="icons/icon-512.png" class="logo-left" alt="GELM">
+
+    <div class="title-box">
+        <h1 class="title">SISTEMA DE TRANSPORTES 2026</h1>
+        <h2 class="subtitle">BY — ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬</h2>
     </div>
 
-    <!-- Títulos centro -->
-    <div class="titles">
-      <h1 class="title-main">SISTEMA DE TRANSPORTES 2026</h1>
-      <h2 class="title-sub">
-        BY — ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬
-      </h2>
+    <!-- LOGO DERECHO -->
+    <img src="icons/YO.png" class="logo-right" alt="YO">
+</header>
+
+<!-- MENÚ PRINCIPAL -->
+<div class="menu-grid">
+
+    <div class="card" onclick="location.href='agen2026.html'">
+        <span class="icon">📘</span>
+        <span class="label">Agenda 2026</span>
+        <span class="mini">Programación mensual</span>
     </div>
 
-    <!-- Logo derecho YO -->
-    <div class="brand brand-right">
-      <img src="icons/YO.png" alt="GELM Yo" class="brand-logo">
+    <div class="card" onclick="location.href='transportes.html'">
+        <span class="icon">🚨</span>
+        <span class="label">Operativos</span>
+        <span class="mini">Licencias, vehículos<br>observaciones</span>
     </div>
-  </header>
 
-  <!-- MENÚ PRINCIPAL -->
-  <main class="main-content">
-    <section class="menu-section">
-      <div class="menu-grid">
+    <div class="card" onclick="location.href='denuncias.html'">
+        <span class="icon">📝</span>
+        <span class="label">Denuncias</span>
+        <span class="mini">Control y evidencia</span>
+    </div>
 
-        <!-- AGENDA 2026 -->
-        <a href="agen2026.html" class="menu-card menu-primary">
-          <div class="menu-icon">📘</div>
-          <div class="menu-title">Agenda 2026</div>
-          <div class="menu-sub">Programación mensual</div>
-        </a>
+    <div class="card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
+        <span class="icon">🔍</span>
+        <span class="label">Buscar placas / DPI</span>
+        <span class="mini">Módulo externo GELM</span>
+    </div>
 
-        <!-- OPERATIVOS -->
-        <a href="transportes.html" class="menu-card">
-          <div class="menu-icon">🚨</div>
-          <div class="menu-title">Operativos</div>
-          <div class="menu-sub">Licencias, vehículos, observaciones</div>
-        </a>
+    <div class="card" onclick="location.href='respaldo.html'">
+        <span class="icon">📦</span>
+        <span class="label">Respaldos</span>
+        <span class="mini">Consolidado histórico</span>
+    </div>
 
-        <!-- DENUNCIAS -->
-        <a href="denuncias.html" class="menu-card">
-          <div class="menu-icon">📝</div>
-          <div class="menu-title">Denuncias</div>
-          <div class="menu-sub">Control y evidencia</div>
-        </a>
+    <div class="card disabled">
+        <span class="icon">📊</span>
+        <span class="label">Reportes</span>
+        <span class="mini">Próximamente</span>
+    </div>
 
-        <!-- BUSCADOR PLACAS / DPI -->
-        <a href="https://gelm2mil.github.io/gelm/" class="menu-card menu-accent" target="_blank" rel="noopener">
-          <div class="menu-icon">🔍</div>
-          <div class="menu-title">Buscar placas / DPI</div>
-          <div class="menu-sub">Módulo externo GELM</div>
-        </a>
-
-        <!-- RESPALDOS -->
-        <a href="respaldo.html" class="menu-card">
-          <div class="menu-icon">📦</div>
-          <div class="menu-title">Respaldos</div>
-          <div class="menu-sub">Consolidado histórico</div>
-        </a>
-
-        <!-- REPORTES (placeholder por ahora) -->
-        <button type="button" class="menu-card menu-disabled" disabled>
-          <div class="menu-icon">📊</div>
-          <div class="menu-title">Reportes</div>
-          <div class="menu-sub">Próximamente</div>
-        </button>
-
-        <!-- CONFIGURACIÓN (placeholder por ahora) -->
-        <button type="button" class="menu-card menu-disabled" disabled>
-          <div class="menu-icon">⚙</div>
-          <div class="menu-title">Configuración</div>
-          <div class="menu-sub">Modo GOD & más</div>
-        </button>
-
-      </div>
-    </section>
-  </main>
-
-  <!-- FOOTER PRO -->
-  <footer class="app-footer">
-    <div>© 2026 — Todos los derechos reservados — BY GELM</div>
-    <div>Policía Municipal de Tránsito — Chimaltenango. Presente.</div>
-  </footer>
+    <div class="card disabled">
+        <span class="icon">⚙️</span>
+        <span class="label">Configuración</span>
+        <span class="mini">Modo GOD & más</span>
+    </div>
 
 </div>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div>© 2026 — Todos los derechos reservados — BY GELM</div>
+    <div>Policía Municipal de Tránsito — Chimaltenango. Presente.</div>
+</footer>
 
 </body>
 </html>
