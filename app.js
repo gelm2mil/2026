@@ -44,3 +44,9 @@ audio.onended = () => {
 };
 
 cargarMusica();
+const volumenSlider = document.getElementById("volumenSlider");
+volumenSlider.addEventListener("input", () => {
+    audio.volume = volumenSlider.value;
+});
+
+
