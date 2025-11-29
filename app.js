@@ -1,71 +1,86 @@
-/* ============================
-   REPRODUCTOR GLOBAL OFICIAL
-============================ */
+/* ================================
+   REPRODUCTOR GELM — 2026
+================================ */
 
-let audio = new Audio();
-let playlist = [];
-let index = 0;
+let canciones = [];
+let indice = 0;
 
-// Cargar lista desde musica.json
+const audio = document.getElementById("audioPlayer");
+const barra = document.getElementById("playerBar");
+const volumen = document.getElementById("volumeRange");
+const songName = document.getElementById("songName");
+
+/* ================================
+   CARGAR EL JSON
+================================ */
 fetch("musica.json")
-  .then(res => res.json())
+  .then(r => r.json())
   .then(data => {
-    playlist = data;
-    index = Math.floor(Math.random() * playlist.length);
-    cargarCancion();
+    canciones = data;
+    if (canciones.length > 0) {
+      cargarCancion(0);
+    } else {
+      songName.textContent = "Sin canciones";
+    }
+  })
+  .catch(err => {
+    console.error("Error al cargar JSON:", err);
+    songName.textContent = "Error cargando música";
   });
 
-// Cargar canción
-function cargarCancion() {
-  let song = playlist[index];
-  audio.src = song.url;
-  document.getElementById("songName").textContent =
-    "Reproduciendo: " + song.title;
+/* ================================
+   FUNCIONES PRINCIPALES
+================================ */
+
+function cargarCancion(i) {
+  indice = i;
+
+  const c = canciones[i];
+  audio.src = c.url;
+
+  songName.textContent = "Reproduciendo: " + c.title;
   audio.play();
 }
 
-// Botones
-document.getElementById("playBtn").addEventListener("click", () => audio.play());
-document.getElementById("pauseBtn").addEventListener("click", () => audio.pause());
-document.getElementById("nextBtn").addEventListener("click", () => {
-  index = (index + 1) % playlist.length;
-  cargarCancion();
-});
-document.getElementById("prevBtn").addEventListener("click", () => {
-  index = (index - 1 + playlist.length) % playlist.length;
-  cargarCancion();
-});
-
-// Barra de progreso
-audio.addEventListener("timeupdate", () => {
-  let bar = document.getElementById("playerBar");
-  bar.value = (audio.currentTime / audio.duration) * 100 || 0;
-});
-
-document.getElementById("playerBar").addEventListener("input", (e) => {
-  audio.currentTime = (audio.duration * e.target.value) / 100;
-});
-
-// Volumen
-document.getElementById("volumeRange").addEventListener("input", function () {
-  audio.volume = this.value;
-});
-
-
-/* ============================
-   SPA — CARGA DE MÓDULOS
-============================ */
-
-function cargarModulo(url) {
-  const zona = document.getElementById("moduloZona");
-  const frame = document.getElementById("moduleFrame");
-
-  if (!zona || !frame) return;
-
-  frame.src = url;
-  zona.classList.add("activo");
-
-  try {
-    zona.scrollIntoView({ behavior: "smooth", block: "start" });
-  } catch (e) {}
+function playPause() {
+  if (audio.paused) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
 }
+
+function nextSong() {
+  indice++;
+  if (indice >= canciones.length) indice = 0;
+  cargarCancion(indice);
+}
+
+function prevSong() {
+  indice--;
+  if (indice < 0) indice = canciones.length - 1;
+  cargarCancion(indice);
+}
+
+/* ================================
+   BARRA DE PROGRESO
+================================ */
+audio.addEventListener("timeupdate", () => {
+  if (!isNaN(audio.duration)) {
+    barra.value = (audio.currentTime / audio.duration) * 100;
+  }
+});
+
+barra.addEventListener("input", () => {
+  audio.currentTime = (barra.value / 100) * audio.duration;
+});
+
+/* ================================
+   VOLUMEN
+================================ */
+volumen.addEventListener("input", () => {
+  audio.volume = volumen.value;
+});
+
+/* Reproducir siguiente si termina */
+audio.addEventListener("ended", nextSong);
