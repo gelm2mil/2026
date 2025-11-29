@@ -43,16 +43,15 @@ if ("serviceWorker" in navigator) {
 
 
     <!-- ===========================
-         MENÚ PRINCIPAL (SPA)
+         MENÚ PRINCIPAL SPA
     ============================ -->
-
     <main class="home-main">
         <section class="home-menu-section">
             <div class="home-menu-grid">
 
                 <!-- AGENDA -->
                 <a class="home-card" onclick="cargarModulo('agen2026.html')">
-                    <div class="home-card-icon"><img src="icons/gelm.png"></div>
+                    <div class="home-card-icon"><img src="icons/agenda.jpg"></div>
                     <div class="home-card-text">Agenda 2026</div>
                 </a>
 
@@ -86,9 +85,11 @@ if ("serviceWorker" in navigator) {
                     <div class="home-card-text">Buscar multas</div>
                 </a>
 
-                <!-- CONFIG -->
+                <!-- CONFIGURACIÓN (CORREGIDO) -->
                 <a class="home-card" onclick="cargarModulo('config.html')">
-                    <div class="home-card-icon"><img src="icons/config.png"></div>
+                    <div class="home-card-icon">
+                        <img src="icons/configuracion.jpg">
+                    </div>
                     <div class="home-card-text">Configuración</div>
                 </a>
 
@@ -98,7 +99,7 @@ if ("serviceWorker" in navigator) {
 
 
     <!-- ===========================
-         ZONA SPA (MÓDULOS)
+         ZONA SPA (IFRAME)
     ============================ -->
     <section id="moduloSPA" class="home-module-zone">
         <iframe id="iframeSPA" src=""></iframe>
@@ -114,38 +115,42 @@ if ("serviceWorker" in navigator) {
     </footer>
 
 
-   <!-- REPRODUCTOR GELM -->
-<div class="player-wrapper">
-  <div id="gelm-player">
 
-    <!-- AUDIO REAL -->
-    <audio id="audioPlayer"></audio>
+    <!-- ===========================
+         REPRODUCTOR GLOBAL GELM
+    ============================ -->
+    <div class="player-wrapper">
+        <div id="gelm-player">
 
-    <!-- BOTONES -->
-    <div class="player-top-row">
+            <!-- AUDIO REAL -->
+            <audio id="audioPlayer"></audio>
 
-      <div class="player-buttons">
-        <button onclick="prevSong()">⏮️</button>
-        <button onclick="playPause()">⏯️</button>
-        <button onclick="nextSong()">⏭️</button>
-      </div>
+            <!-- BOTONES -->
+            <div class="player-top-row">
+                <div class="player-buttons">
+                    <button id="prevBtn">⏮️</button>
+                    <button id="playBtn">▶️</button>
+                    <button id="pauseBtn">⏸️</button>
+                    <button id="nextBtn">⏭️</button>
+                </div>
+            </div>
 
+            <!-- BARRA DE PROGRESO -->
+            <input type="range" id="playerBar" value="0" min="0" max="100">
+
+            <!-- VOLUMEN -->
+            <div class="volume-box">
+                <span class="volume-icon">🔊</span>
+                <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
+            </div>
+
+            <!-- TÍTULO DE CANCIÓN -->
+            <div id="songName">Reproducción detenida</div>
+
+        </div>
     </div>
 
-    <!-- BARRA DE PROGRESO -->
-    <input type="range" id="playerBar" value="0" min="0" max="100">
-
-    <!-- VOLUMEN -->
-    <div class="volume-box">
-      <span class="volume-icon">🔊</span>
-      <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
-    </div>
-
-    <!-- TEXTO DE CANCIÓN -->
-    <div id="songName">Reproducción detenida</div>
-
-  </div>
-</div>
+</div><!-- FIN WRAPPER -->
 
 <script src="app.js"></script>
 
@@ -153,7 +158,6 @@ if ("serviceWorker" in navigator) {
 /* ===========================
    SPA CONTROL
 =========================== */
-
 function cargarModulo(url) {
     const zona = document.getElementById("moduloSPA");
     const frame = document.getElementById("iframeSPA");
@@ -167,4 +171,3 @@ function cargarModulo(url) {
 
 </body>
 </html>
-
