@@ -114,34 +114,37 @@ if ("serviceWorker" in navigator) {
     </footer>
 
 
-    <!-- ===========================
-         REPRODUCTOR GLOBAL FIJO
-    ============================ -->
-    <section class="home-player-zone">
-        <div class="player-wrapper">
-            <div id="gelm-player">
+   <!-- REPRODUCTOR GELM -->
+<div class="player-wrapper">
+  <div id="gelm-player">
 
-                <audio id="audio"></audio>
+    <!-- AUDIO REAL -->
+    <audio id="audioPlayer"></audio>
 
-                <div class="player-buttons">
-                    <button onclick="prevSong()">⏮️</button>
-                    <button onclick="playSong()">▶️</button>
-                    <button onclick="pauseSong()">⏸️</button>
-                    <button onclick="nextSong()">⏭️</button>
-                </div>
+    <!-- BOTONES -->
+    <div class="player-top-row">
 
-                <input type="range" id="playerBar" min="0" max="100" value="0">
+      <div class="player-buttons">
+        <button onclick="prevSong()">⏮️</button>
+        <button onclick="playPause()">⏯️</button>
+        <button onclick="nextSong()">⏭️</button>
+      </div>
 
-                <div class="volume-box">
-                    🔊 <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="1">
-                </div>
+    </div>
 
-                <div id="songName">Reproduciendo...</div>
+    <!-- BARRA DE PROGRESO -->
+    <input type="range" id="playerBar" value="0" min="0" max="100">
 
-            </div>
-        </div>
-    </section>
+    <!-- VOLUMEN -->
+    <div class="volume-box">
+      <span class="volume-icon">🔊</span>
+      <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
+    </div>
 
+    <!-- TEXTO DE CANCIÓN -->
+    <div id="songName">Reproducción detenida</div>
+
+  </div>
 </div>
 
 <script src="app.js"></script>
@@ -164,3 +167,4 @@ function cargarModulo(url) {
 
 </body>
 </html>
+
