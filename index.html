@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sistema  2026 —creado por GELM</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema de GELM 2026 — PMT Chimaltenango</title>
 
-    <!-- PWA -->
-    <link rel="manifest" href="manifest.webmanifest" />
-    <meta name="theme-color" content="#00eaff" />
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#00eaff" />
 
-    <script>
-      // Registrar Service Worker
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.register("service-worker.js");
-      }
-    </script>
+  <script>
+    // Registrar Service Worker
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
 
-    <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
@@ -55,7 +55,7 @@
         <div class="home-menu-grid">
 
           <!-- AGENDA -->
-          <a class="home-card" href="agen2026.html">
+          <a class="home-card" href="#" onclick="cargarModulo('agen2026.html'); return false;">
             <div class="home-card-icon">
               <img src="icons/icon-512.png" alt="Agenda" />
             </div>
@@ -63,7 +63,7 @@
           </a>
 
           <!-- OPERATIVOS -->
-          <a class="home-card" href="operativos.html">
+          <a class="home-card" href="#" onclick="cargarModulo('operativos.html'); return false;">
             <div class="home-card-icon">
               <img src="icons/operativos.jpg" alt="Operativos" />
             </div>
@@ -71,40 +71,39 @@
           </a>
 
           <!-- DENUNCIAS -->
-          <a class="home-card" href="denuncias.html">
+          <a class="home-card" href="#" onclick="cargarModulo('denuncias.html'); return false;">
             <div class="home-card-icon">
               <img src="icons/denuncias.jpg" alt="Denuncias" />
             </div>
             <div class="home-card-text">Denuncias</div>
           </a>
 
-          <!-- CONTROL TRANSPORTES -->
-          <a class="home-card" href="https://gelm2mil.github.io/gelm/">
+          <!-- REGISTRO DE TRANSPORTES (BUSCADOR INTERNO) -->
+          <a class="home-card" href="#" onclick="cargarModulo('https://gelm2mil.github.io/gelm/'); return false;">
             <div class="home-card-icon">
-              <img src="icons/buscar.jpg" alt="Buscar" />
+              <img src="icons/buscar.jpg" alt="Registro" />
             </div>
             <div class="home-card-text">REGISTRO DE TRANSPORTES</div>
           </a>
 
           <!-- RESPALDOS -->
-          <a class="home-card" href="respaldo.html">
+          <a class="home-card" href="#" onclick="cargarModulo('respaldo.html'); return false;">
             <div class="home-card-icon">
               <img src="icons/respaldo.jpg" alt="Respaldos" />
             </div>
             <div class="home-card-text">Respaldos</div>
           </a>
 
-          <!-- multas=?-->
-          <a class="home-card" href="https://gelm2mil.github.io/gelm/">
-    <div class="home-card-icon">
-        <img src="icons/buscar.jpg" alt="Buscar" />
-    </div>
-    <div class="home-card-text">Buscar multas </div>
-</a>
-
+          <!-- BUSCAR MULTAS (MÓDULO EXTERNO EN MIARROBA) -->
+          <a class="home-card" href="#" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html'); return false;">
+            <div class="home-card-icon">
+              <img src="icons/buscar.jpg" alt="Multas" />
+            </div>
+            <div class="home-card-text">Buscar multas</div>
+          </a>
 
           <!-- CONFIGURACIÓN -->
-          <a class="home-card" href="config.html">
+          <a class="home-card" href="#" onclick="cargarModulo('config.html'); return false;">
             <div class="home-card-icon">
               <img src="icons/pngtree-neon-glowing-3d-gear-configuration-icon-png-image_7999020.png" alt="Config" />
             </div>
@@ -115,6 +114,12 @@
       </section>
     </main>
 
+    <!-- =============================
+         ZONA DE MÓDULOS (SPA)
+    ============================== -->
+    <section class="home-module-zone" id="moduloZona">
+      <iframe id="moduleFrame" title="Módulos del sistema" loading="lazy"></iframe>
+    </section>
 
     <!-- =============================
          FOOTER
@@ -128,50 +133,38 @@
 
 
   <!-- =============================
-       REPRODUCTOR GLOBAL
+       REPRODUCTOR GLOBAL (NO SE RECARGA)
   ============================== -->
   <section class="home-player-zone">
     <div class="player-wrapper">
 
       <div id="gelm-player">
+
         <audio id="audio"></audio>
 
-        <!-- Fila de botones + volumen -->
-        <div class="player-top-row">
-          <div class="player-buttons">
-            <button id="prevBtn">⏮️</button>
-            <button id="playBtn">▶️</button>
-            <button id="pauseBtn">⏸️</button>
-            <button id="nextBtn">⏭️</button>
-          </div>
-
-          <div class="volume-box">
-            <span class="volume-icon">🔊</span>
-            <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="1">
-          </div>
+        <div class="player-buttons">
+          <button id="prevBtn">⏮️</button>
+          <button id="playBtn">▶️</button>
+          <button id="pauseBtn">⏸️</button>
+          <button id="nextBtn">⏭️</button>
         </div>
 
-        <!-- Barra de progreso -->
         <input type="range" id="playerBar" min="0" max="100" value="0">
 
-        <!-- Nombre de la canción -->
+        <div class="volume-box">
+          <span class="volume-icon">🔊</span>
+          <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="1">
+        </div>
+
         <div id="songName">Reproduciendo música…</div>
+
       </div>
 
     </div>
   </section>
-
-
 
   <!-- APP -->
   <script src="app.js"></script>
 
 </body>
 </html>
-
-
-
-
-
-
-
