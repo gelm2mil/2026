@@ -1,214 +1,95 @@
-/* ===========================
-   FONDO GENERAL NEÓN
-=========================== */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  color: #e6ffff;
-  background: radial-gradient(circle at 20% 0%, #27c5f5, transparent 55%),
-              radial-gradient(circle at 80% 0%, #3c003c, transparent 55%),
-              #050011;
-  background-attachment: fixed;
+/* ===== REPRODUCTOR SUPERIOR (PC) ===== */
+
+.player-wrapper-top {
+    position: absolute;
+    top: 20px;
+    left: 110px; /* Ajuste horizontal entre logo y título */
+    z-index: 999;
 }
 
-/* WRAPPER PRINCIPAL DEL HOME */
-.home-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-/* ===========================
-   TOP BAR
-=========================== */
-.home-top-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 18px 26px;
-}
-
-.home-logo-left,
-.home-logo-right {
-  flex: 0 0 auto;
-  padding: 4px;
-  border-radius: 14px;
-  background: radial-gradient(circle at 30% 0, rgba(0,255,180,0.2), rgba(0,255,255,0.05));
-  box-shadow:
-      0 0 8px rgba(0,255,180,0.8),
-      0 0 22px rgba(0,0,0,0.9);
-  border: 1px solid rgba(0,255,200,0.7);
-}
-
-.home-logo-left img,
-.home-logo-right img {
-  display: block;
-  width: 70px;
-}
-
-/* TÍTULOS */
-.home-title-box { text-align: center; flex: 1; padding: 0 10px; }
-.home-title {
-  margin: 0;
-  font-size: 28px;
-  font-weight: bold;
-  color: #00eaff;
-  text-shadow: 0 0 16px #00eaff, 0 0 36px #0080ff;
-  letter-spacing: 1px;
-}
-.home-subtitle { margin: 4px 0 0; font-size: 14px; color: #f3ffcc; }
-.home-subtitle2 { margin: 4px 0 0; font-size: 13px; color: #a7ffe7; text-shadow: 0 0 10px #00ffc8; }
-
-/* ===========================
-   MENÚ PRINCIPAL
-=========================== */
-.home-main {
-  flex: 1 0 auto;
-  display: flex;
-  justify-content: center;
-  padding: 15px 10px 0;
-}
-
-.home-menu-section { width: 100%; max-width: 1200px; }
-
-.home-menu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 22px;
-}
-
-.home-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 18px 12px;
-  border-radius: 18px;
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(0,255,255,0.35);
-  box-shadow: 0 0 16px rgba(0,255,255,0.5), 0 0 30px rgba(0,0,0,0.9);
-  text-decoration: none;
-  transition: 0.25s;
-}
-
-.home-card:hover {
-  transform: translateY(-5px);
-  filter: brightness(1.15);
-  box-shadow: 0 0 22px rgba(0,255,255,0.95), 0 0 50px rgba(0,0,0,0.95);
-}
-
-.home-card-icon img { width: 42px; height: 42px; margin-bottom: 8px; }
-.home-card-text { font-size: 15px; font-weight: 600; color: #e6ffff; text-shadow: 0 0 8px #00ffff; }
-
-/* ===========================
-   FOOTER
-=========================== */
-.home-footer {
-  text-align: center;
-  font-size: 12px;
-  color: #bdf7ff;
-  padding: 10px 8px 4px;
-}
-
-/* ===========================
-   REPRODUCTOR GLOBAL
-=========================== */
-.home-player-zone { 
-  margin-top: 4px; 
-  padding-bottom: 20px; 
-}
-.player-wrapper { 
-  max-width: 520px; 
-  margin: 0 auto; 
-  text-align: center; 
-}
-
-/* Marco del reproductor */
 #gelm-player {
-  background: rgba(0, 0, 0, 0.85);
-  border-radius: 18px;
-  border: 1px solid rgba(0,255,255,0.4);
-  box-shadow: 0 0 16px rgba(0,255,255,0.8), 0 0 40px rgba(0,0,0,1);
-  padding: 12px 16px 14px;
-  display: flex;
-  flex-direction: column;
-}
-
-.player-buttons { display: flex; gap: 12px; justify-content: center; }
-.player-buttons button {
-  padding: 10px 14px;
-  border-radius: 50%;
-  border: none;
-  background: #011114;
-  color: #00eaff;
-  box-shadow: 0 0 12px #00eaff;
-  cursor: pointer;
-  font-size: 22px;
-  transition: 0.2s;
-}
-.player-buttons button:hover { transform: scale(1.15); box-shadow: 0 0 25px #00eaff; }
-
-.volume-box { display: flex; align-items: center; gap: 6px; justify-content: center; }
-#volumeRange { width: 110px; accent-color: #00eaff; }
-#playerBar { width: 100%; margin-top: 6px; accent-color: #00eaff; }
-
-#songName { margin-top: 6px; color: #aaffff; font-size: 14px; }
-
-/* ===========================
-   RESPONSIVE
-=========================== */
-@media (max-width: 768px) {
-  .home-top-bar { flex-direction: column; gap: 10px; }
-  .home-logo-left img, .home-logo-right img { width: 60px; }
-  .home-title { font-size: 22px; }
-  .home-menu-grid { grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 16px; }
-  #gelm-player { padding: 10px 10px 12px; }
-  #volumeRange { width: 90px; }
-}
-
-/* ==========================
-   SPA (MÓDULOS)
-========================== */
-.home-module-zone {
-  margin: 22px auto 10px;
-  max-width: 1250px;
-  width: 100%;
-  display: none;
-}
-
-.home-module-zone.activo {
-  display: block;
-}
-
-/* IFRAME RESPONSIVE GRANDE EN PC */
-.home-module-zone iframe {
-  width: 100%;
-  max-width: 1200px;
-  min-height: 88vh;
-  margin: 0 auto;
-  display: block;
-
-  border: 0;
-  border-radius: 22px;
-  background: rgba(0, 0, 0, 0.92);
-  box-shadow:
-    0 0 25px rgba(0,255,230,0.45),
-    0 0 80px rgba(0,0,0,1);
-}
-
-/* Tablets */
-@media (max-width: 1000px) {
-  .home-module-zone iframe {
-    max-width: 900px;
-    min-height: 85vh;
-  }
-}
-
-/* Móviles */
-@media (max-width: 768px) {
-  .home-module-zone iframe {
-    max-width: 100%;
-    min-height: 75vh;
+    background: rgba(0, 0, 0, 0.55);
+    border: 2px solid #00eaff;
+    padding: 10px 18px;
     border-radius: 18px;
-  }
+    box-shadow: 0 0 15px #00eaff;
+    width: 260px;
+    backdrop-filter: blur(4px);
+}
+
+.player-buttons button {
+    background: #002b35;
+    border: 2px solid #00eaff;
+    color: #00eaff;
+    padding: 5px 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    transition: 0.2s;
+}
+
+.player-buttons button:hover {
+    background: #004757;
+    transform: scale(1.1);
+}
+
+#playerBar {
+    width: 100%;
+    margin-top: 8px;
+    accent-color: #00eaff;
+}
+
+.volume-box {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.volume-icon {
+    margin-right: 6px;
+}
+
+#volumeRange {
+    accent-color: #00eaff;
+}
+
+#songName {
+    margin-top: 6px;
+    font-size: 12px;
+    color: #00eaff;
+    text-shadow: 0 0 8px #00eaff;
+    text-align: center;
+}
+
+/* ================================
+   RESPONSIVE — MÓVIL 
+   MOVER REPRODUCTOR DEBAJO DEL TÍTULO
+================================ */
+
+@media (max-width: 768px) {
+
+    .player-wrapper-top {
+        position: relative;    /* Deja de ser absolute */
+        top: 0;
+        left: 0;
+        margin: 10px auto 0;   /* Debajo del título */
+        text-align: center;
+    }
+
+    #gelm-player {
+        width: 90%;
+        max-width: 340px;
+        margin: 0 auto;
+        padding: 12px;
+        backdrop-filter: blur(6px);
+    }
+
+    .player-buttons button {
+        font-size: 22px;
+        padding: 8px 12px;
+    }
+
+    #songName {
+        font-size: 14px;
+    }
 }
