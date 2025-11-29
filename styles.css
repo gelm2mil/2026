@@ -276,3 +276,12 @@ body {
   font-size: 14px;
   text-shadow: 0 0 10px #00ffff;
 }
+
+.home-footer {
+  margin-top: 60px;
+}
+
+.home-player-zone {
+  margin-top: -10px;
+  margin-bottom: 30px;
+}
