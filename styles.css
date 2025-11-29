@@ -329,3 +329,35 @@ body {
     width: 140px;
   }
 }
+/* =========================
+   ZONA SPA (MÓDULOS)
+========================= */
+
+.home-module-zone {
+  margin: 22px auto 10px;
+  max-width: 1150px;
+  display: none;              /* Oculto hasta que se cargue algo */
+}
+
+.home-module-zone.activo {
+  display: block;
+}
+
+.home-module-zone iframe {
+  width: 100%;
+  min-height: 620px;
+  border: 0;
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.92);
+  box-shadow:
+    0 0 25px rgba(0, 255, 230, 0.45),
+    0 0 80px rgba(0, 0, 0, 1);
+}
+
+/* En móvil el iframe se vuelve más alto */
+@media (max-width: 768px) {
+  .home-module-zone iframe {
+    min-height: 75vh;
+  }
+}
+
