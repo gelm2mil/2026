@@ -64,5 +64,60 @@ function cargarModulo(url) {
     // Navegadores viejos simplemente lo ignoran
   }
 }
+let canciones = [];
+let index = 0;
+let audio = document.getElementById("audioPlayer");
+let bar = document.getElementById("playerBar");
+let vol = document.getElementById("volumeRange");
+let songName = document.getElementById("songName");
+
+// CARGAR LISTA musica.json
+fetch("musica.json")
+  .then(r => r.json())
+  .then(data => {
+    canciones = data;
+    index = Math.floor(Math.random() * canciones.length);
+    cargarCancion();
+  });
+
+// Cargar canción
+function cargarCancion(){
+    audio.src = canciones[index].url;
+    songName.textContent = "Reproduciendo: " + canciones[index].nombre;
+    audio.play();
+}
+
+// Play / Pause
+function playPause(){
+  if(audio.paused){ audio.play(); }
+  else{ audio.pause(); }
+}
+
+// Siguiente
+function nextSong(){
+    index = (index + 1) % canciones.length;
+    cargarCancion();
+}
+
+// Anterior
+function prevSong(){
+    index = (index - 1 + canciones.length) % canciones.length;
+    cargarCancion();
+}
+
+// Barra de progreso
+audio.addEventListener("timeupdate", ()=>{
+  bar.value = (audio.currentTime / audio.duration) * 100;
+});
+
+bar.addEventListener("input", ()=>{
+  audio.currentTime = (bar.value / 100) * audio.duration;
+});
+
+// Volumen
+vol.addEventListener("input", ()=>{
+  audio.volume = vol.value;
+});
+
 
 
