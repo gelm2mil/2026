@@ -1,3 +1,14 @@
+/* 🔒 Evita que cualquier imagen dentro de un módulo iframe se haga gigante */
+.home-module-zone iframe img,
+iframe img {
+    max-width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+}
+/* 🔒 Prevención de fondos gigantes */
+iframe body, iframe html {
+    overflow-x: hidden !important;
+}
 /* ===== REPRODUCTOR SUPERIOR (PC) ===== */
 
 .player-wrapper-top {
@@ -93,3 +104,4 @@
         font-size: 14px;
     }
 }
+
