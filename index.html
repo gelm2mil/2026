@@ -17,14 +17,136 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+<style>
+/* ============================
+   REPRODUCTOR SUPERIOR (PC)
+============================ */
+
+.player-wrapper-top{
+    position:absolute;
+    top:20px;
+    left:110px;
+    z-index:999;
+}
+
+#gelm-player{
+    background:rgba(0,0,0,0.55);
+    border:2px solid #00eaff;
+    padding:10px 18px;
+    border-radius:18px;
+    box-shadow:0 0 15px #00eaff;
+    width:260px;
+    backdrop-filter:blur(4px);
+}
+
+.player-buttons button{
+    background:#002b35;
+    border:2px solid #00eaff;
+    color:#00eaff;
+    padding:5px 10px;
+    border-radius:50%;
+    cursor:pointer;
+    font-size:18px;
+    transition:0.2s;
+}
+
+.player-buttons button:hover{
+    background:#004757;
+    transform:scale(1.1);
+}
+
+#playerBar{
+    width:100%;
+    margin-top:8px;
+    accent-color:#00eaff;
+}
+
+.volume-box{
+    display:flex;
+    align-items:center;
+    margin-top:5px;
+}
+
+.volume-icon{ margin-right:6px; }
+#volumeRange{ accent-color:#00eaff; }
+
+#songName{
+    margin-top:6px;
+    font-size:12px;
+    color:#00eaff;
+    text-shadow:0 0 8px #00eaff;
+    text-align:center;
+}
+
+/* ============================
+   MÓVIL (RESPONSIVE)
+============================ */
+@media (max-width:768px){
+    .player-wrapper-top{
+        position:relative;
+        top:0;
+        left:0;
+        margin:10px auto 0;
+        text-align:center;
+    }
+
+    #gelm-player{
+        width:90%;
+        max-width:340px;
+        margin:auto;
+        padding:12px;
+        backdrop-filter:blur(6px);
+    }
+
+    .player-buttons button{
+        font-size:22px;
+        padding:8px 12px;
+    }
+
+    #songName{ font-size:14px; }
+}
+
+/* ================================
+   EFECTO SPOTIFY: OCULTAR EN SCROLL
+================================ */
+#playerWrapper{
+    transition:opacity 0.4s ease, transform 0.4s ease;
+}
+.hiddenPlayer{
+    opacity:0;
+    transform:translateY(-20px);
+}
+</style>
+
 </head>
 <body>
 
+<!-- 🤝 REPRODUCTOR SUPERIOR -->
+<div id="playerWrapper" class="player-wrapper-top">
+    <div id="gelm-player">
+        <audio id="audioPlayer"></audio>
+
+        <div class="player-buttons">
+            <button onclick="prevSong()">⏮️</button>
+            <button onclick="playPause()">⏯️</button>
+            <button onclick="nextSong()">⏭️</button>
+        </div>
+
+        <input type="range" id="playerBar" value="0" min="0" max="100">
+
+        <div class="volume-box">
+            <span class="volume-icon">🔊</span>
+            <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
+        </div>
+
+        <div id="songName">Reproducción detenida</div>
+    </div>
+</div>
+
+
 <div class="home-wrapper">
 
-    <!-- ===========================
-         TOP BAR
-    ============================ -->
+    <!-- HEADER -->
     <header class="home-top-bar">
         <div class="home-logo-left">
             <img src="icons/icon-192.png">
@@ -42,54 +164,44 @@ if ("serviceWorker" in navigator) {
     </header>
 
 
-    <!-- ===========================
-         MENÚ PRINCIPAL SPA
-    ============================ -->
+    <!-- MENÚ PRINCIPAL -->
     <main class="home-main">
         <section class="home-menu-section">
             <div class="home-menu-grid">
 
-                <!-- AGENDA -->
                 <a class="home-card" onclick="cargarModulo('agen2026.html')">
                     <div class="home-card-icon"><img src="icons/agenda.jpg"></div>
                     <div class="home-card-text">Agenda 2026</div>
                 </a>
 
-                <!-- OPERATIVOS -->
                 <a class="home-card" onclick="cargarModulo('operativos.html')">
                     <div class="home-card-icon"><img src="icons/operativos.jpg"></div>
                     <div class="home-card-text">Operativos</div>
                 </a>
 
-                <!-- DENUNCIAS -->
                 <a class="home-card" onclick="cargarModulo('denuncias.html')">
                     <div class="home-card-icon"><img src="icons/denuncias.jpg"></div>
                     <div class="home-card-text">Denuncias</div>
                 </a>
 
-                <!-- REGISTRO DE TRANSPORTES -->
                 <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/gelm/')">
                     <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
                     <div class="home-card-text">REGISTRO DE TRANSPORTES</div>
                 </a>
 
-                <!-- RESPALDOS -->
                 <a class="home-card" onclick="cargarModulo('respaldo.html')">
                     <div class="home-card-icon"><img src="icons/respaldo.jpg"></div>
                     <div class="home-card-text">Respaldos</div>
                 </a>
 
-                <!-- MULTAS -->
                 <a class="home-card" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html')">
                     <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
                     <div class="home-card-text">Buscar multas</div>
                 </a>
 
-                <!-- CONFIGURACIÓN (CORREGIDO) -->
+                <!-- 🔧 CONFIG reparado -->
                 <a class="home-card" onclick="cargarModulo('config.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/configuracion.jpg">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/configuracion.png"></div>
                     <div class="home-card-text">Configuración</div>
                 </a>
 
@@ -98,67 +210,27 @@ if ("serviceWorker" in navigator) {
     </main>
 
 
-    <!-- ===========================
-         ZONA SPA (IFRAME)
-    ============================ -->
+    <!-- SPA - MÓDULOS -->
     <section id="moduloSPA" class="home-module-zone">
         <iframe id="iframeSPA" src=""></iframe>
     </section>
 
 
-    <!-- ===========================
-         FOOTER
-    ============================ -->
+    <!-- FOOTER -->
     <footer class="home-footer">
         © 2026 — Todos los derechos reservados — BY GELM<br>
         Policía Municipal de Tránsito — Chimaltenango. Presente.
     </footer>
 
-
-
-    <!-- ===========================
-         REPRODUCTOR GLOBAL GELM
-    ============================ -->
-    <div class="player-wrapper">
-        <div id="gelm-player">
-
-            <!-- AUDIO REAL -->
-            <audio id="audioPlayer"></audio>
-
-            <!-- BOTONES -->
-            <div class="player-top-row">
-                <div class="player-buttons">
-                    <button id="prevBtn">⏮️</button>
-                    <button id="playBtn">▶️</button>
-                    <button id="pauseBtn">⏸️</button>
-                    <button id="nextBtn">⏭️</button>
-                </div>
-            </div>
-
-            <!-- BARRA DE PROGRESO -->
-            <input type="range" id="playerBar" value="0" min="0" max="100">
-
-            <!-- VOLUMEN -->
-            <div class="volume-box">
-                <span class="volume-icon">🔊</span>
-                <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
-            </div>
-
-            <!-- TÍTULO DE CANCIÓN -->
-            <div id="songName">Reproducción detenida</div>
-
-        </div>
-    </div>
-
-</div><!-- FIN WRAPPER -->
+</div>
 
 <script src="app.js"></script>
 
 <script>
-/* ===========================
-   SPA CONTROL
-=========================== */
-function cargarModulo(url) {
+/* ============================
+   SPA: CARGAR MÓDULOS
+============================ */
+function cargarModulo(url){
     const zona = document.getElementById("moduloSPA");
     const frame = document.getElementById("iframeSPA");
 
@@ -167,6 +239,26 @@ function cargarModulo(url) {
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
+/* ============================
+   EFECTO SPOTIFY SCROLL
+============================ */
+let lastScroll = 0;
+const player = document.getElementById("playerWrapper");
+
+window.addEventListener("scroll", () => {
+    let current = window.scrollY;
+
+    if (current > lastScroll) {
+        // bajando
+        player.classList.add("hiddenPlayer");
+    } else {
+        // subiendo
+        player.classList.remove("hiddenPlayer");
+    }
+
+    lastScroll = current;
+});
 </script>
 
 </body>
