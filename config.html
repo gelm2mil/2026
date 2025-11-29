@@ -114,8 +114,7 @@ function setTema(c){
 }
 
 function guardarVolumen(){
-  const v = document.getElementById("volGlobal").value;
-  localStorage.setItem("volumenGelm", v);
+  localStorage.setItem("volumenGelm",document.getElementById("volGlobal").value);
   alert("Volumen guardado.");
 }
 
@@ -128,8 +127,7 @@ function resetApp(){
 }
 
 function checkConexion(){
-  document.getElementById("estadoRed").innerText =
-    navigator.onLine ? "🟢 Conectado" : "🔴 Sin conexión";
+  document.getElementById("estadoRed").innerText = navigator.onLine ? "🟢 Conectado" : "🔴 Sin conexión";
 }
 </script>
 
