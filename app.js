@@ -42,3 +42,7 @@ audio.addEventListener("timeupdate", () => {
 document.getElementById("playerBar").addEventListener("input", (e) => {
   audio.currentTime = (audio.duration * e.target.value) / 100;
 });
+document.getElementById("volumeRange").addEventListener("input", function () {
+  audio.volume = this.value;
+});
+
