@@ -13,14 +13,13 @@ body {
 
 /* WRAPPER PRINCIPAL DEL HOME */
 .home-wrapper {
-  /* antes: min-height: 100vh;  -> lo quitamos para que el player suba */
   display: flex;
   flex-direction: column;
   align-items: stretch;
 }
 
 /* ===========================
-   TOP BAR COMPACTA
+   TOP BAR
 =========================== */
 .home-top-bar {
   display: flex;
@@ -45,16 +44,10 @@ body {
 .home-logo-right img {
   display: block;
   width: 70px;
-  height: auto;
 }
 
-/* TÍTULOS CENTRADOS */
-.home-title-box {
-  text-align: center;
-  flex: 1 1 auto;
-  padding: 0 10px;
-}
-
+/* TÍTULOS */
+.home-title-box { text-align: center; flex: 1; padding: 0 10px; }
 .home-title {
   margin: 0;
   font-size: 28px;
@@ -63,36 +56,20 @@ body {
   text-shadow: 0 0 16px #00eaff, 0 0 36px #0080ff;
   letter-spacing: 1px;
 }
-
-.home-subtitle {
-  margin: 4px 0 0;
-  font-size: 14px;
-  color: #f3ffcc;
-}
-
-.home-subtitle2 {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: #a7ffe7;
-  text-shadow: 0 0 10px #00ffc8;
-}
+.home-subtitle { margin: 4px 0 0; font-size: 14px; color: #f3ffcc; }
+.home-subtitle2 { margin: 4px 0 0; font-size: 13px; color: #a7ffe7; text-shadow: 0 0 10px #00ffc8; }
 
 /* ===========================
    MENÚ PRINCIPAL
 =========================== */
-
 .home-main {
   flex: 1 0 auto;
   display: flex;
-  align-items: flex-start;
   justify-content: center;
   padding: 15px 10px 0;
 }
 
-.home-menu-section {
-  width: 100%;
-  max-width: 1200px;
-}
+.home-menu-section { width: 100%; max-width: 1200px; }
 
 .home-menu-grid {
   display: grid;
@@ -100,7 +77,6 @@ body {
   gap: 22px;
 }
 
-/* TARJETA / CAJA DEL MENÚ */
 .home-card {
   display: flex;
   flex-direction: column;
@@ -110,94 +86,47 @@ body {
   border-radius: 18px;
   background: rgba(0,0,0,0.55);
   border: 1px solid rgba(0,255,255,0.35);
-  box-shadow:
-    0 0 16px rgba(0,255,255,0.5),
-    0 0 30px rgba(0,0,0,0.9);
+  box-shadow: 0 0 16px rgba(0,255,255,0.5), 0 0 30px rgba(0,0,0,0.9);
   text-decoration: none;
-  transition: 0.25s ease-in-out;
+  transition: 0.25s;
 }
 
 .home-card:hover {
   transform: translateY(-5px);
   filter: brightness(1.15);
-  box-shadow:
-    0 0 22px rgba(0,255,255,0.95),
-    0 0 50px rgba(0,0,0,0.95);
+  box-shadow: 0 0 22px rgba(0,255,255,0.95), 0 0 50px rgba(0,0,0,0.95);
 }
 
-/* ICONOS PEQUEÑOS */
-.home-card-icon img {
-  width: 42px;
-  height: 42px;
-  object-fit: contain;
-  margin-bottom: 8px;
-}
-
-/* TEXTO DEL BOTÓN */
-.home-card-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: #e6ffff;
-  text-shadow: 0 0 8px #00ffff;
-}
+.home-card-icon img { width: 42px; height: 42px; margin-bottom: 8px; }
+.home-card-text { font-size: 15px; font-weight: 600; color: #e6ffff; text-shadow: 0 0 8px #00ffff; }
 
 /* ===========================
    FOOTER
 =========================== */
-
 .home-footer {
   text-align: center;
   font-size: 12px;
   color: #bdf7ff;
-  text-shadow: 0 0 10px #00eaff;
   padding: 10px 8px 4px;
 }
 
 /* ===========================
-   ZONA DEL REPRODUCTOR
+   REPRODUCTOR GLOBAL
 =========================== */
+.home-player-zone { margin-top: 4px; padding-bottom: 20px; }
+.player-wrapper { max-width: 520px; margin: 0 auto; text-align: center; }
 
-.home-player-zone {
-  /* lo acercamos al footer */
-  margin-top: 4px;
-  padding: 0 0 20px;
-}
-
-.player-wrapper {
-  max-width: 520px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-/* Marco del reproductor, estilo compacto dentro de un “cuadro” */
 #gelm-player {
   background: rgba(0, 0, 0, 0.85);
   border-radius: 18px;
   border: 1px solid rgba(0,255,255,0.4);
-  box-shadow:
-      0 0 16px rgba(0,255,255,0.8),
-      0 0 40px rgba(0,0,0,1);
+  box-shadow: 0 0 16px rgba(0,255,255,0.8), 0 0 40px rgba(0,0,0,1);
   padding: 12px 16px 14px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
 }
 
-/* Fila superior: botones + volumen */
-.player-top-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin-bottom: 8px;
-}
-
-/* Botones de reproducción */
-.player-buttons {
-  display: flex;
-  gap: 12px;
-}
-
+.player-buttons { display: flex; gap: 12px; }
 .player-buttons button {
   padding: 10px 14px;
   border-radius: 50%;
@@ -207,141 +136,36 @@ body {
   box-shadow: 0 0 12px #00eaff;
   cursor: pointer;
   font-size: 22px;
-  transition: 0.2s ease-out;
+  transition: 0.2s;
 }
+.player-buttons button:hover { transform: scale(1.15); box-shadow: 0 0 25px #00eaff; }
 
-.player-buttons button:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 25px #00eaff;
-}
-
-/* Volumen a la derecha de los botones */
-.volume-box {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.volume-icon {
-  font-size: 18px;
-  color: #00eaff;
-  text-shadow: 0 0 8px #00eaff;
-}
-
-#volumeRange {
-  width: 110px;
-  accent-color: #00eaff;
-}
-
-/* Barra de progreso */
-#playerBar {
-  width: 100%;
-  margin-top: 6px;
-  accent-color: #00eaff;
-}
-
-/* Texto de la canción */
-#songName {
-  margin-top: 6px;
-  color: #aaffff;
-  font-size: 14px;
-  text-shadow: 0 0 10px #00ffff;
-}
+.volume-box { display: flex; align-items: center; gap: 6px; }
+#volumeRange { width: 110px; accent-color: #00eaff; }
+#playerBar { width: 100%; margin-top: 6px; accent-color: #00eaff; }
+#songName { margin-top: 6px; color: #aaffff; font-size: 14px; }
 
 /* ===========================
-   RESPONSIVE (CELULAR)
+   RESPONSIVE
 =========================== */
 @media (max-width: 768px) {
-
-  .home-top-bar {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .home-logo-left img,
-  .home-logo-right img {
-    width: 60px;
-  }
-
-  .home-title {
-    font-size: 22px;
-  }
-
-  .home-subtitle {
-    font-size: 13px;
-  }
-
-  .home-subtitle2 {
-    font-size: 12px;
-  }
-
-  .home-menu-grid {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 16px;
-  }
-
-  .home-card {
-    padding: 14px 10px;
-  }
-
-  .home-card-icon img {
-    width: 34px;
-    height: 34px;
-  }
-
-  .home-card-text {
-    font-size: 14px;
-  }
-
-  /* En móvil hacemos el player aún más compacto */
-  #gelm-player {
-    padding: 10px 10px 12px;
-  }
-
-  .player-top-row {
-    gap: 10px;
-  }
-
-  #volumeRange {
-    width: 90px;
-  }
+  .home-top-bar { flex-direction: column; gap: 10px; }
+  .home-logo-left img, .home-logo-right img { width: 60px; }
+  .home-title { font-size: 22px; }
+  .home-menu-grid { grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 16px; }
+  #gelm-player { padding: 10px 10px 12px; }
+  #volumeRange { width: 90px; }
 }
 
-@media (max-width: 480px) {
-  .home-menu-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  }
-
-  .home-title {
-    font-size: 20px;
-  }
-
-  .player-top-row {
-    flex-direction: column;
-  }
-
-  .volume-box {
-    width: 100%;
-    justify-content: center;
-  }
-
-  #volumeRange {
-    width: 140px;
-  }
-}
-/* =========================
-   ZONA SPA (MÓDULOS)
-========================= */
-
+/* ==========================
+   SPA (MÓDULOS)
+========================== */
 .home-module-zone {
   margin: 22px auto 10px;
   max-width: 1150px;
-  display: none;              /* Oculto hasta que se cargue algo */
+  display: none;
 }
-
-.home-module-zone.activo {
-  display: block;
-}
+.home-module-zone.activo { display: block; }
 
 .home-module-zone iframe {
   width: 100%;
@@ -349,15 +173,9 @@ body {
   border: 0;
   border-radius: 22px;
   background: rgba(0, 0, 0, 0.92);
-  box-shadow:
-    0 0 25px rgba(0, 255, 230, 0.45),
-    0 0 80px rgba(0, 0, 0, 1);
+  box-shadow: 0 0 25px rgba(0,255,230,0.45), 0 0 80px rgba(0,0,0,1);
 }
 
-/* En móvil el iframe se vuelve más alto */
 @media (max-width: 768px) {
-  .home-module-zone iframe {
-    min-height: 75vh;
-  }
+  .home-module-zone iframe { min-height: 75vh; }
 }
-
