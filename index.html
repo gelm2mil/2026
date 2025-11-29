@@ -92,14 +92,29 @@
         Policía Municipal de Tránsito — Chimaltenango. Presente.
     </footer>
 
-    <!-- REPRODUCTOR -->
-    <div class="reproductor">
+   <!-- ========================================= -->
+<!-- MINI REPRODUCTOR GOD MODE 2 LINEAS -->
+<!-- ========================================= -->
+<div class="reproductor">
+
+    <!-- SLIDER DE VOLUMEN ARRIBA -->
+    <div class="volumen-box">
+        <span class="vol-icon">🔊</span>
+        <input type="range" id="volumenSlider" min="0" max="1" step="0.01" value="1">
+    </div>
+
+    <!-- BOTONES + TÍTULO -->
+    <div class="reproductor-controles">
         <button id="prevBtn">⏮</button>
         <button id="playPauseBtn">⏯</button>
         <button id="nextBtn">⏭</button>
         <span class="reproductor-title" id="currentTitle">Cargando…</span>
     </div>
 
+</div>
+
+
     <script src="app.js"></script>
 </body>
 </html>
+
