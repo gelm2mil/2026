@@ -1,98 +1,80 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#00eaff">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#00eaff">
-
-  <link rel="manifest" href="manifest.webmanifest">
-
-  <!-- ÍCONO (opcional, si tienes uno tipo favicon) -->
-  <link rel="icon" type="image/png" href="icons/icon-192.png">
-
-  <title>GELM — Sistema PMT 2026</title>
-
-  <!-- ESTILOS GOD MODE -->
+  <title>Sistema PMT 2026 — GELM</title>
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Registro del Service Worker -->
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js')
-          .then(reg => console.log('SW registrado 🔥', reg.scope))
-          .catch(err => console.log('Error SW 😢', err));
-      });
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
     }
   </script>
 </head>
 
 <body>
 
-<div class="container">
+<header class="home-header">
+  <img src="icons/icon-192.png" class="logo-top">
 
-  <header class="top-header">
-    <img src="icons/icon-192.png" class="logo" alt="GELM">
-    <h1 class="titulo neon-text">SISTEMA PMT 2026</h1>
-    <h2 class="sub neon-soft">Unidad de Transportes — PMT Chimaltenango</h2>
-    <h3 class="by">== BY GELM ==</h3>
-  </header>
+  <h1 class="titulo-home">SISTEMA PMT 2026</h1>
+  <h2 class="sub-home">Unidad de Transportes — PMT Chimaltenango</h2>
+  <h3 class="by-home">== BY GELM ==</h3>
+</header>
 
-  <div class="grid-menu">
+<div class="menu-grid">
 
-    <!-- AGENDA -->
-    <div class="card" onclick="location.href='agen2026.html'">
-      <span class="icon">📘</span>
-      <span class="label">Agenda 2026</span>
-    </div>
-
-    <!-- OPERATIVOS -->
-    <div class="card disabled">
-      <span class="icon">🚨</span>
-      <span class="label">Operativos</span>
-      <span class="mini">Próximamente</span>
-    </div>
-
-    <!-- DENUNCIAS -->
-    <div class="card disabled">
-      <span class="icon">📝</span>
-      <span class="label">Denuncias</span>
-      <span class="mini">En desarrollo</span>
-    </div>
-
-    <!-- BUSCADOR DE PLACAS / DPI -->
-    <div class="card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
-      <span class="icon">🔎</span>
-      <span class="label">Buscar placas / DPI</span>
-    </div>
-
-    <!-- RESPALDOS -->
-    <div class="card disabled">
-      <span class="icon">📦</span>
-      <span class="label">Respaldos</span>
-    </div>
-
-    <!-- REPORTES -->
-    <div class="card disabled">
-      <span class="icon">📊</span>
-      <span class="label">Reportes</span>
-    </div>
-
-    <!-- CONFIGURACIÓN -->
-    <div class="card disabled">
-      <span class="icon">⚙</span>
-      <span class="label">Configuración</span>
-    </div>
-
+  <!-- AGENDA -->
+  <div class="menu-card" onclick="location.href='agen2026.html'">
+    <img src="icons/agenda.png" class="icon-menu">
+    <p class="menu-text">Agenda 2026</p>
   </div>
 
-  <footer class="pie">
-    <div>© 2026 — GELM</div>
-    <div>PMT — Chimaltenango</div>
-  </footer>
+  <!-- OPERATIVOS -->
+  <div class="menu-card" onclick="location.href='transportes.html'">
+    <img src="icons/operativos.png" class="icon-menu">
+    <p class="menu-text">Operativos</p>
+  </div>
+
+  <!-- DENUNCIAS -->
+  <div class="menu-card" onclick="location.href='denuncias.html'">
+    <img src="icons/denuncias.png" class="icon-menu">
+    <p class="menu-text">Denuncias</p>
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="menu-card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
+    <img src="icons/buscar.png" class="icon-menu">
+    <p class="menu-text">Buscar placas / DPI</p>
+  </div>
+
+  <!-- RESPALDOS -->
+  <div class="menu-card" onclick="location.href='respaldo.html'">
+    <img src="icons/respaldos.png" class="icon-menu">
+    <p class="menu-text">Respaldos</p>
+  </div>
+
+  <!-- REPORTES -->
+  <div class="menu-card" onclick="location.href='reportes.html'">
+    <img src="icons/reportes.png" class="icon-menu">
+    <p class="menu-text">Reportes</p>
+  </div>
+
+  <!-- CONFIGURACIÓN -->
+  <div class="menu-card" onclick="location.href='configuracion.html'">
+    <img src="icons/config.png" class="icon-menu">
+    <p class="menu-text">Configuración</p>
+  </div>
 
 </div>
+
+<footer class="pie-home">
+  <div>© 2026 — GELM</div>
+  <div>PMT — Chimaltenango</div>
+</footer>
 
 </body>
 </html>
