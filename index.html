@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
@@ -10,7 +10,6 @@
     <meta name="theme-color" content="#00eaff" />
 
     <script>
-      // Registrar Service Worker (PWA)
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("service-worker.js");
       }
@@ -20,10 +19,9 @@
 </head>
 <body>
 
-  <!-- WRAPPER GENERAL DEL HOME -->
   <div class="home-wrapper">
 
-    <!-- TOP BAR COMPACTA (OPCIÓN A) -->
+    <!-- TOP BAR -->
     <header class="home-top-bar">
       <div class="home-logo-left">
         <img src="icons/icon-192.png" alt="GELM" />
@@ -31,12 +29,8 @@
 
       <div class="home-title-box">
         <h1 class="home-title">SISTEMA PMT 2026</h1>
-        <h2 class="home-subtitle">
-          Unidad de Transportes — PMT Chimaltenango
-        </h2>
-        <h3 class="home-subtitle2">
-          == BY ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬ ==
-        </h3>
+        <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
+        <h3 class="home-subtitle2">== BY ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬ ==</h3>
       </div>
 
       <div class="home-logo-right">
@@ -49,16 +43,16 @@
       <section class="home-menu-section">
         <div class="home-menu-grid">
 
-          <!-- AGENDA 2026 -->
+          <!-- AGENDA -->
           <a class="home-card" href="agen2026.html">
             <div class="home-card-icon">
-              <img src="icons/icon-512.png" alt="Agenda 2026" />
+              <img src="icons/icon-512.png" alt="Agenda" />
             </div>
             <div class="home-card-text">Agenda 2026</div>
           </a>
 
-          <!-- OPERATIVOS -->
-          <a class="home-card" href="operativos.html">
+          <!-- OPERATIVOS (archivo no existe aún, temporal) -->
+          <a class="home-card" href="transportes.html">
             <div class="home-card-icon">
               <img src="icons/operativos.jpg" alt="Operativos" />
             </div>
@@ -73,10 +67,10 @@
             <div class="home-card-text">Denuncias</div>
           </a>
 
-          <!-- BUSCAR PLACAS / DPI (MÓDULO EXTERNO) -->
-          <a class="home-card" href="https://gelm2mil.github.io/gelm/" target="_blank" rel="noopener">
+          <!-- BUSCAR PLACAS -->
+          <a class="home-card" href="https://gelm2mil.github.io/gelm/" target="_blank">
             <div class="home-card-icon">
-              <img src="icons/buscar.jpg" alt="Buscar placas / DPI" />
+              <img src="icons/buscar.jpg" alt="Buscar" />
             </div>
             <div class="home-card-text">Buscar placas / DPI</div>
           </a>
@@ -89,18 +83,18 @@
             <div class="home-card-text">Respaldos</div>
           </a>
 
-          <!-- REPORTES -->
-          <a class="home-card" href="reportes.html">
+          <!-- REPORTES (temporal) -->
+          <a class="home-card" href="transportes.html">
             <div class="home-card-icon">
               <img src="icons/reporte.jpg" alt="Reportes" />
             </div>
             <div class="home-card-text">Reportes</div>
           </a>
 
-          <!-- CONFIGURACIÓN / MODO GOD -->
-          <a class="home-card" href="config.html">
+          <!-- CONFIGURACIÓN (temporal) -->
+          <a class="home-card" href="transportes.html">
             <div class="home-card-icon">
-              <img src="icons/pngtree-neon-glowing-3d-gear-configuration-icon-png-image_7999020.png" alt="Configuración" />
+              <img src="icons/config.png" alt="Configuración" />
             </div>
             <div class="home-card-text">Configuración</div>
           </a>
@@ -114,36 +108,29 @@
       <div>© 2026 — Todos los derechos reservados — BY GELM</div>
       <div>Policía Municipal de Tránsito — Chimaltenango. Presente.</div>
     </footer>
+  </div>
 
-  </div> <!-- /home-wrapper -->
-
-  <!-- ZONA PARA EL REPRODUCTOR (debajo del footer) -->
+  <!-- REPRODUCTOR ABAJO -->
   <section class="home-player-zone">
-    <!--
-      OJO:
-      Aquí solo dejo el contenedor limpio.
-      Puedes meter tu reproductor actual (los 3 botones + slider)
-      dentro de este DIV para que nunca se encime con el menú.
-    -->
     <div class="player-wrapper">
-     <div id="gelm-player">
 
-    <audio id="audio" preload="auto">
-        <source src="musica/nova.mp3" type="audio/mpeg" />
-    </audio>
+        <div id="gelm-player">
 
-    <div class="player-buttons">
-        <button id="prevBtn">⏮️</button>
-        <button id="playBtn">▶️</button>
-        <button id="pauseBtn">⏸️</button>
-        <button id="nextBtn">⏭️</button>
-    </div>
+            <audio id="audio" preload="auto">
+                <source src="musica/nova.mp3" type="audio/mpeg" />
+            </audio>
 
-    <input type="range" id="playerBar" min="0" max="100" value="0">
+            <div class="player-buttons">
+                <button id="prevBtn">⏮️</button>
+                <button id="playBtn">▶️</button>
+                <button id="pauseBtn">⏸️</button>
+                <button id="nextBtn">⏭️</button>
+            </div>
 
-    <div id="songName">Reproduciendo: nova.mp3</div>
+            <input type="range" id="playerBar" min="0" max="100" value="0">
+            <div id="songName">Reproduciendo: nova.mp3</div>
 
-</div>
+        </div>
 
     </div>
   </section>
@@ -151,4 +138,3 @@
   <script src="app.js"></script>
 </body>
 </html>
-
