@@ -17,20 +17,6 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
-<style>
-/* Reproductor arriba pegado al logo */
-.player-top-fixed {
-    position: absolute;
-    left: 110px;
-    top: 10px;
-    width: 320px;
-    z-index: 99;
-}
-.player-top-fixed #gelm-player {
-    transform: scale(0.78);
-}
-</style>
-
 </head>
 <body>
 
@@ -43,11 +29,11 @@ if ("serviceWorker" in navigator) {
 
         <!-- LOGO IZQUIERDO -->
         <div class="home-logo-left">
-            <img src="icons/YO.png">
+            <img src="icons/YO.png" alt="">
         </div>
 
-        <!-- REPRODUCTOR PEGADO AL LOGO -->
-        <div class="player-top-fixed">
+        <!-- MINI REPRODUCTOR SUPERIOR -->
+        <div class="player-mini">
             <div id="gelm-player">
 
                 <audio id="audioPlayer"></audio>
@@ -61,7 +47,8 @@ if ("serviceWorker" in navigator) {
                 <input type="range" id="playerBar" min="0" max="100" value="0">
 
                 <div class="volume-box">
-                    🔊 <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
+                    <span class="volume-icon">🔊</span>
+                    <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8">
                 </div>
 
                 <div id="songName">Reproducción detenida</div>
@@ -69,7 +56,7 @@ if ("serviceWorker" in navigator) {
             </div>
         </div>
 
-        <!-- TITULOS -->
+        <!-- TITULOS CENTRALES -->
         <div class="home-title-box">
             <h1 class="home-title">SISTEMA de GELM 2026</h1>
             <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
@@ -78,8 +65,9 @@ if ("serviceWorker" in navigator) {
 
         <!-- LOGO DERECHO -->
         <div class="home-logo-right">
-            <img src="icons/YO.png">
+            <img src="icons/YO.png" alt="">
         </div>
+
     </header>
 
 
@@ -91,59 +79,38 @@ if ("serviceWorker" in navigator) {
         <section class="home-menu-section">
             <div class="home-menu-grid">
 
-                <!-- AGENDA -->
                 <a class="home-card" onclick="cargarModulo('agen2026.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/agenda.jpg">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/agenda.jpg"></div>
                     <div class="home-card-text">Agenda 2026</div>
                 </a>
 
-                <!-- OPERATIVOS -->
                 <a class="home-card" onclick="cargarModulo('operativos.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/operativos.jpg">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/operativos.jpg"></div>
                     <div class="home-card-text">Operativos</div>
                 </a>
 
-                <!-- DENUNCIAS -->
                 <a class="home-card" onclick="cargarModulo('denuncias.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/denuncias.jpg">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/denuncias.jpg"></div>
                     <div class="home-card-text">Denuncias</div>
                 </a>
 
-                <!-- TRANSPORTES -->
                 <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/gelm/')">
-                    <div class="home-card-icon">
-                        <img src="icons/buscar.jpg">
-                    </div>
-                    <div class="home-card-text">REGISTRO DE TRANSPORTES</div>
+                    <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
+                    <div class="home-card-text">Registro Transportes</div>
                 </a>
 
-                <!-- RESPALDOS -->
                 <a class="home-card" onclick="cargarModulo('respaldo.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/respaldo.jpg">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/respaldo.jpg"></div>
                     <div class="home-card-text">Respaldos</div>
                 </a>
 
-                <!-- BUSCAR MULTAS -->
                 <a class="home-card" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/buscar.jpg">
-                    </div>
-                    <div class="home-card-text">Buscar multas</div>
+                    <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
+                    <div class="home-card-text">Buscar Multas</div>
                 </a>
 
-                <!-- CONFIGURACIÓN -->
                 <a class="home-card" onclick="cargarModulo('config.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/configuracion.png">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/configuracion.png"></div>
                     <div class="home-card-text">Configuración</div>
                 </a>
 
@@ -169,7 +136,7 @@ if ("serviceWorker" in navigator) {
 </div>
 
 
-<!-- APP JS -->
+<!-- CONTROL SPA + REPRODUCTOR -->
 <script src="app.js"></script>
 
 <script>
