@@ -1,31 +1,119 @@
-.menu-principal {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sistema de Transportes 2026 — GELM</title>
 
-.menu-item {
-  width: 180px;
-  padding: 18px;
-  border-radius: 16px;
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(0,255,255,0.35);
-  box-shadow: 0 0 12px rgba(0,255,255,0.5);
-  transition: 0.25s ease-in-out;
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#00fff0">
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
 }
+</script>
 
-.menu-item:hover {
-  transform: translateY(-4px);
-  filter: brightness(1.2);
-  box-shadow:
-      0 0 20px rgba(0,255,255,0.9),
-      0 0 40px rgba(0,0,0,0.9);
-}
+<link rel="stylesheet" href="styles.css" />
 
-.menu-item a {
-  text-decoration: none;
-  color: #aaffff;
-  font-size: 14px;
-  text-shadow: 0 0 5px #00ffff;
-}
+</head>
+<body>
+
+<div class="contenedor">
+
+    <!-- ====================== ENCABEZADO ====================== -->
+    <div class="header-top">
+
+        <!-- LOGO IZQUIERDO -->
+        <div class="logo-box">
+            <img src="icons/icon-512.png" alt="GELM">
+        </div>
+
+        <!-- TITULOS CENTRALES -->
+        <div class="titulos">
+            <div class="titulos-linea1">SISTEMA DE TRANSPORTES 2026</div>
+            <div class="titulos-linea2">BY — ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬</div>
+        </div>
+
+        <!-- LOGO DERECHO -->
+        <div class="logo-box">
+            <img src="icons/YO.png" alt="YO">
+        </div>
+
+    </div>
+    <!-- ====================== FIN ENCABEZADO ====================== -->
+
+
+    <!-- ================= MENU PRINCIPAL ================= -->
+    <div class="menu-principal" style="text-align:center; margin-top:25px;">
+
+        <div class="menu-item">
+            <a href="agen2026.html">
+                📘<br>
+                Agenda 2026<br>
+                Programación mensual
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a href="transportes.html">
+                🚨<br>
+                Operativos<br>
+                Licencias, vehículos, observaciones
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a href="denuncias.html">
+                📄<br>
+                Denuncias<br>
+                Control y evidencia
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a href="buscador.html">
+                🔍<br>
+                Buscar placas / DPI<br>
+                Módulo externo GELM
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a href="respaldo.html">
+                📦<br>
+                Respaldos<br>
+                Consolidado histórico
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a href="#">
+                📊<br>
+                Reportes<br>
+                Próximamente
+            </a>
+        </div>
+
+        <div class="menu-item">
+            <a href="#">
+                ⚙️<br>
+                Configuración<br>
+                Modo GOD & más
+            </a>
+        </div>
+
+    </div>
+    <!-- ================= FIN MENU ================= -->
+
+
+    <!-- ====================== PIE DE PÁGINA ====================== -->
+    <div class="pie">
+        © 2026 — Todos los derechos reservados — <b>BY GELM</b><br>
+        Policía Municipal de Tránsito — Chimaltenango. Presente.
+    </div>
+
+</div> <!-- fin contenedor -->
+
+</body>
+</html>
