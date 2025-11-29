@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Configuración — MODO DIOS GELM 2026</title>
 
 <link rel="stylesheet" href="styles.css">
@@ -42,7 +42,6 @@
 }
 
 .config-btn{
-  display: inline-block;
   padding: 10px 20px;
   background: #00eaff;
   border-radius: 999px;
@@ -76,7 +75,6 @@
 
   <div class="config-title">⚡ MODO DIOS — CONFIGURACIÓN GENERAL</div>
 
-  <!-- Cambiar Tema -->
   <div class="config-item">
     <h2>Colores NEON del sistema</h2>
     <div class="selector-tema">
@@ -88,38 +86,33 @@
     </div>
   </div>
 
-  <!-- Volumen global -->
   <div class="config-item">
     <h2>Volumen del reproductor</h2>
     <input type="range" min="0" max="1" step="0.01" value="1" id="volGlobal">
     <button class="config-btn" onclick="guardarVolumen()">Guardar</button>
   </div>
 
-  <!-- Reiniciar PWA -->
   <div class="config-item">
     <h2>Restablecer aplicación</h2>
-    <p>Borra caché, datos temporales y recarga el sistema.</p>
+    <p>Borra caché y recarga el sistema completo.</p>
     <button class="config-btn" onclick="resetApp()">Restablecer</button>
   </div>
 
-  <!-- Estado conexión -->
   <div class="config-item">
     <h2>Estado de conexión</h2>
     <div id="estadoRed">Verificando...</div>
     <button class="config-btn" onclick="checkConexion()">Actualizar</button>
   </div>
 
-  <!-- Información del dispositivo -->
   <div class="config-item">
     <h2>Información del dispositivo</h2>
     <div id="infoDisp"></div>
     <button class="config-btn" onclick="infoDispositivo()">Mostrar</button>
   </div>
 
-  <!-- MODO DIOS -->
   <div class="config-item">
     <h2>Modo Dios 💀</h2>
-    <p>Desbloquea funciones avanzadas del sistema.</p>
+    <p>Desbloquea funciones avanzadas.</p>
     <button class="config-btn" onclick="activarDios()">Activar poder</button>
   </div>
 
@@ -128,39 +121,36 @@
 <script>
 function setTema(color){
   localStorage.setItem("temaColor", color);
-  alert("Tema actualizado. Regresa al inicio para ver los cambios.");
+  alert("Tema guardado. Regresa al inicio.");
 }
 
 function guardarVolumen(){
-  const vol = document.getElementById("volGlobal").value;
-  localStorage.setItem("volumenGelm", vol);
-  alert("Volumen guardado");
+  localStorage.setItem("volumenGelm", document.getElementById("volGlobal").value);
+  alert("Volumen guardado.");
 }
 
 function resetApp(){
   caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   localStorage.clear();
-  sessionStorage.clear();
-  alert("Aplicación limpiada. Recargando...");
+  alert("Sistema reiniciado.");
   location.reload();
 }
 
 function checkConexion(){
-  const estado = navigator.onLine ? "🟢 Conectado" : "🔴 Sin conexión";
-  document.getElementById("estadoRed").textContent = estado;
+  document.getElementById("estadoRed").textContent =
+    navigator.onLine ? "🟢 Conectado" : "🔴 Sin conexión";
 }
 
 function infoDispositivo(){
-  const info = `
+  document.getElementById("infoDisp").innerHTML = `
     Plataforma: ${navigator.platform}<br>
     Navegador: ${navigator.userAgent}<br>
     Online: ${navigator.onLine}
   `;
-  document.getElementById("infoDisp").innerHTML = info;
 }
 
 function activarDios(){
-  alert("🔥 MODO DIOS ACTIVADO — Bienvenido, Comandante GELM.");
+  alert("🔥 MODO DIOS ACTIVADO — bienvenida leyenda GELM");
 }
 </script>
 
