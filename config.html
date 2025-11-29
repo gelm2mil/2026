@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Configuración — MODO DIOS GELM 2026</title>
+<title>Configuración — GELM 2026</title>
 
 <link rel="stylesheet" href="styles.css">
 
@@ -14,25 +14,24 @@
   background: rgba(0,0,0,0.75);
   border-radius: 18px;
   padding: 25px;
-  border: 1px solid #00eaff;
-  box-shadow: 0 0 25px rgba(0,255,255,0.4);
+  border: 1px solid var(--tema,#00eaff);
+  box-shadow: 0 0 25px var(--tema,#00eaff);
 }
 
 .config-title{
   font-size: 32px;
   text-align: center;
-  color: #00eaff;
-  text-shadow: 0 0 12px #00ffff;
+  color: var(--tema,#00eaff);
+  text-shadow: 0 0 12px var(--tema,#00eaff);
   margin-bottom: 20px;
 }
 
 .config-item{
   background: rgba(0,0,0,0.6);
-  border: 1px solid #00eaff55;
+  border: 1px solid var(--tema,#00eaff55);
   border-radius: 14px;
   padding: 15px;
   margin-bottom: 15px;
-  box-shadow: 0 0 10px #00eaff33;
 }
 
 .config-item h2{
@@ -42,8 +41,9 @@
 }
 
 .config-btn{
+  display: inline-block;
   padding: 10px 20px;
-  background: #00eaff;
+  background: var(--tema,#00eaff);
   border-radius: 999px;
   border: none;
   color: #000;
@@ -68,6 +68,7 @@
   box-shadow: 0 0 10px rgba(255,255,255,0.5);
 }
 </style>
+
 </head>
 <body>
 
@@ -78,23 +79,23 @@
   <div class="config-item">
     <h2>Colores NEON del sistema</h2>
     <div class="selector-tema">
-      <button style="background:#00eaff;" onclick="setTema('#00eaff')"></button>
-      <button style="background:#00ff44;" onclick="setTema('#00ff44')"></button>
-      <button style="background:#ff0099;" onclick="setTema('#ff0099')"></button>
-      <button style="background:#a200ff;" onclick="setTema('#a200ff')"></button>
-      <button style="background:#ff5500;" onclick="setTema('#ff5500')"></button>
+      <button style="background:#00eaff" onclick="setTema('#00eaff')"></button>
+      <button style="background:#00ff44" onclick="setTema('#00ff44')"></button>
+      <button style="background:#ff0099" onclick="setTema('#ff0099')"></button>
+      <button style="background:#a200ff" onclick="setTema('#a200ff')"></button>
+      <button style="background:#ff5500" onclick="setTema('#ff5500')"></button>
     </div>
   </div>
 
   <div class="config-item">
     <h2>Volumen del reproductor</h2>
-    <input type="range" min="0" max="1" step="0.01" value="1" id="volGlobal">
+    <input type="range" min="0" max="1" step="0.01" id="volGlobal">
     <button class="config-btn" onclick="guardarVolumen()">Guardar</button>
   </div>
 
   <div class="config-item">
     <h2>Restablecer aplicación</h2>
-    <p>Borra caché y recarga el sistema completo.</p>
+    <p>Limpia la caché y reinicia la PWA.</p>
     <button class="config-btn" onclick="resetApp()">Restablecer</button>
   </div>
 
@@ -104,53 +105,29 @@
     <button class="config-btn" onclick="checkConexion()">Actualizar</button>
   </div>
 
-  <div class="config-item">
-    <h2>Información del dispositivo</h2>
-    <div id="infoDisp"></div>
-    <button class="config-btn" onclick="infoDispositivo()">Mostrar</button>
-  </div>
-
-  <div class="config-item">
-    <h2>Modo Dios 💀</h2>
-    <p>Desbloquea funciones avanzadas.</p>
-    <button class="config-btn" onclick="activarDios()">Activar poder</button>
-  </div>
-
 </div>
 
 <script>
-function setTema(color){
-  localStorage.setItem("temaColor", color);
-  alert("Tema guardado. Regresa al inicio.");
+function setTema(c){
+  localStorage.setItem("temaColor",c);
+  alert("Tema guardado. Regresa al menú principal.");
 }
 
 function guardarVolumen(){
-  localStorage.setItem("volumenGelm", document.getElementById("volGlobal").value);
+  localStorage.setItem("volumenGelm",document.getElementById("volGlobal").value);
   alert("Volumen guardado.");
 }
 
 function resetApp(){
   caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
   localStorage.clear();
-  alert("Sistema reiniciado.");
+  sessionStorage.clear();
+  alert("App reiniciada.");
   location.reload();
 }
 
 function checkConexion(){
-  document.getElementById("estadoRed").textContent =
-    navigator.onLine ? "🟢 Conectado" : "🔴 Sin conexión";
-}
-
-function infoDispositivo(){
-  document.getElementById("infoDisp").innerHTML = `
-    Plataforma: ${navigator.platform}<br>
-    Navegador: ${navigator.userAgent}<br>
-    Online: ${navigator.onLine}
-  `;
-}
-
-function activarDios(){
-  alert("🔥 MODO DIOS ACTIVADO — bienvenida leyenda GELM");
+  document.getElementById("estadoRed").innerText = navigator.onLine ? "🟢 Conectado" : "🔴 Sin conexión";
 }
 </script>
 
