@@ -109,3 +109,46 @@ footer {
     color: #bdf7ff;
     text-shadow: 0 0 10px #00eaff;
 }
+/* ========================================
+   BARRA DE REPRODUCTOR GOD MODE
+======================================== */
+.reproductor {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.65);
+    border-top: 2px solid #00eaff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 10px 0;
+    box-shadow: 0 -4px 18px rgba(0, 255, 255, 0.4);
+    backdrop-filter: blur(6px);
+    z-index: 9999;
+}
+
+.reproductor button {
+    background: none;
+    border: 2px solid #00eaff;
+    color: #aaffff;
+    padding: 8px 14px;
+    font-size: 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-shadow: 0 0 8px #00eaff;
+}
+
+.reproductor button:hover {
+    box-shadow: 0 0 15px #00eaff;
+    transform: scale(1.15);
+}
+
+.reproductor-title {
+    font-size: 14px;
+    color: #66ffff;
+    text-shadow: 0 0 6px #00eaff;
+}
+
