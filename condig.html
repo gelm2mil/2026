@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Configuración — MODO DIOS GELM 2026</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<style>
+.config-box{
+  max-width: 900px;
+  margin: 40px auto;
+  background: rgba(0,0,0,0.75);
+  border-radius: 18px;
+  padding: 25px;
+  border: 1px solid #00eaff;
+  box-shadow: 0 0 25px rgba(0,255,255,0.4);
+}
+
+.config-title{
+  font-size: 32px;
+  text-align: center;
+  color: #00eaff;
+  text-shadow: 0 0 12px #00ffff;
+  margin-bottom: 20px;
+}
+
+.config-item{
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #00eaff55;
+  border-radius: 14px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 0 10px #00eaff33;
+}
+
+.config-item h2{
+  margin: 0 0 10px;
+  font-size: 20px;
+  color: #8afaff;
+}
+
+.config-btn{
+  display: inline-block;
+  padding: 10px 20px;
+  background: #00eaff;
+  border-radius: 999px;
+  border: none;
+  color: #000;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  transition: 0.2s;
+}
+
+.config-btn:hover{
+  filter: brightness(1.2);
+  transform: scale(1.05);
+}
+
+.selector-tema button{
+  margin: 4px;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+</style>
+</head>
+<body>
+
+<div class="config-box">
+
+  <div class="config-title">⚡ MODO DIOS — CONFIGURACIÓN GENERAL</div>
+
+  <!-- Cambiar Tema -->
+  <div class="config-item">
+    <h2>Colores NEON del sistema</h2>
+    <div class="selector-tema">
+      <button style="background:#00eaff;" onclick="setTema('#00eaff')"></button>
+      <button style="background:#00ff44;" onclick="setTema('#00ff44')"></button>
+      <button style="background:#ff0099;" onclick="setTema('#ff0099')"></button>
+      <button style="background:#a200ff;" onclick="setTema('#a200ff')"></button>
+      <button style="background:#ff5500;" onclick="setTema('#ff5500')"></button>
+    </div>
+  </div>
+
+  <!-- Volumen global -->
+  <div class="config-item">
+    <h2>Volumen del reproductor</h2>
+    <input type="range" min="0" max="1" step="0.01" value="1" id="volGlobal">
+    <button class="config-btn" onclick="guardarVolumen()">Guardar</button>
+  </div>
+
+  <!-- Reiniciar PWA -->
+  <div class="config-item">
+    <h2>Restablecer aplicación</h2>
+    <p>Borra caché, datos temporales y recarga el sistema.</p>
+    <button class="config-btn" onclick="resetApp()">Restablecer</button>
+  </div>
+
+  <!-- Estado conexión -->
+  <div class="config-item">
+    <h2>Estado de conexión</h2>
+    <div id="estadoRed">Verificando...</div>
+    <button class="config-btn" onclick="checkConexion()">Actualizar</button>
+  </div>
+
+  <!-- Información del dispositivo -->
+  <div class="config-item">
+    <h2>Información del dispositivo</h2>
+    <div id="infoDisp"></div>
+    <button class="config-btn" onclick="infoDispositivo()">Mostrar</button>
+  </div>
+
+  <!-- MODO DIOS -->
+  <div class="config-item">
+    <h2>Modo Dios 💀</h2>
+    <p>Desbloquea funciones avanzadas del sistema.</p>
+    <button class="config-btn" onclick="activarDios()">Activar poder</button>
+  </div>
+
+</div>
+
+<script>
+function setTema(color){
+  localStorage.setItem("temaColor", color);
+  alert("Tema actualizado. Regresa al inicio para ver los cambios.");
+}
+
+function guardarVolumen(){
+  const vol = document.getElementById("volGlobal").value;
+  localStorage.setItem("volumenGelm", vol);
+  alert("Volumen guardado");
+}
+
+function resetApp(){
+  caches.keys().then(keys => keys.forEach(k => caches.delete(k)));
+  localStorage.clear();
+  sessionStorage.clear();
+  alert("Aplicación limpiada. Recargando...");
+  location.reload();
+}
+
+function checkConexion(){
+  const estado = navigator.onLine ? "🟢 Conectado" : "🔴 Sin conexión";
+  document.getElementById("estadoRed").textContent = estado;
+}
+
+function infoDispositivo(){
+  const info = `
+    Plataforma: ${navigator.platform}<br>
+    Navegador: ${navigator.userAgent}<br>
+    Online: ${navigator.onLine}
+  `;
+  document.getElementById("infoDisp").innerHTML = info;
+}
+
+function activarDios(){
+  alert("🔥 MODO DIOS ACTIVADO — Bienvenido, Comandante GELM.");
+}
+</script>
+
+</body>
+</html>
