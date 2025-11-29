@@ -70,3 +70,63 @@ function cambiarCancion() {
     audio.play();
     audio.onended = () => siguiente(true);
 }
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("playBtn");
+const pauseBtn = document.getElementById("pauseBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const playerBar = document.getElementById("playerBar");
+const songName = document.getElementById("songName");
+
+// Lista de canciones
+const songs = [
+  "musica/nova.mp3",
+  "musica/gelm2.mp3",
+  "musica/rockers.mp3"
+];
+
+let index = 0;
+
+function loadSong(i) {
+  audio.src = songs[i];
+  songName.textContent = "Reproduciendo: " + songs[i].split("/").pop();
+  audio.load();
+  audio.play();
+}
+
+// Botón play
+playBtn.addEventListener("click", () => {
+  audio.play();
+});
+
+// Botón pausa
+pauseBtn.addEventListener("click", () => {
+  audio.pause();
+});
+
+// Anterior
+prevBtn.addEventListener("click", () => {
+  index = (index - 1 + songs.length) % songs.length;
+  loadSong(index);
+});
+
+// Siguiente
+nextBtn.addEventListener("click", () => {
+  index = (index + 1) % songs.length;
+  loadSong(index);
+});
+
+// Barra de progreso
+audio.addEventListener("timeupdate", () => {
+  playerBar.value = (audio.currentTime / audio.duration) * 100;
+});
+
+playerBar.addEventListener("input", () => {
+  audio.currentTime = (playerBar.value / 100) * audio.duration;
+});
+
+// Iniciar automáticamente
+audio.addEventListener("loadeddata", () => {
+  audio.play();
+});
+
