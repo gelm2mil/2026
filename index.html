@@ -1,47 +1,31 @@
-<div class="menu-container">
-  <div class="menu-grid">
+.menu-principal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
 
-    <div class="menu-card" onclick="location.href='agen2026.html'">
-        <img src="icons/icon-192.png">
-        <div class="menu-title">Agenda 2026</div>
-        <div class="menu-sub">Programación mensual</div>
-    </div>
+.menu-item {
+  width: 180px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(0,0,0,0.55);
+  border: 1px solid rgba(0,255,255,0.35);
+  box-shadow: 0 0 12px rgba(0,255,255,0.5);
+  transition: 0.25s ease-in-out;
+}
 
-    <div class="menu-card" onclick="location.href='transportes.html'">
-        <img src="icons/icon-operativos.png">
-        <div class="menu-title">Operativos</div>
-        <div class="menu-sub">Licencias, vehículos, observaciones</div>
-    </div>
+.menu-item:hover {
+  transform: translateY(-4px);
+  filter: brightness(1.2);
+  box-shadow:
+      0 0 20px rgba(0,255,255,0.9),
+      0 0 40px rgba(0,0,0,0.9);
+}
 
-    <div class="menu-card" onclick="location.href='denuncias.html'">
-        <img src="icons/icon-denuncias.png">
-        <div class="menu-title">Denuncias</div>
-        <div class="menu-sub">Control y evidencia</div>
-    </div>
-
-    <div class="menu-card" onclick="location.href='https://gelm2mil.github.io/gelm/'">
-        <img src="icons/icon-search.png">
-        <div class="menu-title">Buscar placas / DPI</div>
-        <div class="menu-sub">Módulo externo GELM</div>
-    </div>
-
-    <div class="menu-card" onclick="location.href='respaldo.html'">
-        <img src="icons/icon-respaldo.png">
-        <div class="menu-title">Respaldos</div>
-        <div class="menu-sub">Consolidado histórico</div>
-    </div>
-
-    <div class="menu-card">
-        <img src="icons/icon-report.png">
-        <div class="menu-title">Reportes</div>
-        <div class="menu-sub">Próximamente</div>
-    </div>
-
-    <div class="menu-card">
-        <img src="icons/icon-config.png">
-        <div class="menu-title">Configuración</div>
-        <div class="menu-sub">Modo GOD & más</div>
-    </div>
-
-  </div>
-</div>
+.menu-item a {
+  text-decoration: none;
+  color: #aaffff;
+  font-size: 14px;
+  text-shadow: 0 0 5px #00ffff;
+}
