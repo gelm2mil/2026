@@ -1,52 +1,72 @@
 let lista = [];
-let indexActual = 0;
-let audio = new Audio();
+let indice = 0;
+let audio;
+let autoPlay = true;
 
-async function cargarMusica() {
-    const res = await fetch("musica.json");
-    lista = await res.json();
+// Cargar JSON
+fetch("musica.json")
+    .then(r => r.json())
+    .then(data => {
+        lista = data;
+        iniciarReproductor();
+    });
 
-    // Buscar "the good life"
-    const inicio = lista.findIndex(t => t.title.toLowerCase().includes("the good life"));
-    indexActual = inicio >= 0 ? inicio : 0;
+function iniciarReproductor() {
+    if (!lista.length) return;
 
-    cargarCancion();
+    // ALEATORIO AL INICIAR
+    indice = Math.floor(Math.random() * lista.length);
+
+    audio = new Audio(lista[indice].url);
+    actualizarTitulo();
+
+    audio.volume = 0.70;
+
+    // AUTOPLAY AUTOMÁTICO
+    audio.play().catch(() => {});
+
+    // Cuando termina la canción → siguiente aleatoria
+    audio.onended = () => siguiente(true);
+
+    // Volumen slider
+    document.getElementById("volumen").addEventListener("input", (e) => {
+        audio.volume = e.target.value;
+    });
+
+    // Botones
+    document.getElementById("playPauseBtn").onclick = playPause;
+    document.getElementById("prevBtn").onclick = anterior;
+    document.getElementById("nextBtn").onclick = () => siguiente(true);
 }
 
-function cargarCancion() {
-    const tema = lista[indexActual];
-    audio.src = tema.url;
-    document.getElementById("currentTitle").textContent = tema.title;
-    audio.play();
+function actualizarTitulo() {
+    document.getElementById("currentTitle").textContent = lista[indice].title;
 }
 
-document.getElementById("playPauseBtn").onclick = () => {
-    if (audio.paused) {
-        audio.play();
+function playPause() {
+    if (audio.paused) audio.play();
+    else audio.pause();
+}
+
+function anterior() {
+    indice = (indice - 1 + lista.length) % lista.length;
+    cambiarCancion();
+}
+
+function siguiente(aleatorio = false) {
+    if (aleatorio) {
+        indice = Math.floor(Math.random() * lista.length);
     } else {
-        audio.pause();
+        indice = (indice + 1) % lista.length;
     }
-};
+    cambiarCancion();
+}
 
-document.getElementById("nextBtn").onclick = () => {
-    indexActual = (indexActual + 1) % lista.length;
-    cargarCancion();
-};
-
-document.getElementById("prevBtn").onclick = () => {
-    indexActual = (indexActual - 1 + lista.length) % lista.length;
-    cargarCancion();
-};
-
-audio.onended = () => {
-    indexActual = (indexActual + 1) % lista.length;
-    cargarCancion();
-};
-
-cargarMusica();
-const volumenSlider = document.getElementById("volumenSlider");
-volumenSlider.addEventListener("input", () => {
-    audio.volume = volumenSlider.value;
-});
-
-
+function cambiarCancion() {
+    audio.pause();
+    audio = new Audio(lista[indice].url);
+    audio.volume = document.getElementById("volumen").value;
+    actualizarTitulo();
+    audio.play();
+    audio.onended = () => siguiente(true);
+}
