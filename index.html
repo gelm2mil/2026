@@ -6,97 +6,136 @@
     <title>Sistema PMT 2026 — GELM</title>
 
     <!-- PWA -->
-    <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#00eaff">
+    <link rel="manifest" href="manifest.webmanifest" />
+    <meta name="theme-color" content="#00eaff" />
 
     <script>
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("service-worker.js");
-        }
+      // Registrar Service Worker (PWA)
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("service-worker.js");
+      }
     </script>
 
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
 
-<!-- ========================================================= -->
-<!-- TOP COMPACTO (LOGOS PEQUEÑOS + TITULO CENTRADO)            -->
-<!-- ========================================================= -->
-<header class="top-compact">
+  <!-- WRAPPER GENERAL DEL HOME -->
+  <div class="home-wrapper">
 
-    <!-- LOGO IZQUIERDO -->
-    <img src="icons/icon-192.png" class="logo-mini" alt="GELM">
+    <!-- TOP BAR COMPACTA (OPCIÓN A) -->
+    <header class="home-top-bar">
+      <div class="home-logo-left">
+        <img src="icons/icon-192.png" alt="GELM" />
+      </div>
 
-    <!-- TITULOS -->
-    <div class="titulo-centro">
-        <h1 class="t1">SISTEMA PMT 2026</h1>
-        <h2 class="t2">Unidad de Transportes — PMT Chimaltenango</h2>
-        <h3 class="t3">== BY ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬ ==</h3>
+      <div class="home-title-box">
+        <h1 class="home-title">SISTEMA PMT 2026</h1>
+        <h2 class="home-subtitle">
+          Unidad de Transportes — PMT Chimaltenango
+        </h2>
+        <h3 class="home-subtitle2">
+          == BY ▬■▪┼▪▪[ĢэŁM]▪▪┼▪■▬ ==
+        </h3>
+      </div>
+
+      <div class="home-logo-right">
+        <img src="icons/YO.png" alt="GELM" />
+      </div>
+    </header>
+
+    <!-- MENÚ PRINCIPAL -->
+    <main class="home-main">
+      <section class="home-menu-section">
+        <div class="home-menu-grid">
+
+          <!-- AGENDA 2026 -->
+          <a class="home-card" href="agen2026.html">
+            <div class="home-card-icon">
+              <img src="icons/icon-512.png" alt="Agenda 2026" />
+            </div>
+            <div class="home-card-text">Agenda 2026</div>
+          </a>
+
+          <!-- OPERATIVOS -->
+          <a class="home-card" href="operativos.html">
+            <div class="home-card-icon">
+              <img src="icons/operativos.jpg" alt="Operativos" />
+            </div>
+            <div class="home-card-text">Operativos</div>
+          </a>
+
+          <!-- DENUNCIAS -->
+          <a class="home-card" href="denuncias.html">
+            <div class="home-card-icon">
+              <img src="icons/denuncias.jpg" alt="Denuncias" />
+            </div>
+            <div class="home-card-text">Denuncias</div>
+          </a>
+
+          <!-- BUSCAR PLACAS / DPI (MÓDULO EXTERNO) -->
+          <a class="home-card" href="https://gelm2mil.github.io/gelm/" target="_blank" rel="noopener">
+            <div class="home-card-icon">
+              <img src="icons/buscar.jpg" alt="Buscar placas / DPI" />
+            </div>
+            <div class="home-card-text">Buscar placas / DPI</div>
+          </a>
+
+          <!-- RESPALDOS -->
+          <a class="home-card" href="respaldo.html">
+            <div class="home-card-icon">
+              <img src="icons/respaldo.jpg" alt="Respaldos" />
+            </div>
+            <div class="home-card-text">Respaldos</div>
+          </a>
+
+          <!-- REPORTES -->
+          <a class="home-card" href="reportes.html">
+            <div class="home-card-icon">
+              <img src="icons/reporte.jpg" alt="Reportes" />
+            </div>
+            <div class="home-card-text">Reportes</div>
+          </a>
+
+          <!-- CONFIGURACIÓN / MODO GOD -->
+          <a class="home-card" href="config.html">
+            <div class="home-card-icon">
+              <img src="icons/pngtree-neon-glowing-3d-gear-configuration-icon-png-image_7999020.png" alt="Configuración" />
+            </div>
+            <div class="home-card-text">Configuración</div>
+          </a>
+
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="home-footer">
+      <div>© 2026 — Todos los derechos reservados — BY GELM</div>
+      <div>Policía Municipal de Tránsito — Chimaltenango. Presente.</div>
+    </footer>
+
+  </div> <!-- /home-wrapper -->
+
+  <!-- ZONA PARA EL REPRODUCTOR (debajo del footer) -->
+  <section class="home-player-zone">
+    <!--
+      OJO:
+      Aquí solo dejo el contenedor limpio.
+      Puedes meter tu reproductor actual (los 3 botones + slider)
+      dentro de este DIV para que nunca se encime con el menú.
+    -->
+    <div class="player-wrapper">
+      <!-- EJEMPLO BÁSICO (elimina esto si ya tienes tu propio player en app.js) -->
+      <!--
+      <audio id="player" controls>
+        <source src="musica/nova.mp3" type="audio/mpeg" />
+        Tu navegador no soporta audio HTML5.
+      </audio>
+      -->
     </div>
+  </section>
 
-    <!-- LOGO DERECHO -->
-    <img src="icons/YO.png" class="logo-mini" alt="YO">
-
-</header>
-
-
-<!-- ========================================================= -->
-<!-- MENÚ COMPACTO (2 FILAS — MODO PRO — ICONOS PEQUEÑOS)       -->
-<!-- ========================================================= -->
-<section class="menu-compacto">
-
-    <a href="agen2026.html" class="btn-box">
-        <img src="icons/agenda2026.png">
-        <span class="b1">Agenda 2026</span>
-        <span class="b2">Programación mensual</span>
-    </a>
-
-    <a href="operativos.html" class="btn-box">
-        <img src="icons/operativos.jpg">
-        <span class="b1">Operativos</span>
-        <span class="b2">Próximamente</span>
-    </a>
-
-    <a href="denuncias.html" class="btn-box">
-        <img src="icons/denuncias.jpg">
-        <span class="b1">Denuncias</span>
-        <span class="b2">Registro con evidencia</span>
-    </a>
-
-    <a href="https://gelm2mil.github.io/gelm/" class="btn-box">
-        <img src="icons/buscar.jpg">
-        <span class="b1">Buscar placas / DPI</span>
-        <span class="b2">Módulo externo GELM</span>
-    </a>
-
-    <a href="respaldo.html" class="btn-box">
-        <img src="icons/respaldo.jpg">
-        <span class="b1">Respaldo</span>
-        <span class="b2">Consolidado histórico</span>
-    </a>
-
-    <a href="reportes.html" class="btn-box">
-        <img src="icons/reporte.jpg">
-        <span class="b1">Reportes</span>
-        <span class="b2">Próximamente</span>
-    </a>
-
-    <a href="config.html" class="btn-box">
-        <img src="icons/config.png">
-        <span class="b1">Configuración</span>
-        <span class="b2">Modo GOD & más</span>
-    </a>
-
-</section>
-
-<!-- ========================================================= -->
-<!-- FOOTER                                                     -->
-<!-- ========================================================= -->
-<footer>
-    © 2026 — Todos los derechos reservados — <b>BY GELM</b><br>
-    Policía Municipal de Tránsito — Chimaltenango. Presente.
-</footer>
-
+  <script src="app.js"></script>
 </body>
 </html>
