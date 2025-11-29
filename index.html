@@ -126,16 +126,29 @@
       dentro de este DIV para que nunca se encime con el menú.
     -->
     <div class="player-wrapper">
-      <!-- EJEMPLO BÁSICO (elimina esto si ya tienes tu propio player en app.js) -->
-      <!--
-      <audio id="player" controls>
+     <div id="gelm-player">
+
+    <audio id="audio" preload="auto">
         <source src="musica/nova.mp3" type="audio/mpeg" />
-        Tu navegador no soporta audio HTML5.
-      </audio>
-      -->
+    </audio>
+
+    <div class="player-buttons">
+        <button id="prevBtn">⏮️</button>
+        <button id="playBtn">▶️</button>
+        <button id="pauseBtn">⏸️</button>
+        <button id="nextBtn">⏭️</button>
+    </div>
+
+    <input type="range" id="playerBar" min="0" max="100" value="0">
+
+    <div id="songName">Reproduciendo: nova.mp3</div>
+
+</div>
+
     </div>
   </section>
 
   <script src="app.js"></script>
 </body>
 </html>
+
