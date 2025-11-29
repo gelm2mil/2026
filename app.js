@@ -1,8 +1,4 @@
-/* ================================
-   REPRODUCTOR GELM — 2026
-================================ */
-
-let canciones = [];
+let lista = [];
 let indice = 0;
 
 const audio = document.getElementById("audioPlayer");
@@ -10,77 +6,55 @@ const barra = document.getElementById("playerBar");
 const volumen = document.getElementById("volumeRange");
 const songName = document.getElementById("songName");
 
-/* ================================
-   CARGAR EL JSON
-================================ */
-fetch("musica.json")
-  .then(r => r.json())
-  .then(data => {
-    canciones = data;
-    if (canciones.length > 0) {
-      cargarCancion(0);
-    } else {
-      songName.textContent = "Sin canciones";
-    }
-  })
-  .catch(err => {
-    console.error("Error al cargar JSON:", err);
-    songName.textContent = "Error cargando música";
-  });
+async function cargarMusica(){
+    const resp = await fetch("musica.json");
+    lista = await resp.json();
 
-/* ================================
-   FUNCIONES PRINCIPALES
-================================ */
-
-function cargarCancion(i) {
-  indice = i;
-
-  const c = canciones[i];
-  audio.src = c.url;
-
-  songName.textContent = "Reproduciendo: " + c.title;
-  audio.play();
+    indice = Math.floor(Math.random()*lista.length);
+    cargarCancion();
 }
 
-function playPause() {
-  if (audio.paused) {
+function cargarCancion(){
+    audio.src = lista[indice].url;
+    songName.textContent = lista[indice].title;
     audio.play();
-  } else {
-    audio.pause();
-  }
 }
 
-function nextSong() {
-  indice++;
-  if (indice >= canciones.length) indice = 0;
-  cargarCancion(indice);
+function playPause(){
+    if(audio.paused){ audio.play(); }
+    else{ audio.pause(); }
 }
 
-function prevSong() {
-  indice--;
-  if (indice < 0) indice = canciones.length - 1;
-  cargarCancion(indice);
+function nextSong(){
+    indice = (indice+1)%lista.length;
+    cargarCancion();
 }
 
-/* ================================
-   BARRA DE PROGRESO
-================================ */
-audio.addEventListener("timeupdate", () => {
-  if (!isNaN(audio.duration)) {
-    barra.value = (audio.currentTime / audio.duration) * 100;
-  }
-});
+function prevSong(){
+    indice = (indice-1+lista.length)%lista.length;
+    cargarCancion();
+}
 
-barra.addEventListener("input", () => {
-  audio.currentTime = (barra.value / 100) * audio.duration;
-});
+audio.ontimeupdate = () => {
+    barra.value = audio.currentTime * 100 / audio.duration;
+};
 
-/* ================================
-   VOLUMEN
-================================ */
-volumen.addEventListener("input", () => {
-  audio.volume = volumen.value;
-});
+barra.oninput = () => {
+    audio.currentTime = barra.value * audio.duration / 100;
+};
 
-/* Reproducir siguiente si termina */
-audio.addEventListener("ended", nextSong);
+volumen.oninput = () => {
+    audio.volume = volumen.value;
+    localStorage.setItem("volumenGelm",volumen.value);
+};
+
+window.onload = () => {
+    if(localStorage.getItem("volumenGelm")){
+        volumen.value = localStorage.getItem("volumenGelm");
+        audio.volume = volumen.value;
+    }
+    if(localStorage.getItem("temaColor")){
+        document.documentElement.style.setProperty("--tema", localStorage.getItem("temaColor"));
+    }
+    cargarMusica();
+};
