@@ -1,170 +1,166 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistema de GELM 2026 — PMT Chimaltenango</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SISTEMA de GELM 2026</title>
 
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.webmanifest" />
-  <meta name="theme-color" content="#00eaff" />
+<link rel="stylesheet" href="styles.css">
 
-  <script>
-    // Registrar Service Worker
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
+<!-- PWA -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#00eaff">
 
-  <link rel="stylesheet" href="styles.css" />
+<script>
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
 </head>
 <body>
 
-  <!-- CONTENEDOR GENERAL -->
-  <div class="home-wrapper">
+<div class="home-wrapper">
 
-    <!-- =============================
+    <!-- ===========================
          TOP BAR
-    ============================== -->
+    ============================ -->
     <header class="home-top-bar">
-      <div class="home-logo-left">
-        <img src="icons/icon-192.png" alt="GELM" />
-      </div>
+        <div class="home-logo-left">
+            <img src="icons/icon-192.png">
+        </div>
 
-      <div class="home-title-box">
-        <h1 class="home-title">SISTEMA de GELM 2026</h1>
-        <h2 class="home-subtitle">
-          Unidad de Transportes — PMT Chimaltenango
-        </h2>
-        <h3 class="home-subtitle2">
-          == BY GELM ==
-        </h3>
-      </div>
+        <div class="home-title-box">
+            <h1 class="home-title">SISTEMA de GELM 2026</h1>
+            <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
+            <h3 class="home-subtitle2">== BY GELM ==</h3>
+        </div>
 
-      <div class="home-logo-right">
-        <img src="icons/YO.png" alt="GELM" />
-      </div>
+        <div class="home-logo-right">
+            <img src="icons/icon-192.png">
+        </div>
     </header>
 
 
-    <!-- =============================
-         MENÚ PRINCIPAL
-    ============================== -->
+    <!-- ===========================
+         MENÚ PRINCIPAL (SPA)
+    ============================ -->
+
     <main class="home-main">
-      <section class="home-menu-section">
-        <div class="home-menu-grid">
+        <section class="home-menu-section">
+            <div class="home-menu-grid">
 
-          <!-- AGENDA -->
-          <a class="home-card" href="#" onclick="cargarModulo('agen2026.html'); return false;">
-            <div class="home-card-icon">
-              <img src="icons/icon-512.png" alt="Agenda" />
+                <!-- AGENDA -->
+                <a class="home-card" onclick="cargarModulo('agen2026.html')">
+                    <div class="home-card-icon"><img src="icons/gelm.png"></div>
+                    <div class="home-card-text">Agenda 2026</div>
+                </a>
+
+                <!-- OPERATIVOS -->
+                <a class="home-card" onclick="cargarModulo('operativos.html')">
+                    <div class="home-card-icon"><img src="icons/operativos.jpg"></div>
+                    <div class="home-card-text">Operativos</div>
+                </a>
+
+                <!-- DENUNCIAS -->
+                <a class="home-card" onclick="cargarModulo('denuncias.html')">
+                    <div class="home-card-icon"><img src="icons/denuncias.jpg"></div>
+                    <div class="home-card-text">Denuncias</div>
+                </a>
+
+                <!-- REGISTRO DE TRANSPORTES -->
+                <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/gelm/')">
+                    <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
+                    <div class="home-card-text">REGISTRO DE TRANSPORTES</div>
+                </a>
+
+                <!-- RESPALDOS -->
+                <a class="home-card" onclick="cargarModulo('respaldo.html')">
+                    <div class="home-card-icon"><img src="icons/respaldo.jpg"></div>
+                    <div class="home-card-text">Respaldos</div>
+                </a>
+
+                <!-- MULTAS -->
+                <a class="home-card" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html')">
+                    <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
+                    <div class="home-card-text">Buscar multas</div>
+                </a>
+
+                <!-- CONFIG -->
+                <a class="home-card" onclick="cargarModulo('config.html')">
+                    <div class="home-card-icon"><img src="icons/config.png"></div>
+                    <div class="home-card-text">Configuración</div>
+                </a>
+
             </div>
-            <div class="home-card-text">Agenda 2026</div>
-          </a>
-
-          <!-- OPERATIVOS -->
-          <a class="home-card" href="#" onclick="cargarModulo('operativos.html'); return false;">
-            <div class="home-card-icon">
-              <img src="icons/operativos.jpg" alt="Operativos" />
-            </div>
-            <div class="home-card-text">Operativos</div>
-          </a>
-
-          <!-- DENUNCIAS -->
-          <a class="home-card" href="#" onclick="cargarModulo('denuncias.html'); return false;">
-            <div class="home-card-icon">
-              <img src="icons/denuncias.jpg" alt="Denuncias" />
-            </div>
-            <div class="home-card-text">Denuncias</div>
-          </a>
-
-          <!-- REGISTRO DE TRANSPORTES (BUSCADOR INTERNO) -->
-          <a class="home-card" href="#" onclick="cargarModulo('https://gelm2mil.github.io/gelm/'); return false;">
-            <div class="home-card-icon">
-              <img src="icons/buscar.jpg" alt="Registro" />
-            </div>
-            <div class="home-card-text">REGISTRO DE TRANSPORTES</div>
-          </a>
-
-          <!-- RESPALDOS -->
-          <a class="home-card" href="#" onclick="cargarModulo('respaldo.html'); return false;">
-            <div class="home-card-icon">
-              <img src="icons/respaldo.jpg" alt="Respaldos" />
-            </div>
-            <div class="home-card-text">Respaldos</div>
-          </a>
-
-          <!-- BUSCAR MULTAS (MÓDULO EXTERNO EN MIARROBA) -->
-          <a class="home-card" href="#" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html'); return false;">
-            <div class="home-card-icon">
-              <img src="icons/buscar.jpg" alt="Multas" />
-            </div>
-            <div class="home-card-text">Buscar multas</div>
-          </a>
-
-          <!-- CONFIGURACIÓN -->
-          <a class="home-card" href="#" onclick="cargarModulo('config.html'); return false;">
-            <div class="home-card-icon">
-              <img src="icons/pngtree-neon-glowing-3d-gear-configuration-icon-png-image_7999020.png" alt="Config" />
-            </div>
-            <div class="home-card-text">Configuración</div>
-          </a>
-
-        </div>
-      </section>
+        </section>
     </main>
 
-    <!-- =============================
-         ZONA DE MÓDULOS (SPA)
-    ============================== -->
-    <section class="home-module-zone" id="moduloZona">
-      <iframe id="moduleFrame" title="Módulos del sistema" loading="lazy"></iframe>
+
+    <!-- ===========================
+         ZONA SPA (MÓDULOS)
+    ============================ -->
+    <section id="moduloSPA" class="home-module-zone">
+        <iframe id="iframeSPA" src=""></iframe>
     </section>
 
-    <!-- =============================
+
+    <!-- ===========================
          FOOTER
-    ============================== -->
+    ============================ -->
     <footer class="home-footer">
-      <div>© 2026 — Todos los derechos reservados — BY GELM</div>
-      <div>Policía Municipal de Tránsito — Chimaltenango. Presente.</div>
+        © 2026 — Todos los derechos reservados — BY GELM<br>
+        Policía Municipal de Tránsito — Chimaltenango. Presente.
     </footer>
 
-  </div><!-- FIN WRAPPER -->
 
+    <!-- ===========================
+         REPRODUCTOR GLOBAL FIJO
+    ============================ -->
+    <section class="home-player-zone">
+        <div class="player-wrapper">
+            <div id="gelm-player">
 
-  <!-- =============================
-       REPRODUCTOR GLOBAL (NO SE RECARGA)
-  ============================== -->
-  <section class="home-player-zone">
-    <div class="player-wrapper">
+                <audio id="audio"></audio>
 
-      <div id="gelm-player">
+                <div class="player-buttons">
+                    <button onclick="prevSong()">⏮️</button>
+                    <button onclick="playSong()">▶️</button>
+                    <button onclick="pauseSong()">⏸️</button>
+                    <button onclick="nextSong()">⏭️</button>
+                </div>
 
-        <audio id="audio"></audio>
+                <input type="range" id="playerBar" min="0" max="100" value="0">
 
-        <div class="player-buttons">
-          <button id="prevBtn">⏮️</button>
-          <button id="playBtn">▶️</button>
-          <button id="pauseBtn">⏸️</button>
-          <button id="nextBtn">⏭️</button>
+                <div class="volume-box">
+                    🔊 <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="1">
+                </div>
+
+                <div id="songName">Reproduciendo...</div>
+
+            </div>
         </div>
+    </section>
 
-        <input type="range" id="playerBar" min="0" max="100" value="0">
+</div>
 
-        <div class="volume-box">
-          <span class="volume-icon">🔊</span>
-          <input type="range" id="volumeRange" min="0" max="1" step="0.01" value="1">
-        </div>
+<script src="app.js"></script>
 
-        <div id="songName">Reproduciendo música…</div>
+<script>
+/* ===========================
+   SPA CONTROL
+=========================== */
 
-      </div>
+function cargarModulo(url) {
+    const zona = document.getElementById("moduloSPA");
+    const frame = document.getElementById("iframeSPA");
 
-    </div>
-  </section>
+    zona.classList.add("activo");
+    frame.src = url;
 
-  <!-- APP -->
-  <script src="app.js"></script>
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
 
 </body>
 </html>
