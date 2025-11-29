@@ -1,265 +1,161 @@
-/* ===============================
-   LOGOS REDONDOS
-================================ */
-.logo-left,
-.logo-right {
-    width: 110px !important;
-    height: auto !important;
-    object-fit: contain !important;
-    display: block;
-    border-radius: 50%;
-}
-
-/* ===============================
-   FONDO RADIAL NEON
-================================ */
+/* ============================================================
+   FONDO NEON RADIAL
+============================================================ */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: radial-gradient(circle at 20% 0%, rgba(0,255,255,0.2), transparent 50%),
-                radial-gradient(circle at 80% 0%, rgba(255,0,255,0.18), transparent 55%),
+    background: radial-gradient(circle at 20% 0%, rgba(0,255,255,0.18), transparent 55%),
+                radial-gradient(circle at 80% 0%, rgba(255,0,255,0.15), transparent 60%),
                 #05010a;
     background-attachment: fixed;
     color: #e6ffff;
     text-align: center;
 }
 
-/* ===============================
-   TOP BAR
-================================ */
-.top-bar {
+/* ============================================================
+   TOP COMPACTO (LOGOS + TITULOS CENTRADOS)
+============================================================ */
+.top-compact {
     width: 100%;
+    padding: 15px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 25px 40px;
 }
 
-.title-box {
+.logo-mini {
+    width: 70px;
+    height: auto;
+    filter: drop-shadow(0 0 12px #00eaff);
+}
+
+.titulo-centro {
+    flex: 1;
     text-align: center;
 }
 
-.title {
+/* TITULOS */
+.t1 {
     margin: 0;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: bold;
     color: #00eaff;
-    text-shadow: 0 0 15px #00eaff, 0 0 25px #0088ff;
+    text-shadow: 0 0 10px #00eaff, 0 0 20px #0088ff;
+}
+.t2 {
+    margin: 4px 0 0;
+    font-size: 15px;
+    color: #c5f8ff;
+}
+.t3 {
+    margin: 4px 0 0;
+    font-size: 14px;
+    color: #aaffff;
+    text-shadow: 0 0 10px #00ffee;
 }
 
-.subtitle {
-    margin-top: 5px;
-    font-size: 18px;
-    color: #e6ffff;
-    text-shadow: 0 0 10px #00eaff;
-}
+/* ============================================================
+   MENU COMPACTO GRID RESPONSIVE
+============================================================ */
+.menu-compacto {
+    margin-top: 20px;
+    width: 100%;
+    max-width: 1100px;
+    margin-left: auto;
+    margin-right: auto;
 
-/* ===============================
-   MENÚ PRO
-================================ */
-.menu-container {
-    margin-top: 40px;
-}
-
-.menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 35px;
-    max-width: 1500px;
-    margin: auto;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 25px;
+    padding: 0 15px;
 }
 
-.menu-card {
+/* BOTONES */
+.btn-box {
     background: rgba(0,0,0,0.55);
-    border-radius: 16px;
-    padding: 25px 20px;
     border: 1px solid rgba(0,255,255,0.35);
-    box-shadow:
-        0 0 12px rgba(0,255,255,0.5),
-        0 0 40px rgba(0,0,0,1);
-    transition: 0.25s;
-    cursor: pointer;
-}
-
-.menu-card:hover {
-    transform: translateY(-6px);
-    filter: brightness(1.15);
-}
-
-.menu-card img {
-    width: 45px;
-    margin-bottom: 10px;
-    border-radius: 50%; /* REDONDO */
-}
-
-.menu-title {
-    font-size: 18px;
-    color: #aaffff;
-    font-weight: bold;
-}
-
-.menu-sub {
-    font-size: 14px;
-    color: #c8faff;
-}
-
-/* ===============================
-   FOOTER
-================================ */
-footer {
-    margin-top: 40px;
-    font-size: 14px;
-    color: #bdf7ff;
-    text-shadow: 0 0 10px #00eaff;
-}
-
-/* ===============================
-   BARRA DE REPRODUCTOR GOD MODE
-================================ */
-.reproductor {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.65);
-    border-top: 2px solid #00eaff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 10px 0;
-    box-shadow: 0 -4px 18px rgba(0, 255, 255, 0.4);
-    backdrop-filter: blur(6px);
-    z-index: 9999;
-}
-
-.reproductor button {
-    background: none;
-    border: 2px solid #00eaff;
-    color: #aaffff;
-    padding: 8px 14px;
-    font-size: 18px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: 0.3s;
-    text-shadow: 0 0 8px #00eaff;
-}
-
-.reproductor button:hover {
-    box-shadow: 0 0 15px #00eaff;
-    transform: scale(1.15);
-}
-
-.reproductor-title {
-    font-size: 14px;
-    color: #66ffff;
-    text-shadow: 0 0 6px #00eaff;
-}
-
-/* ===============================
-   RESPONSIVE
-================================ */
-@media (max-width: 768px) {
-    .top-bar {
-        padding: 15px 20px;
-    }
-
-    .logo-left, .logo-right {
-        width: 70px !important;
-    }
-
-    .title {
-        font-size: 22px;
-    }
-
-    .subtitle {
-        font-size: 14px;
-    }
-
-    .menu-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 20px;
-    }
-}
-/* ========================================
-   REPRODUCTOR — 2 LINEAS GOD MODE
-======================================== */
-.reproductor {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: rgba(0,0,0,0.65);
-    border-top: 2px solid #00eaff;
-    box-shadow: 0 -4px 18px rgba(0,255,255,0.4);
-    backdrop-filter: blur(6px);
-    padding: 6px 0 10px;
-    z-index: 9999;
+    border-radius: 16px;
+    padding: 15px 10px;
+    text-decoration: none;
+    color: #dfffff;
 
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+
+    box-shadow: 0 0 12px rgba(0,255,255,0.4);
+    transition: 0.25s ease-in-out;
 }
 
-/* CONTROLES */
-.reproductor-controles {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.btn-box:hover {
+    transform: translateY(-6px);
+    filter: brightness(1.2);
+    box-shadow: 0 0 18px rgba(0,255,255,0.9);
 }
 
-.reproductor button {
-    background: none;
-    border: 2px solid #00eaff;
-    color: #aaffff;
-    padding: 8px 14px;
-    font-size: 18px;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: 0.3s;
-    text-shadow: 0 0 8px #00eaff;
-}
-.reproductor button:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 15px #00eaff;
+.btn-box img {
+    width: 42px;
+    height: auto;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 10px #00f0ff);
 }
 
-/* TITULO */
-.reproductor-title {
-    font-size: 14px;
-    color: #66ffff;
-    text-shadow: 0 0 6px #00eaff;
+.b1 {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e6ffff;
+    text-shadow: 0 0 6px #00ffff;
 }
 
-/* === SLIDER DE VOLUMEN === */
-.volumen-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+.b2 {
+    font-size: 13px;
+    color: #bbffff;
 }
 
-.vol-icon {
-    color: #66ffff;
-    font-size: 18px;
-    text-shadow: 0 0 8px #00eaff;
+/* ============================================================
+   FOOTER
+============================================================ */
+footer {
+    margin-top: 35px;
+    margin-bottom: 30px;
+    font-size: 13px;
+    color: #99fdff;
+    text-shadow: 0 0 10px #00eaff;
+    line-height: 20px;
 }
 
-#volumenSlider {
-    width: 100px; /* TAMAÑO A */
-    height: 6px;
-    background: rgba(0,255,255,0.25);
-    border-radius: 10px;
-    outline: none;
-    -webkit-appearance: none;
-}
-#volumenSlider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    background: #00eaff;
-    border-radius: 50%;
-    box-shadow: 0 0 15px #00eaff;
-    cursor: pointer;
+/* ============================================================
+   RESPONSIVE OPTIMIZADO
+============================================================ */
+
+/* MOVIL MUY PEQUEÑO */
+@media (max-width: 430px) {
+    .logo-mini {
+        width: 60px;
+    }
+
+    .t1 { font-size: 22px; }
+    .t2 { font-size: 13px; }
+    .t3 { font-size: 12px; }
+
+    .menu-compacto {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 18px;
+    }
 }
 
+/* TABLET */
+@media (max-width: 850px) {
+    .logo-mini {
+        width: 65px;
+    }
+    .t1 { font-size: 24px; }
+}
+
+/* PC GRANDE */
+@media (min-width: 1300px) {
+    .menu-compacto {
+        max-width: 1200px;
+        grid-template-columns: repeat(5, 1fr);
+    }
+}
