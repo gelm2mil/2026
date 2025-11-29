@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistema PMT 2026 — GELM</title>
 
-    <!-- MANIFEST + SERVICE WORKER -->
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#00eaff">
 
@@ -21,28 +20,23 @@
 
 <body>
 
-    <!-- ========================================= -->
-    <!-- TOP BAR con ICONO IZQUIERDA - TITULO - ICONO DERECHA -->
-    <!-- ========================================= -->
+    <!-- TOP BAR -->
     <header class="top-bar">
 
-        <!-- ICONO PEQUEÑO IZQUIERDO -->
         <img src="icons/icon-192.png" class="logo-left" alt="GELM">
 
-        <!-- TITULOS CENTRADOS -->
         <div class="title-box">
             <h1 class="title">SISTEMA PMT 2026</h1>
             <h2 class="subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
-            <h3 class="subtitle">== BY ▬■▪┼▪▪[GэLM]▪▪┼▪■▬ ==</h3>
+
+            <!-- 🔥 TEXTO SEGURO PARA GITHUB -->
+            <h3 class="subtitle">== BY ▬■▪┼▪▪[GELM]▪▪┼▪■▬ ==</h3>
         </div>
 
-        <!-- ICONO PEQUEÑO DERECHO -->
         <img src="icons/YO.png" class="logo-right" alt="YO">
     </header>
 
-    <!-- ========================================= -->
-    <!-- MENÚ PRINCIPAL -->
-    <!-- ========================================= -->
+    <!-- MENÚ -->
     <section class="menu-container">
 
         <div class="menu-grid">
@@ -92,25 +86,20 @@
         </div>
     </section>
 
-    <!-- ========================================= -->
     <!-- FOOTER -->
-    <!-- ========================================= -->
     <footer>
         © 2026 — Todos los derechos reservados — <b>BY GELM</b><br>
         Policía Municipal de Tránsito — Chimaltenango. Presente.
     </footer>
-<!-- ========================================= -->
-<!-- MINI REPRODUCTOR GOD MODE -->
-<!-- ========================================= -->
-<div class="reproductor">
-    <button id="prevBtn">⏮</button>
-    <button id="playPauseBtn">⏯</button>
-    <button id="nextBtn">⏭</button>
-    <span class="reproductor-title" id="currentTitle">Cargando…</span>
-</div>
 
-<script src="app.js"></script>
+    <!-- REPRODUCTOR -->
+    <div class="reproductor">
+        <button id="prevBtn">⏮</button>
+        <button id="playPauseBtn">⏯</button>
+        <button id="nextBtn">⏭</button>
+        <span class="reproductor-title" id="currentTitle">Cargando…</span>
+    </div>
 
+    <script src="app.js"></script>
 </body>
 </html>
-
