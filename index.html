@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistema PMT 2026 — GELM</title>
 
+    <!-- MANIFEST + SERVICE WORKER -->
     <link rel="manifest" href="manifest.webmanifest">
     <meta name="theme-color" content="#00eaff">
 
@@ -20,23 +21,28 @@
 
 <body>
 
-    <!-- TOP BAR -->
+    <!-- ========================================= -->
+    <!-- TOP BAR (ICONOS PEQUEÑOS + TÍTULO) -->
+    <!-- ========================================= -->
     <header class="top-bar">
 
+        <!-- ICONO PEQUEÑO IZQUIERDA -->
         <img src="icons/icon-192.png" class="logo-left" alt="GELM">
 
+        <!-- TITULOS CENTRADOS -->
         <div class="title-box">
             <h1 class="title">SISTEMA PMT 2026</h1>
             <h2 class="subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
-
-            <!-- 🔥 TEXTO SEGURO PARA GITHUB -->
-            <h3 class="subtitle">== BY ▬■▪┼▪▪[GELM]▪▪┼▪■▬ ==</h3>
+            <h3 class="subtitle">== BY ▬■▪┼▪▪[GэLM]▪▪┼▪■▬ ==</h3>
         </div>
 
+        <!-- ICONO PEQUEÑO DERECHA -->
         <img src="icons/YO.png" class="logo-right" alt="YO">
     </header>
 
-    <!-- MENÚ -->
+    <!-- ========================================= -->
+    <!-- MENÚ PRINCIPAL -->
+    <!-- ========================================= -->
     <section class="menu-container">
 
         <div class="menu-grid">
@@ -86,35 +92,29 @@
         </div>
     </section>
 
+    <!-- ========================================= -->
     <!-- FOOTER -->
+    <!-- ========================================= -->
     <footer>
         © 2026 — Todos los derechos reservados — <b>BY GELM</b><br>
         Policía Municipal de Tránsito — Chimaltenango. Presente.
     </footer>
 
-   <!-- ========================================= -->
-<!-- MINI REPRODUCTOR GOD MODE 2 LINEAS -->
-<!-- ========================================= -->
-<div class="reproductor">
-
-    <!-- SLIDER DE VOLUMEN ARRIBA -->
-    <div class="volumen-box">
-        <span class="vol-icon">🔊</span>
-        <input type="range" id="volumenSlider" min="0" max="1" step="0.01" value="1">
-    </div>
-
-    <!-- BOTONES + TÍTULO -->
-    <div class="reproductor-controles">
+    <!-- ========================================= -->
+    <!-- MINI REPRODUCTOR GOD MODE -->
+    <!-- ========================================= -->
+    <div class="reproductor">
         <button id="prevBtn">⏮</button>
         <button id="playPauseBtn">⏯</button>
         <button id="nextBtn">⏭</button>
+
+        <!-- SLIDER VOLUMEN -->
+        <input type="range" id="volumen" min="0" max="1" step="0.01" value="0.70">
+
         <span class="reproductor-title" id="currentTitle">Cargando…</span>
     </div>
 
-</div>
-
-
     <script src="app.js"></script>
+
 </body>
 </html>
-
