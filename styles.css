@@ -1,15 +1,18 @@
-/* FORZAR TAMAÑO DE LOS LOGOS */
+/* ===============================
+   LOGOS REDONDOS
+================================ */
 .logo-left,
 .logo-right {
     width: 110px !important;
     height: auto !important;
     object-fit: contain !important;
     display: block;
+    border-radius: 50%;
 }
 
-/* ===========================
+/* ===============================
    FONDO RADIAL NEON
-=========================== */
+================================ */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -21,9 +24,9 @@ body {
     text-align: center;
 }
 
-/* ===========================
+/* ===============================
    TOP BAR
-=========================== */
+================================ */
 .top-bar {
     width: 100%;
     display: flex;
@@ -32,7 +35,6 @@ body {
     padding: 25px 40px;
 }
 
-/* TÍTULOS */
 .title-box {
     text-align: center;
 }
@@ -52,9 +54,9 @@ body {
     text-shadow: 0 0 10px #00eaff;
 }
 
-/* ===========================
+/* ===============================
    MENÚ PRO
-=========================== */
+================================ */
 .menu-container {
     margin-top: 40px;
 }
@@ -87,6 +89,7 @@ body {
 .menu-card img {
     width: 45px;
     margin-bottom: 10px;
+    border-radius: 50%; /* REDONDO */
 }
 
 .menu-title {
@@ -100,18 +103,19 @@ body {
     color: #c8faff;
 }
 
-/* ===========================
+/* ===============================
    FOOTER
-=========================== */
+================================ */
 footer {
     margin-top: 40px;
     font-size: 14px;
     color: #bdf7ff;
     text-shadow: 0 0 10px #00eaff;
 }
-/* ========================================
+
+/* ===============================
    BARRA DE REPRODUCTOR GOD MODE
-======================================== */
+================================ */
 .reproductor {
     position: fixed;
     bottom: 0;
@@ -152,3 +156,28 @@ footer {
     text-shadow: 0 0 6px #00eaff;
 }
 
+/* ===============================
+   RESPONSIVE
+================================ */
+@media (max-width: 768px) {
+    .top-bar {
+        padding: 15px 20px;
+    }
+
+    .logo-left, .logo-right {
+        width: 70px !important;
+    }
+
+    .title {
+        font-size: 22px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+    }
+}
