@@ -1,34 +1,34 @@
-// Nombre de la caché (cámbialo cuando hagas cambios grandes)
-const CACHE_NAME = "gelm-pmt-2026-v2";
+const CACHE_NAME = "gelm-2026-v1";
 
-// Archivos que se cachean para trabajar offline
-const OFFLINE_URLS = [
-  "./",
-  "./index.html",
-  "./styles.css",
-  "./app.js",                // si no usas app.js aún, no pasa nada
-  "./manifest.webmanifest",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./agen2026.html"          // si todavía no existe, puedes quitarla o dejarla preparada
+const FILES_TO_CACHE = [
+  "/2026/index.html",
+  "/2026/styles.css",
+  "/2026/app.js",
+  "/2026/operativos.html",
+  "/2026/denuncias.html",
+  "/2026/confia.html",
+  "/2026/respaldo.html",
+  "/2026/agen2026.html",
+  "/2026/icons/icon-192.png",
+  "/2026/icons/icon-512.png"
 ];
 
-// INSTALACIÓN: guardar archivos en caché
+// INSTALAR
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(OFFLINE_URLS);
+      return cache.addAll(FILES_TO_CACHE);
     })
   );
   self.skipWaiting();
 });
 
-// ACTIVACIÓN: limpiar cachés viejas
+// ACTIVAR Y LIMPIAR CACHES VIEJOS
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
+    caches.keys().then((keyList) =>
       Promise.all(
-        keys.map((key) => {
+        keyList.map((key) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
@@ -39,37 +39,17 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// FETCH: estrategia cache-first con fallback a red
+// MODO OFFLINE / RESPUESTA
 self.addEventListener("fetch", (event) => {
-  const request = event.request;
-
-  // Sólo manejar peticiones GET
-  if (request.method !== "GET") {
-    return;
-  }
-
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-
-      return fetch(request)
-        .then((networkResponse) => {
-          // Guardar en caché lo nuevo
-          return caches.open(CACHE_NAME).then((cache) => {
-            cache.put(request, networkResponse.clone());
-            return networkResponse;
-          });
+    caches.match(event.request).then((cached) => {
+      return (
+        cached ||
+        fetch(event.request).catch(() => {
+          // Si falla red y no hay cache, devolvemos el index
+          return caches.match("/2026/index.html");
         })
-        .catch(() => {
-          // Si falla la red y no hay caché, puedes devolver algo opcional
-          if (request.mode === "navigate") {
-            // Podrías devolver una página offline personalizada aquí
-            return caches.match("./index.html");
-          }
-        });
+      );
     })
   );
 });
-
