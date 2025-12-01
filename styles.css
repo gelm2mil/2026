@@ -205,3 +205,30 @@ body {
         padding: 14px;
     }
 }
+/* BOTÓN VOLVER (modo APP) */
+#btnVolver {
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    padding: 10px 18px;
+    background: #00ffaa;
+    color: #000;
+    z-index: 99999;
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    box-shadow: 0 10px 20px #00ffcc77;
+    cursor: pointer;
+}
+
+/* Un poquito más compacto en móvil */
+@media (max-width: 768px) {
+    #btnVolver {
+        top: 10px;
+        left: 10px;
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+}
+
