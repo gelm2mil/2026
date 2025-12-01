@@ -27,47 +27,47 @@
 
   "screenshots": [
     {
-      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen1.png",
+      "src": "icons/screen1.png",
       "sizes": "1080x2400",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Vista principal"
+      "label": "Vista principal del sistema"
     },
     {
-      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen2.png",
+      "src": "icons/screen2.png",
       "sizes": "1080x2400",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Opciones y menú"
+      "label": "Menú y opciones"
     },
     {
-      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen3.png",
+      "src": "icons/screen3.png",
       "sizes": "1080x2400",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Consultas"
     },
     {
-      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen4.png",
+      "src": "icons/screen4.png",
       "sizes": "1080x2400",
       "type": "image/png",
       "form_factor": "narrow",
       "label": "Resultados"
     },
     {
-      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen5.png",
+      "src": "icons/screen5.png",
       "sizes": "1080x2400",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Panel PMT"
+      "label": "Panel PMT y configuraciones"
     },
 
     {
-      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen-wide.png",
+      "src": "icons/screen_wide_1.png",
       "sizes": "1600x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Vista horizontal"
+      "label": "Vista horizontal del sistema"
     }
   ],
 
