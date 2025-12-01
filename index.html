@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>SISTEMA DE GELM 2026</title>
 
 <link rel="stylesheet" href="styles.css">
@@ -14,31 +15,33 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+<!-- =============================
+     BOTÓN VOLVER (solo modo APP)
+============================= -->
 <style>
-/* BOTÓN ATRÁS (Solo en modo APP real) */
 #btnVolver {
-    display:none;
-    position:fixed;
-    top:12px;
-    left:12px;
-    padding:10px 18px;
-    background:#00ffaa;
-    color:#000;
-    z-index:99999;
-    border-radius:10px;
-    font-weight:bold;
-    box-shadow:0 0 10px #00ffcc;
+    display: none;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    padding: 10px 18px;
+    background: #00ffaa;
+    color: #000;
+    z-index: 99999;
+    border-radius: 10px;
+    font-weight: bold;
+    border: 2px solid #00e6b8;
+    box-shadow: 0 0 12px #00ffc8;
 }
 </style>
-</head>
 
+</head>
 <body>
 
 <!-- BOTÓN VOLVER -->
-<button id="btnVolver" onclick="volverHome()">⬅ Volver</button>
+<button id="btnVolver" onclick="volverInicio()">⬅ Volver</button>
 
-<!-- 🔥 HEADER PRINCIPAL (solo visible en home) -->
-<header id="headerHome" class="home-top-bar">
+<header class="home-top-bar">
 
     <div class="home-logo-left">
         <img src="icons/YO.png">
@@ -53,13 +56,12 @@ if ("serviceWorker" in navigator) {
     <div class="home-logo-right">
         <img src="icons/YO.png">
     </div>
-
 </header>
 
 
 <main class="home-main">
 
-<section id="seccionMenu" class="home-menu-section">
+<section class="home-menu-section">
     <div class="home-menu-grid">
 
         <a class="home-card" onclick="cargarModulo('agen2026.html')">
@@ -77,8 +79,8 @@ if ("serviceWorker" in navigator) {
             <div class="home-card-text">Denuncias</div>
         </a>
 
-        <!-- 🔥 Buscar Multas ACTUALIZADO -->
-        <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/buscador/')">
+        <!-- 🔥 REDIRECCIÓN NUEVA PERFECTA -->
+        <a class="home-card" onclick="window.open('https://gelm2mil.github.io/buscador/', '_blank')">
             <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
             <div class="home-card-text">Buscar Multas</div>
         </a>
@@ -96,47 +98,36 @@ if ("serviceWorker" in navigator) {
     </div>
 </section>
 
-
-<!-- 🔥 MÓDULOS A PANTALLA COMPLETA -->
 <section id="moduloSPA" class="home-module-zone">
     <iframe id="iframeSPA"></iframe>
 </section>
 
-
-<footer id="footerHome" class="home-footer">
+<footer class="home-footer">
 © 2026 — BY GELM — PMT Chimaltenango
 </footer>
 
 </main>
 
-
 <script src="app.js"></script>
 
 <script>
-// 🔥 Cargar módulo en modo APP real
 function cargarModulo(url){
-    document.getElementById("headerHome").style.display = "none";
-    document.getElementById("footerHome").style.display = "none";
-    document.getElementById("seccionMenu").style.display = "none";
-
-    document.getElementById("btnVolver").style.display = "block";
-    document.getElementById("moduloSPA").style.display = "block";
-
+    document.getElementById("moduloSPA").classList.add("activo");
     document.getElementById("iframeSPA").src = url;
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
-    window.scrollTo({top:0, behavior:"smooth"});
+    // Mostrar botón volver
+    document.getElementById("btnVolver").style.display = "block";
 }
 
-// 🔥 Botón volver al HOME
-function volverHome(){
-    document.getElementById("headerHome").style.display = "flex";
-    document.getElementById("footerHome").style.display = "block";
-    document.getElementById("seccionMenu").style.display = "block";
-
-    document.getElementById("btnVolver").style.display = "none";
-    document.getElementById("moduloSPA").style.display = "none";
-
+// Volver al home
+function volverInicio(){
+    document.getElementById("moduloSPA").classList.remove("activo");
     document.getElementById("iframeSPA").src = "";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Ocultar botón volver
+    document.getElementById("btnVolver").style.display = "none";
 }
 </script>
 
