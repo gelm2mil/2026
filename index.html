@@ -9,21 +9,40 @@
 <link rel="manifest" href="manifest.webmanifest">
 
 <script>
-if("serviceWorker" in navigator){
+if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
 }
 </script>
 
+<style>
+/* BOTÓN ATRÁS (Solo en modo APP real) */
+#btnVolver {
+    display:none;
+    position:fixed;
+    top:12px;
+    left:12px;
+    padding:10px 18px;
+    background:#00ffaa;
+    color:#000;
+    z-index:99999;
+    border-radius:10px;
+    font-weight:bold;
+    box-shadow:0 0 10px #00ffcc;
+}
+</style>
 </head>
+
 <body>
 
-<header class="home-top-bar">
+<!-- BOTÓN VOLVER -->
+<button id="btnVolver" onclick="volverHome()">⬅ Volver</button>
+
+<!-- 🔥 HEADER PRINCIPAL (solo visible en home) -->
+<header id="headerHome" class="home-top-bar">
 
     <div class="home-logo-left">
         <img src="icons/YO.png">
     </div>
-
-    <!-- 🔥 REPRODUCTOR ELIMINADO COMPLETAMENTE -->
 
     <div class="home-title-box">
         <h1 class="home-title">SISTEMA de GELM 2026</h1>
@@ -34,12 +53,13 @@ if("serviceWorker" in navigator){
     <div class="home-logo-right">
         <img src="icons/YO.png">
     </div>
+
 </header>
 
 
 <main class="home-main">
 
-<section class="home-menu-section">
+<section id="seccionMenu" class="home-menu-section">
     <div class="home-menu-grid">
 
         <a class="home-card" onclick="cargarModulo('agen2026.html')">
@@ -57,19 +77,15 @@ if("serviceWorker" in navigator){
             <div class="home-card-text">Denuncias</div>
         </a>
 
-        <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/gelm/')">
+        <!-- 🔥 Buscar Multas ACTUALIZADO -->
+        <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/buscador/')">
             <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
-            <div class="home-card-text">Registro Transportes</div>
+            <div class="home-card-text">Buscar Multas</div>
         </a>
 
         <a class="home-card" onclick="cargarModulo('respaldo.html')">
             <div class="home-card-icon"><img src="icons/respaldo.jpg"></div>
             <div class="home-card-text">Respaldos</div>
-        </a>
-
-        <a class="home-card" onclick="cargarModulo('https://gelmhistoria.webcindario.com/multas/buscador_placas.html')">
-            <div class="home-card-icon"><img src="icons/buscar.jpg"></div>
-            <div class="home-card-text">Buscar Multas</div>
         </a>
 
         <a class="home-card" onclick="cargarModulo('confia.html')">
@@ -81,26 +97,46 @@ if("serviceWorker" in navigator){
 </section>
 
 
+<!-- 🔥 MÓDULOS A PANTALLA COMPLETA -->
 <section id="moduloSPA" class="home-module-zone">
     <iframe id="iframeSPA"></iframe>
 </section>
 
 
-<footer class="home-footer">
+<footer id="footerHome" class="home-footer">
 © 2026 — BY GELM — PMT Chimaltenango
 </footer>
 
 </main>
 
 
-
 <script src="app.js"></script>
 
 <script>
+// 🔥 Cargar módulo en modo APP real
 function cargarModulo(url){
-    document.getElementById("moduloSPA").classList.add("activo");
+    document.getElementById("headerHome").style.display = "none";
+    document.getElementById("footerHome").style.display = "none";
+    document.getElementById("seccionMenu").style.display = "none";
+
+    document.getElementById("btnVolver").style.display = "block";
+    document.getElementById("moduloSPA").style.display = "block";
+
     document.getElementById("iframeSPA").src = url;
-    window.scrollTo({top:0,behavior:"smooth"});
+
+    window.scrollTo({top:0, behavior:"smooth"});
+}
+
+// 🔥 Botón volver al HOME
+function volverHome(){
+    document.getElementById("headerHome").style.display = "flex";
+    document.getElementById("footerHome").style.display = "block";
+    document.getElementById("seccionMenu").style.display = "block";
+
+    document.getElementById("btnVolver").style.display = "none";
+    document.getElementById("moduloSPA").style.display = "none";
+
+    document.getElementById("iframeSPA").src = "";
 }
 </script>
 
