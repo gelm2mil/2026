@@ -58,3 +58,18 @@ window.onload = () => {
     }
     cargarMusica();
 };
+/* ======================================================
+   APP JS — CONTROL GENERAL DEL SISTEMA GELM
+====================================================== */
+
+// Puedes agregar funciones globales si luego expandimos módulos.
+// Por ahora, se mantiene minimalista y seguro.
+
+console.log("✔ APP.js cargado correctamente — BY GELM");
+
+/* Ejemplo de función reutilizable */
+function notificar(msg){
+    alert("📌 GELM:\n" + msg);
+}
+
+
