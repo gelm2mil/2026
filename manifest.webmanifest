@@ -1,74 +1,65 @@
 {
   "name": "GELM 2026",
   "short_name": "GELM 2026",
-  "description": "Sistema de Transportes — PMT Chimaltenango. Agenda, operativos, denuncias, consultas y control de servicios. == BY GELM ==",
-
-  "id": "/",
+  "id": "/2026/",
   "start_url": "/2026/index.html",
   "scope": "/2026/",
   "display": "standalone",
   "orientation": "portrait",
-  "theme_color": "#00eaff",
   "background_color": "#000000",
+  "theme_color": "#00e5ff",
+  "description": "Sistema PMT Chimaltenango — Agenda 2026, Operativos, Denuncias, Registro de Transportes, Multas y Respaldo — BY GELM",
 
   "icons": [
     {
-      "src": "icons/icon-192.png",
+      "src": "/2026/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     },
     {
-      "src": "icons/icon-512.png",
+      "src": "/2026/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ],
 
   "screenshots": [
     {
-      "src": "icons/screen1.png",
+      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen1.png",
       "sizes": "720x1560",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Pantalla principal del sistema GELM"
+      "form_factor": "narrow"
     },
     {
-      "src": "icons/screen2.png",
+      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen2.png",
       "sizes": "720x1560",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Sistema de búsqueda"
+      "form_factor": "narrow"
     },
     {
-      "src": "icons/screen3.png",
+      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen3.png",
       "sizes": "720x1560",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Pantalla de transportes 2026"
+      "form_factor": "narrow"
     },
     {
-      "src": "icons/screen4.png",
+      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen4.png",
       "sizes": "720x1560",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Panel principal con menú GELM"
+      "form_factor": "narrow"
     },
     {
-      "src": "icons/screen5.png",
+      "src": "https://raw.githubusercontent.com/gelm2mil/2026/main/icons/screen5.png",
       "sizes": "720x1560",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Acceso rápido a módulos PMT"
+      "form_factor": "narrow"
     }
   ],
 
   "categories": [
     "productivity",
-    "business",
     "utilities",
-    "government"
+    "business"
   ],
 
   "prefer_related_applications": false
