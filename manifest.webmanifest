@@ -1,49 +1,74 @@
 {
   "name": "GELM 2026",
-  "short_name": "GELM2026",
-  "description": "Sistema PMT Chimaltenango — Aplicación oficial BY GELM",
+  "short_name": "GELM 2026",
+  "description": "Sistema de Transportes — PMT Chimaltenango. Agenda, operativos, denuncias, consultas y control de servicios. == BY GELM ==",
+
+  "id": "/",
   "start_url": "/2026/index.html",
   "scope": "/2026/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#00eaff",
   "orientation": "portrait",
-  "id": "app.gelm2026.pmt",
+  "theme_color": "#00eaff",
+  "background_color": "#000000",
 
   "icons": [
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
 
   "screenshots": [
     {
       "src": "icons/screen1.png",
-      "sizes": "720x1280",
+      "sizes": "720x1560",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Pantalla principal del sistema GELM"
     },
     {
       "src": "icons/screen2.png",
-      "sizes": "720x1280",
+      "sizes": "720x1560",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Sistema de búsqueda"
+    },
+    {
+      "src": "icons/screen3.png",
+      "sizes": "720x1560",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Pantalla de transportes 2026"
+    },
+    {
+      "src": "icons/screen4.png",
+      "sizes": "720x1560",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Panel principal con menú GELM"
+    },
+    {
+      "src": "icons/screen5.png",
+      "sizes": "720x1560",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Acceso rápido a módulos PMT"
     }
   ],
 
   "categories": [
     "productivity",
     "business",
-    "utilities"
+    "utilities",
+    "government"
   ],
 
   "prefer_related_applications": false
