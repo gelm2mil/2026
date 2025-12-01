@@ -1,14 +1,14 @@
 {
   "name": "GELM 2026",
   "short_name": "GELM2026",
-  "description": "Sistema PMT Chimaltenango — by GELM",
+  "description": "Sistema PMT Chimaltenango — Aplicación oficial BY GELM",
   "start_url": "/2026/index.html",
   "scope": "/2026/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#00eaff",
   "orientation": "portrait",
-  "id": "gelm2026.app",
+  "id": "app.gelm2026.pmt",
 
   "icons": [
     {
@@ -25,23 +25,25 @@
     }
   ],
 
-  "categories": [
-    "productivity",
-    "utilities",
-    "business"
-  ],
-
   "screenshots": [
     {
       "src": "icons/screen1.png",
       "sizes": "720x1280",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "narrow"
     },
     {
       "src": "icons/screen2.png",
       "sizes": "720x1280",
-      "type": "image/png"
+      "type": "image/png",
+      "form_factor": "narrow"
     }
+  ],
+
+  "categories": [
+    "productivity",
+    "business",
+    "utilities"
   ],
 
   "prefer_related_applications": false
