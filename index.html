@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>SISTEMA DE GELM 2026</title>
 
-    <!-- 🔹 PWA / APP REAL -->
+    <!-- PWA / APP -->
     <meta name="theme-color" content="#00eaff">
     <meta name="background-color" content="#000000">
     <meta name="mobile-web-app-capable" content="yes">
@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" href="icons/icon-512.png">
     <link rel="icon" type="image/png" href="icons/icon-192.png">
 
-    <!-- Manifest PWA -->
+    <!-- Manifest -->
     <link rel="manifest" href="manifest.webmanifest">
 
     <!-- Estilos -->
@@ -29,117 +29,107 @@
         navigator.serviceWorker.register("service-worker.js");
     }
     </script>
+
+    <style>
+        /* Botón volver */
+        #btnVolver {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            padding: 10px 18px;
+            background: #00ffaa;
+            color: #000;
+            z-index: 99999;
+            border-radius: 10px;
+            font-weight: bold;
+            box-shadow: 0 10px 20px #00ffcc55;
+        }
+    </style>
 </head>
+
 <body>
 
-    <!-- BOTÓN VOLVER (se muestra solo cuando hay módulo abierto) -->
-    <button id="btnVolver" onclick="cerrarModulo()">⬅ Volver</button>
+<button id="btnVolver" onclick="cerrarModulo()">⬅ Volver</button>
 
-    <header class="home-top-bar">
+<header class="home-top-bar">
+    <div class="home-logo-left">
+        <img src="icons/YO.png" alt="Logo Izquierdo">
+    </div>
 
-        <div class="home-logo-left">
-            <img src="icons/YO.png" alt="Logo Izquierdo">
-        </div>
+    <div class="home-title-box">
+        <h1 class="home-title">SISTEMA de GELM 2026</h1>
+        <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
+        <h3 class="home-subtitle2">== BY GELM ==</h3>
+    </div>
 
-        <div class="home-title-box">
-            <h1 class="home-title">SISTEMA de GELM 2026</h1>
-            <h2 class="home-subtitle">Unidad de Transportes — PMT Chimaltenango</h2>
-            <h3 class="home-subtitle2">== BY GELM ==</h3>
-        </div>
+    <div class="home-logo-right">
+        <img src="icons/YO.png" alt="Logo Derecho">
+    </div>
+</header>
 
-        <div class="home-logo-right">
-            <img src="icons/YO.png" alt="Logo Derecho">
-        </div>
+<main class="home-main">
 
-    </header>
+<section class="home-menu-section">
+    <div class="home-menu-grid">
 
-    <main class="home-main">
+        <a class="home-card" onclick="cargarModulo('agen2026.html')">
+            <div class="home-card-icon"><img src="icons/agenda.jpg" alt=""></div>
+            <div class="home-card-text">Agenda 2026</div>
+        </a>
 
-        <!-- MENÚ PRINCIPAL -->
-        <section class="home-menu-section">
-            <div class="home-menu-grid">
+        <a class="home-card" onclick="cargarModulo('operativos.html')">
+            <div class="home-card-icon"><img src="icons/operativos.jpg" alt=""></div>
+            <div class="home-card-text">Operativos</div>
+        </a>
 
-                <a class="home-card" onclick="cargarModulo('agen2026.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/agenda.jpg" alt="Agenda">
-                    </div>
-                    <div class="home-card-text">Agenda 2026</div>
-                </a>
+        <a class="home-card" onclick="cargarModulo('denuncias.html')">
+            <div class="home-card-icon"><img src="icons/denuncias.jpg" alt=""></div>
+            <div class="home-card-text">Denuncias</div>
+        </a>
 
-                <a class="home-card" onclick="cargarModulo('operativos.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/operativos.jpg" alt="Operativos">
-                    </div>
-                    <div class="home-card-text">Operativos</div>
-                </a>
+        <!-- Buscar Multas en iframe -->
+        <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/buscador/')">
+            <div class="home-card-icon"><img src="icons/buscar.jpg" alt=""></div>
+            <div class="home-card-text">Buscar Multas</div>
+        </a>
 
-                <a class="home-card" onclick="cargarModulo('denuncias.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/denuncias.jpg" alt="Denuncias">
-                    </div>
-                    <div class="home-card-text">Denuncias</div>
-                </a>
+        <a class="home-card" onclick="cargarModulo('respaldo.html')">
+            <div class="home-card-icon"><img src="icons/respaldo.jpg" alt=""></div>
+            <div class="home-card-text">Respaldos</div>
+        </a>
 
-                <!-- 🔹 Buscar Multas AHORA se abre en el iframe, NO cambia de página -->
-                <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/buscador/')">
-                    <div class="home-card-icon">
-                        <img src="icons/buscar.jpg" alt="Buscar Multas">
-                    </div>
-                    <div class="home-card-text">Buscar Multas</div>
-                </a>
+        <a class="home-card" onclick="cargarModulo('confia.html')">
+            <div class="home-card-icon"><img src="icons/configuracion.png" alt=""></div>
+            <div class="home-card-text">Configuración</div>
+        </a>
 
-                <a class="home-card" onclick="cargarModulo('respaldo.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/respaldo.jpg" alt="Respaldos">
-                    </div>
-                    <div class="home-card-text">Respaldos</div>
-                </a>
+    </div>
+</section>
 
-                <a class="home-card" onclick="cargarModulo('confia.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/configuracion.png" alt="Configuración">
-                    </div>
-                    <div class="home-card-text">Configuración</div>
-                </a>
+<section id="moduloSPA" class="home-module-zone">
+    <iframe id="iframeSPA" title="Módulos GELM"></iframe>
+</section>
 
-            </div>
-        </section>
+<footer class="home-footer">© 2026 — BY GELM — PMT Chimaltenango</footer>
 
-        <!-- ZONA SPA -->
-        <section id="moduloSPA" class="home-module-zone">
-            <iframe id="iframeSPA" title="Módulos GELM"></iframe>
-        </section>
+</main>
 
-        <footer class="home-footer">
-            © 2026 — BY GELM — PMT Chimaltenango
-        </footer>
+<script>
+function cargarModulo(url) {
+    document.getElementById("moduloSPA").classList.add("activo");
+    document.getElementById("iframeSPA").src = url;
+    document.getElementById("btnVolver").style.display = "block";
 
-    </main>
+    window.scrollTo({top: 0, behavior: "smooth"});
+}
 
-    <!-- LÓGICA SPA / BOTÓN VOLVER -->
-    <script>
-    function cargarModulo(url) {
-        const zona    = document.getElementById("moduloSPA");
-        const iframe  = document.getElementById("iframeSPA");
-        const btnBack = document.getElementById("btnVolver");
-
-        zona.classList.add("activo");
-        iframe.src = url;
-        btnBack.style.display = "block";
-
-        window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    function cerrarModulo() {
-        const zona    = document.getElementById("moduloSPA");
-        const iframe  = document.getElementById("iframeSPA");
-        const btnBack = document.getElementById("btnVolver");
-
-        iframe.src = "about:blank";
-        zona.classList.remove("activo");
-        btnBack.style.display = "none";
-    }
-    </script>
+function cerrarModulo() {
+    document.getElementById("iframeSPA").src = "about:blank";
+    document.getElementById("moduloSPA").classList.remove("activo");
+    document.getElementById("btnVolver").style.display = "none";
+}
+</script>
 
 </body>
 </html>
