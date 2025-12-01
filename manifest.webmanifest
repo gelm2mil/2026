@@ -52,22 +52,21 @@
       "sizes": "1080x2400",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Resultados"
+      "label": "Resultados del sistema"
     },
     {
       "src": "icons/screen5.png",
       "sizes": "1080x2400",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Panel PMT y configuraciones"
+      "label": "Panel PMT y Gestión"
     },
-
     {
       "src": "icons/screen_wide_1.png",
       "sizes": "1600x720",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "Vista horizontal del sistema"
+      "label": "Vista horizontal general"
     }
   ],
 
