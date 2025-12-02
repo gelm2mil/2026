@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "io.github.gelm2mil.gelm2026.twa",
+      "sha256_cert_fingerprints": [
+        "35:BB:55:84:BF:6F:AB:18:B6:2C:23:00:BB:66:1E:1A:D2:C7:53:C7:2B:72:7F:5F:FD:8D:92:AF:E7:E5:EA"
+      ]
+    }
+  }
+]
