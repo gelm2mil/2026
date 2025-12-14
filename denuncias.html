@@ -270,6 +270,30 @@
     <img id="modal-img" src="" alt="Evidencia">
   </div>
 </div>
+// === GOOGLE SHEETS ENDPOINT ===
+const GOOGLE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxEaxAeBVeS4Pk8VO-2HNaM4AA5YdhwTYK8KK5QQK4taFV35JCa8Cs-JHwwQbuRRMYHVw/exec";
+
+function enviarAGoogleSheets(data) {
+  try {
+    fetch(GOOGLE_ENDPOINT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fecha: data.fecha,
+        hora: data.hora,
+        identificador: data.identificador,
+        tipoDenuncia: data.tipoDenuncia,
+        lugar: data.lugar,
+        estado: data.estado,
+        descripcion: data.descripcion,
+        observaciones: data.observaciones
+      })
+    });
+  } catch (e) {
+    console.warn("Error enviando a Google Sheets", e);
+  }
+}
 
 <script>
   const STORAGE_KEY_DEN = 'denuncias2026';
@@ -401,6 +425,7 @@
         denuncias.push(denunciaBase);
         guardarDenuncias();
         renderDenuncias();
+        enviarAGoogleSheets(denunciaBase);
         document.getElementById('descripcion').value = '';
         document.getElementById('observaciones').value = '';
         document.getElementById('imagen').value = '';
@@ -483,3 +508,4 @@
 </script>
 </body>
 </html>
+
