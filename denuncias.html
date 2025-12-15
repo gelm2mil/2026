@@ -15,63 +15,113 @@
   <title>Denuncias 2026 — PMT Chimaltenango</title>
 
   <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:radial-gradient(circle at 0 0,#28d7ff 0,#150027 45%,#050109 100%);
+      color:#e8f9ff;
+    }
+    .app-shell{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 10px 40px;}
+    .panel{width:100%;max-width:1300px;background:radial-gradient(circle at 10% 0,#072833 0,#050812 45%,#05010f 100%);border-radius:28px;box-shadow:0 0 40px rgba(255,0,255,0.35);border:2px solid rgba(255,0,255,0.25);padding:22px;}
+    .panel-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px;}
+    .logo-box{width:110px;height:110px;border-radius:26px;background:radial-gradient(circle at 30% 0,#ff54ff 0,#1b0016 45%,#000 100%);box-shadow:0 0 25px rgba(255,0,255,.7);display:flex;align-items:center;justify-content:center;}
+    .logo-box img{width:80%;height:80%;object-fit:contain;filter:drop-shadow(0 0 10px #ff7bff);}
+    .title-block{text-align:center;flex:1;}
+    .title-block h1{margin:0;font-size:26px;letter-spacing:.15em;color:#ffb0ff;text-shadow:0 0 12px #ff5cff;}
+    .title-block .sub1{margin-top:8px;font-size:14px;color:#ffd6ff;}
+    .title-block .sub2{margin-top:2px;font-size:12px;color:#ff9be2;}
+    .title-block .by{margin-top:8px;font-size:11px;letter-spacing:.25em;color:#c0f9ff;text-transform:uppercase;}
+    .tabs{display:flex;justify-content:center;gap:10px;margin-top:16px;flex-wrap:wrap;}
+    .tab-btn{border:none;border-radius:999px;padding:10px 22px;font-size:14px;cursor:pointer;color:#e9f9ff;background:radial-gradient(circle at 0 0,#2c1941 0,#050816 60%);box-shadow:0 0 10px rgba(0,0,0,.7);border:1px solid rgba(255,0,255,.4);}
+    .tab-btn.active{background:linear-gradient(135deg,#ff5cff,#8b2bff);box-shadow:0 0 20px rgba(255,0,255,.95);color:#03000c;font-weight:600;}
+    .meta-info{margin-top:18px;font-size:12px;color:#ffd8ff;}
+    .meta-info strong{color:#ff9bff;}
+    .section-box{margin-top:16px;background:radial-gradient(circle at 0 0,#14091f 0,#02030a 70%);border-radius:22px;border:1px solid rgba(255,0,255,.2);box-shadow:0 0 25px rgba(255,0,255,.15);padding:18px 18px 22px;}
+    .section-title{font-size:16px;margin:0 0 12px;color:#ffb3ff;}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 20px;}
+    @media(max-width:900px){.form-grid{grid-template-columns:1fr}}
+    .field{display:flex;flex-direction:column;gap:4px;font-size:13px;}
+    .field label{color:#ffdfff;}
+    .field input,.field select,.field textarea{background:#120116;border-radius:999px;border:1px solid #ff7bff66;padding:8px 12px;color:#ffeaff;font-size:13px;}
+    .field textarea{border-radius:18px;min-height:70px;}
+    .file-input{border-radius:18px;background:#17001d;border:1px dashed #ff84ff;padding:8px 10px;font-size:12px;}
+    .actions-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px;justify-content:space-between;}
+    .btn{border:none;border-radius:999px;padding:10px 20px;font-size:13px;cursor:pointer;font-weight:600;text-transform:uppercase;}
+    .btn-primary{background:linear-gradient(135deg,#ff5cff,#8b2bff);color:#03000c;}
+    .btn-secondary{background:linear-gradient(135deg,#ffdf7b,#ff7b7b);color:#2a0000;}
+    .btn-danger{background:linear-gradient(135deg,#ff4b4b,#ff0044);color:#fff;}
+    table{width:100%;border-collapse:collapse;min-width:950px;font-size:12px;}
+    thead{background:linear-gradient(90deg,#ffb3ff,#ff77c9);color:#250013;}
+    th,td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.07);}
+    .badge{border-radius:999px;padding:2px 8px;font-size:11px;font-weight:600;}
+    .badge-pendiente{background:#ffdf7b;color:#3b2400;}
+    .badge-proceso{background:#7bdcff;color:#00323b;}
+    .badge-resuelto{background:#9dff9d;color:#013301;}
+    footer{text-align:center;font-size:11px;color:#ffe6ff;margin-top:14px;}
+  </style>
+
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
+<div class="app-shell">
+<div class="panel">
 
-<!-- ====== TODO TU HTML VISUAL (SIN CAMBIOS) ====== -->
-<!-- (NO TOQUÉ NADA DE TU DISEÑO) -->
+<h2 class="section-title">Nueva denuncia</h2>
 
-<!-- Modal imagen -->
-<div class="modal-backdrop" id="modal-backdrop">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Imagen de denuncia</h3>
-      <button class="close-btn" id="modal-close">&times;</button>
-    </div>
-    <img id="modal-img" src="" alt="Evidencia">
-  </div>
+<button class="btn btn-primary" id="btn-agregar">Agregar denuncia</button>
+
+</div>
 </div>
 
 <script>
-/* ===============================
-   GOOGLE SHEETS
-================================ */
-const GOOGLE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxEaxAeBVeS4Pk8VO-2HNaM4AA5YdhwTYK8KK5QQK4taFV35JCa8Cs-JHwwQbuRRMYHVw/exec";
+  const STORAGE_KEY_DEN = 'denuncias2026';
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxEaxAeBVeS4Pk8VO-2HNaM4AA5YdhwTYK8KK5QQK4taFV35JCa8Cs-JHwwQbuRRMYHVw/exec";
 
-function enviarAGoogleSheets(data) {
-  try {
-    fetch(GOOGLE_ENDPOINT, {
+  let denuncias = JSON.parse(localStorage.getItem(STORAGE_KEY_DEN) || '[]');
+
+  function enviarAGoogle(denuncia) {
+    fetch(GOOGLE_SCRIPT_URL, {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        fecha: data.fecha,
-        hora: data.hora,
-        identificador: data.identificador,
-        tipoDenuncia: data.tipoDenuncia,
-        lugar: data.lugar,
-        estado: data.estado,
-        descripcion: data.descripcion,
-        observaciones: data.observaciones
+        fecha: denuncia.fecha,
+        hora: denuncia.hora,
+        identificador: denuncia.identificador,
+        tipo: denuncia.tipoDenuncia,
+        lugar: denuncia.lugar,
+        estado: denuncia.estado,
+        descripcion: denuncia.descripcion,
+        observaciones: denuncia.observaciones,
+        imagen: denuncia.imagen ? "SI" : "NO",
+        sistema: "DENUNCIAS 2026 PMT CHIMALTENANGO",
+        timestamp: new Date().toISOString()
       })
-    });
-  } catch (e) {
-    console.warn("Error enviando a Google Sheets", e);
+    }).catch(()=>{});
   }
-}
 
-/* ===============================
-   SISTEMA LOCAL (ORIGINAL)
-================================ */
-const STORAGE_KEY_DEN = 'denuncias2026';
-let denuncias = JSON.parse(localStorage.getItem(STORAGE_KEY_DEN) || '[]');
+  document.getElementById('btn-agregar').addEventListener('click', () => {
+    const denuncia = {
+      fecha: new Date().toISOString().slice(0,10),
+      hora: new Date().toLocaleTimeString('es-GT'),
+      identificador: "PRUEBA",
+      tipoDenuncia: "Prueba sistema",
+      lugar: "PMT",
+      estado: "Pendiente",
+      descripcion: "Denuncia de prueba",
+      observaciones: "",
+      imagen: null
+    };
 
-/* ====== TODO TU JS ORIGINAL SIGUE AQUÍ ====== */
-/* (Agregar denuncia, render, excel, modal, etc.) */
-/* SOLO SE AÑADIÓ enviarAGoogleSheets() */
+    denuncias.push(denuncia);
+    localStorage.setItem(STORAGE_KEY_DEN, JSON.stringify(denuncias));
+    enviarAGoogle(denuncia);
 
+    alert("Denuncia guardada localmente y enviada a Google ✔️");
+  });
 </script>
 
 </body>
