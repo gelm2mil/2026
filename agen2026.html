@@ -1,867 +1,310 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#00eaff">
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AGENDA 2026 — PMT Chimaltenango</title>
+  <title>BITÁCORA DE TRANSPORTES 2026</title>
 
-  <!-- Estilos globales del proyecto (fondo, tipografía, etc.) -->
-  <link rel="stylesheet" href="styles.css">
-
-  <!-- Librería para exportar a Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
-    /* ===============================
-       Agenda 2026 — Estilo PRO GOD MODE
-       =============================== */
-
     :root {
       --gelm-cyan: #00eaff;
       --gelm-cyan-soft: #00ffc8;
       --gelm-magenta: #b300ff;
-      --gelm-purple-deep: #18001e;
       --gelm-bg-panel: rgba(3, 5, 20, 0.96);
       --gelm-text-main: #e9f9ff;
       --gelm-text-muted: #9cb3d8;
-      --gelm-danger: #ff0044;
-      --gelm-shadow-strong: 0 0 35px rgba(0, 234, 255, 0.45);
       --gelm-radius-xl: 24px;
-      --gelm-radius-lg: 18px;
     }
 
     body {
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0; padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
       color: var(--gelm-text-main);
-      /* El fondo degradado ya viene desde styles.css,
-         aquí solo aseguramos que ocupe toda la pantalla */
+      background: #020510;
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      display: flex; justify-content: center;
     }
 
-    .agenda-shell {
-      width: 100%;
-      max-width: 1280px;
-      margin: 32px auto;
-      padding: 20px 16px 40px;
-    }
-
+    .agenda-shell { width: 100%; max-width: 1280px; margin: 20px auto; padding: 15px; }
+    
     .agenda-panel {
-      background: radial-gradient(circle at top left, rgba(0, 234, 255, 0.14), transparent 55%),
-                  radial-gradient(circle at top right, rgba(179, 0, 255, 0.16), transparent 60%),
-                  var(--gelm-bg-panel);
+      background: radial-gradient(circle at top left, rgba(0, 234, 255, 0.1), transparent), var(--gelm-bg-panel);
       border-radius: 32px;
-      box-shadow:
-        0 0 0 1px rgba(0, 234, 255, 0.25),
-        0 0 60px rgba(0, 0, 0, 0.9),
-        0 0 55px rgba(0, 234, 255, 0.35);
-      padding: 24px 22px 30px;
-      position: relative;
-      overflow: hidden;
+      border: 1px solid rgba(0, 234, 255, 0.3);
+      padding: 24px;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 234, 255, 0.2);
     }
 
-    .agenda-panel::before {
-      content: "";
-      position: absolute;
-      inset: -2px;
-      border-radius: inherit;
-      border: 1px solid rgba(0, 234, 255, 0.22);
-      pointer-events: none;
-      mix-blend-mode: screen;
-    }
-
-    /* HEADER SUPERIOR */
-
+    /* HEADER */
     .agenda-header {
       display: grid;
-      grid-template-columns: 120px 1fr 120px;
-      gap: 16px;
+      grid-template-columns: 100px 1fr 100px;
+      gap: 20px;
       align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .agenda-logo-box {
-      height: 120px;
-      border-radius: 26px;
-      background: radial-gradient(circle at 30% 0%, rgba(0, 255, 200, 0.25), transparent 70%),
-                  #020510;
-      box-shadow: var(--gelm-shadow-strong);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(0, 234, 255, 0.45);
-    }
-
-    .agenda-logo-box img {
-      width: 80px;
-      height: 80px;
-      object-fit: contain;
-      filter: drop-shadow(0 0 10px rgba(0, 255, 220, 0.9));
-    }
-
-    .agenda-title-block {
+      margin-bottom: 30px;
       text-align: center;
     }
+    .logo-box img { width: 80px; filter: drop-shadow(0 0 10px var(--gelm-cyan)); }
+    .agenda-title { color: var(--gelm-cyan-soft); text-transform: uppercase; letter-spacing: 2px; margin: 0; }
+    .agenda-by { color: var(--gelm-cyan); font-weight: bold; margin-top: 5px; font-size: 0.9rem; }
 
-    .agenda-title {
-      font-size: clamp(1.6rem, 2.3vw, 2.1rem);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--gelm-cyan-soft);
-      text-shadow:
-        0 0 10px rgba(0, 234, 255, 0.9),
-        0 0 22px rgba(0, 234, 255, 0.8);
-      margin: 0 0 4px;
-    }
-
-    .agenda-subtitle {
-      font-size: 0.9rem;
-      color: var(--gelm-text-muted);
-      margin: 0;
-    }
-
-    .agenda-by {
-      margin-top: 6px;
-      font-size: 0.8rem;
-      color: var(--gelm-cyan);
-      letter-spacing: 0.18em;
-    }
-
-    /* NAV SUPERIOR */
-
-    .agenda-nav {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .nav-pill {
-      border-radius: 999px;
-      padding: 10px 24px;
-      font-size: 0.9rem;
-      border: 1px solid rgba(0, 234, 255, 0.35);
-      background: radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.3), transparent 55%),
-                  rgba(4, 8, 30, 0.9);
-      color: var(--gelm-text-main);
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 0 18px rgba(0, 0, 0, 0.55);
-      transition: all 0.18s ease-out;
-    }
-
-    .nav-pill span {
-      font-size: 1.05rem;
-    }
-
-    .nav-pill.active {
-      background: linear-gradient(135deg, #00eaff 0%, #00ffc8 40%, #b300ff 100%);
-      color: #020510;
-      box-shadow:
-        0 0 18px rgba(0, 234, 255, 0.9),
-        0 0 30px rgba(179, 0, 255, 0.7);
-      font-weight: 600;
-    }
-
-    .nav-pill.disabled {
-      opacity: 0.45;
-      cursor: default;
-    }
-
-    .nav-pill:not(.active):not(.disabled):hover {
-      transform: translateY(-2px);
-      box-shadow:
-        0 0 16px rgba(0, 234, 255, 0.7),
-        0 8px 30px rgba(0, 0, 0, 0.8);
-      border-color: rgba(0, 255, 200, 0.7);
-    }
-
-    /* RESUMEN SUPERIOR */
-
-    .agenda-summary {
-      margin: 24px 4px 8px;
-      font-size: 0.87rem;
-      color: var(--gelm-text-muted);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px 18px;
-      justify-content: space-between;
-    }
-
-    .agenda-summary strong {
-      color: var(--gelm-cyan-soft);
-    }
-
-    /* FORMULARIO PRINCIPAL */
-
-    .agenda-main {
-      margin-top: 12px;
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr);
-      gap: 18px;
-    }
-
+    /* FORMULARIO */
     .agenda-form-card {
+      background: rgba(255,255,255,0.03);
       border-radius: var(--gelm-radius-xl);
-      background: radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.08), transparent 55%),
-                  radial-gradient(circle at 100% 0%, rgba(179, 0, 255, 0.07), transparent 55%),
-                  rgba(1, 4, 20, 0.96);
-      border: 1px solid rgba(0, 234, 255, 0.35);
-      box-shadow: 0 0 24px rgba(0, 0, 0, 0.9);
-      padding: 18px 18px 16px;
+      border: 1px solid rgba(0, 234, 255, 0.2);
+      padding: 20px;
+      margin-bottom: 25px;
     }
-
-    .agenda-form-title {
-      font-size: 1.1rem;
-      margin: 0 0 12px;
-      color: var(--gelm-cyan-soft);
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+    .full-width { grid-column: 1 / -1; }
+    
+    label { font-size: 0.75rem; color: var(--gelm-cyan); text-transform: uppercase; margin-bottom: 5px; display: block; }
+    input, select, textarea {
+      width: 100%; padding: 10px; border-radius: 12px; border: 1px solid #333;
+      background: #000; color: white; box-sizing: border-box; outline: none;
     }
-
-    .agenda-form-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 10px 14px;
-    }
-
-    .field-full {
-      grid-column: 1 / -1;
-    }
-
-    .field-3 {
-      grid-column: span 3;
-    }
-
-    .field-2 {
-      grid-column: span 2;
-    }
-
-    label {
-      font-size: 0.8rem;
-      color: var(--gelm-text-muted);
-      margin-bottom: 4px;
-      display: block;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 8px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(0, 234, 255, 0.4);
-      background: radial-gradient(circle at 100% 0%, rgba(0, 255, 200, 0.12), transparent 50%),
-                  #020616;
-      color: var(--gelm-text-main);
-      font-size: 0.9rem;
-      outline: none;
-      box-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
-      transition: all 0.17s ease-out;
-    }
-
-    textarea {
-      min-height: 90px;
-      border-radius: 16px;
-      resize: vertical;
-      font-family: inherit;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--gelm-cyan-soft);
-      box-shadow:
-        0 0 15px rgba(0, 234, 255, 0.85),
-        0 0 30px rgba(0, 0, 0, 0.9);
-    }
+    input:focus, textarea:focus { border-color: var(--gelm-cyan); box-shadow: 0 0 10px rgba(0,234,255,0.3); }
 
     /* BOTONES */
-
-    .agenda-actions-row {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .btn,
-    .select-inline {
-      font-size: 0.9rem;
-    }
-
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; align-items: flex-end; }
     .btn {
-      border-radius: 999px;
-      padding: 9px 22px;
-      border: 1px solid rgba(0, 234, 255, 0.4);
-      cursor: pointer;
-      background: linear-gradient(135deg, #00eaff 0%, #00ffc8 40%, #b300ff 100%);
-      color: #020510;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      box-shadow:
-        0 0 16px rgba(0, 234, 255, 0.75),
-        0 10px 28px rgba(0, 0, 0, 0.95);
-      transition: all 0.16s ease-out;
-      white-space: nowrap;
+      padding: 12px 24px; border-radius: 30px; border: none; cursor: pointer;
+      font-weight: bold; text-transform: uppercase; transition: 0.3s;
     }
+    .btn-add { background: linear-gradient(135deg, #00eaff, #00ffc8); color: #000; }
+    .btn-excel { background: #217346; color: white; }
+    .btn-pdf { background: var(--gelm-magenta); color: white; }
 
-    .btn:hover {
-      transform: translateY(-2px) scale(1.01);
-      box-shadow:
-        0 0 22px rgba(0, 234, 255, 0.95),
-        0 14px 32px rgba(0, 0, 0, 1);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, #ff0044 0%, #ff7a3c 100%);
-      border-color: rgba(255, 0, 68, 0.7);
-      color: #fff;
-      box-shadow:
-        0 0 18px rgba(255, 0, 68, 0.8),
-        0 10px 30px rgba(0, 0, 0, 1);
-    }
-
-    .btn-soft {
-      background: radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.25), transparent 55%),
-                  rgba(4, 8, 26, 0.95);
-      color: var(--gelm-text-main);
-      border-color: rgba(0, 234, 255, 0.4);
-      box-shadow: 0 0 16px rgba(0, 0, 0, 0.95);
-    }
-
-    .btn-soft:hover {
-      color: var(--gelm-cyan-soft);
-      border-color: var(--gelm-cyan-soft);
-      box-shadow:
-        0 0 20px rgba(0, 234, 255, 0.8),
-        0 12px 30px rgba(0, 0, 0, 1);
-    }
-
-    .select-inline {
-      min-width: 140px;
-    }
-
-    .select-inline select {
-      border-radius: 999px;
-      padding-inline: 12px;
-    }
-
-    /* TABLA DE ACTIVIDADES */
-
-    .agenda-table-card {
-      margin-top: 18px;
-      border-radius: var(--gelm-radius-xl);
-      padding: 16px 16px 10px;
-      background: radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.07), transparent 55%),
-                  rgba(2, 6, 22, 0.96);
-      border: 1px solid rgba(0, 234, 255, 0.35);
-      box-shadow: 0 0 24px rgba(0, 0, 0, 0.9);
-    }
-
-    .agenda-table-wrapper {
-      max-height: 310px;
-      overflow: auto;
-      border-radius: 16px;
-      border: 1px solid rgba(0, 234, 255, 0.35);
-      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.85);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.86rem;
-    }
-
-    thead {
-      background: linear-gradient(90deg, #00ffc8, #00eaff);
-      color: #020510;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    th,
-    td {
-      padding: 8px 10px;
-    }
-
-    th {
-      font-weight: 700;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    tbody tr:nth-child(even) {
-      background: rgba(0, 255, 200, 0.03);
-    }
-
-    tbody tr:hover {
-      background: rgba(0, 234, 255, 0.18);
-      transition: background 0.14s ease-out;
-    }
-
-    tbody td {
-      border-top: 1px solid rgba(0, 234, 255, 0.18);
-    }
-
-    .agenda-empty {
-      text-align: center;
-      padding: 16px 10px;
-      color: var(--gelm-cyan-soft);
-      font-size: 0.9rem;
-    }
+    /* TABLA */
+    .table-wrapper { overflow-x: auto; background: rgba(0,0,0,0.2); border-radius: 15px; border: 1px solid #222; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: var(--gelm-cyan); color: #000; padding: 12px; text-align: left; font-size: 0.85rem; }
+    td { padding: 12px; border-bottom: 1px solid #222; vertical-align: top; font-size: 0.9rem; }
+    .img-mini { width: 80px; height: 60px; object-fit: cover; border-radius: 8px; border: 1px solid var(--gelm-cyan); cursor: pointer; }
 
     /* FOOTER */
-
     .agenda-footer {
-      margin-top: 18px;
-      text-align: center;
-      font-size: 0.78rem;
-      color: var(--gelm-text-muted);
+      margin-top: 30px; text-align: center; font-size: 0.85rem; color: var(--gelm-text-muted);
+      border-top: 1px solid rgba(0, 234, 255, 0.1); padding-top: 20px;
     }
 
-    .agenda-footer strong {
-      color: var(--gelm-cyan-soft);
-    }
-
-    /* RESPONSIVE */
-
-    @media (max-width: 960px) {
-      .agenda-header {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-      .agenda-logo-box {
-        margin: 0 auto;
-        width: 110px;
-        height: 110px;
-      }
-    }
-
-    @media (max-width: 840px) {
-      .agenda-form-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .field-3 {
-        grid-column: span 2;
-      }
-    }
-
-    @media (max-width: 640px) {
-      .agenda-panel {
-        padding: 18px 14px 22px;
-      }
-      .agenda-form-grid {
-        grid-template-columns: 1fr;
-      }
-      .field-2,
-      .field-3,
-      .field-full {
-        grid-column: 1 / -1;
-      }
-      .agenda-actions-row {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .agenda-actions-row .btn,
-      .agenda-actions-row .select-inline {
-        width: 100%;
-        justify-content: center;
-        text-align: center;
-      }
-      .agenda-summary {
-        flex-direction: column;
-        gap: 4px;
-      }
+    /* MODO IMPRESIÓN / PDF */
+    @media print {
+      body { background: white !important; color: black !important; }
+      .agenda-form-card, .btn, #filtroMes, label[for="filtroMes"] { display: none !important; }
+      .agenda-panel { border: none !important; box-shadow: none !important; width: 100% !important; }
+      th { background: #eee !important; color: black !important; border: 1px solid #000 !important; }
+      td { border: 1px solid #ddd !important; color: black !important; }
+      .img-mini { width: 150px !important; height: auto !important; }
     }
   </style>
 </head>
-
 <body>
+
 <div class="agenda-shell">
   <div class="agenda-panel">
-
-    <!-- HEADER SUPERIOR -->
+    
     <header class="agenda-header">
-      <div class="agenda-logo-box">
-        <img src="icons/icon-192.png" alt="GELM logo">
+      <div class="logo-box"><img src="icons/icon-192.png" alt="logo"></div>
+      <div>
+        <h1 class="agenda-title">BITÁCORA DE TRANSPORTES 2026</h1>
+        <div class="agenda-by">PMT CHIMALTENANGO — UNIDAD DE TRANSPORTES</div>
       </div>
-
-      <div class="agenda-title-block">
-        <h1 class="agenda-title">TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
-        <p class="agenda-subtitle">
-          Unidad de Transportes — Subcomisario / Jefe de Transportes<br>
-          Sistema de agenda, operativos, denuncias y control de servicios
-        </p>
-        <div class="agenda-by">== BY GELM ==</div>
-      </div>
-
-      <div class="agenda-logo-box">
-        <img src="icons/icon-192.png" alt="GELM logo espejado">
-      </div>
+      <div class="logo-box"><img src="icons/icon-192.png" alt="logo"></div>
     </header>
 
-    <!-- NAVEGACIÓN SUPERIOR -->
-    <nav class="agenda-nav">
-      <a href="agen2026.html" class="nav-pill active"><span>Agenda 2026</span></a>
-      <button class="nav-pill disabled" type="button"><span>Operativos</span></button>
-      <button class="nav-pill disabled" type="button"><span>Denuncias</span></button>
-      <a href="https://gelm2mil.github.io/gelm/" class="nav-pill"><span>Buscar</span></a>
-      <button class="nav-pill disabled" type="button"><span>Respaldos</span></button>
-    </nav>
-
-    <!-- RESUMEN MES -->
-    <section class="agenda-summary">
-      <div>
-        Mostrando <strong id="resumenVisible">0</strong> de
-        <strong id="resumenTotal">0</strong> actividades para
-        <strong id="resumenMes">Enero</strong>.
+    <section class="agenda-form-card">
+      <div class="grid">
+        <div>
+          <label>Fecha de Actividad</label>
+          <input type="date" id="fecha">
+        </div>
+        <div>
+          <label>Categoría</label>
+          <select id="categoria">
+            <option value="Operativo">Operativo</option>
+            <option value="Supervisión">Supervisión</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+          </select>
+        </div>
+        <div>
+          <label>Lugar / Ruta</label>
+          <input type="text" id="lugar" placeholder="Ej. Ruta Interamericana">
+        </div>
+        <div class="full-width">
+          <label>Detalle Técnico de la Actividad</label>
+          <textarea id="detalle" rows="3" placeholder="Escriba el reporte detallado aquí..."></textarea>
+        </div>
+        <div class="full-width">
+          <label>Evidencia Fotográfica (Se comprime automáticamente)</label>
+          <input type="file" id="foto" accept="image/*" capture="environment">
+          <div id="previewContainer" style="margin-top:10px; display:none;">
+            <img id="imgPreview" src="" style="width:120px; border-radius:10px; border: 2px solid var(--gelm-cyan);">
+          </div>
+        </div>
       </div>
-      <div id="ultimaActualizacion"></div>
+
+      <div class="actions">
+        <button class="btn btn-add" id="btnAgregar">Guardar en Bitácora</button>
+        
+        <div style="margin-left: auto; display: flex; gap: 10px; align-items: center;">
+          <label for="filtroMes" style="margin:0;">Ver Mes:</label>
+          <select id="filtroMes" style="width: 130px;">
+            <option value="0">Todo el Año</option>
+            <option value="1">Enero</option><option value="2">Febrero</option>
+            <option value="3">Marzo</option><option value="4">Abril</option>
+            <option value="5">Mayo</option><option value="6">Junio</option>
+            <option value="7">Julio</option><option value="8">Agosto</option>
+            <option value="9">Septiembre</option><option value="10">Octubre</option>
+            <option value="11">Noviembre</option><option value="12">Diciembre</option>
+          </select>
+          <button class="btn btn-excel" onclick="exportarExcel()">Excel</button>
+          <button class="btn btn-pdf" onclick="window.print()">Generar PDF</button>
+        </div>
+      </div>
     </section>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <main class="agenda-main">
-      <!-- FORMULARIO -->
-      <section class="agenda-form-card">
-        <h2 class="agenda-form-title">Agenda mensual 2026</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 100px;">Fecha</th>
+            <th style="width: 120px;">Categoría</th>
+            <th style="width: 150px;">Lugar</th>
+            <th>Detalle</th>
+            <th style="width: 100px;">Evidencia</th>
+          </tr>
+        </thead>
+        <tbody id="tbodyAgenda"></tbody>
+      </table>
+    </div>
 
-        <div class="agenda-form-grid">
-          <div class="field-2">
-            <label for="fecha">Fecha</label>
-            <input type="date" id="fecha">
-          </div>
-
-          <div class="field-2">
-            <label for="categoria">Categoría</label>
-            <select id="categoria">
-              <option value="Operativo">Operativo</option>
-              <option value="Supervisión">Supervisión</option>
-              <option value="Revisión">Revisión</option>
-              <option value="Capacitación">Capacitación</option>
-              <option value="Administrativo">Administrativo</option>
-              <option value="Reunión">Reunión</option>
-            </select>
-          </div>
-
-          <div>
-            <label for="servicio">Servicio (opcional)</label>
-            <select id="servicio">
-              <option value="">(Opcional)</option>
-              <option value="Turno ordinario">Turno ordinario</option>
-              <option value="Turno extraordinario">Turno extraordinario</option>
-              <option value="Apoyo operativo">Apoyo operativo</option>
-              <option value="Operativo conjunto">Operativo conjunto</option>
-            </select>
-          </div>
-
-          <div class="field-3">
-            <label for="lugar">Lugar / ruta</label>
-            <input
-              type="text"
-              id="lugar"
-              placeholder="Casco urbano, Interamericana, colonias, etc.">
-          </div>
-
-          <div class="field-full">
-            <label for="detalle">Detalle de la actividad</label>
-            <textarea
-              id="detalle"
-              placeholder="Objetivo del operativo, revisión, seguimiento, etc."></textarea>
-          </div>
-        </div>
-
-        <div class="agenda-actions-row">
-          <button class="btn" type="button" id="btnAgregar">Agregar a la agenda</button>
-
-          <div class="select-inline">
-            <label for="filtroMes">Ver mes</label>
-            <select id="filtroMes">
-              <option value="0">Todos</option>
-              <option value="1">Enero</option>
-              <option value="2">Febrero</option>
-              <option value="3">Marzo</option>
-              <option value="4">Abril</option>
-              <option value="5">Mayo</option>
-              <option value="6">Junio</option>
-              <option value="7">Julio</option>
-              <option value="8">Agosto</option>
-              <option value="9">Septiembre</option>
-              <option value="10">Octubre</option>
-              <option value="11">Noviembre</option>
-              <option value="12">Diciembre</option>
-            </select>
-          </div>
-
-          <button class="btn btn-soft" type="button" id="btnExcel">
-            Descargar agenda en Excel
-          </button>
-
-          <button class="btn btn-danger" type="button" id="btnBorrarTodo">
-            Borrar todo (año 2026)
-          </button>
-        </div>
-      </section>
-
-      <!-- TABLA -->
-      <section class="agenda-table-card">
-        <div class="agenda-table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Categoría</th>
-                <th>Servicio</th>
-                <th>Lugar / ruta</th>
-                <th>Detalle</th>
-              </tr>
-            </thead>
-            <tbody id="tbodyAgenda">
-              <!-- Renglones dinámicos -->
-            </tbody>
-          </table>
-
-          <div id="estadoVacio" class="agenda-empty">
-            No hay actividades para este mes.
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <!-- FOOTER -->
     <footer class="agenda-footer">
-      2026 | <strong>BY GELM</strong> | Unidad de Transportes PMT — Chimaltenango<br>
-      <span id="fechaActual"></span>
+      2026 | <strong>UNIDAD DE TRANSPORTES PMT</strong> | Chimaltenango, Guatemala<br>
+      <div style="margin-top:8px; color:var(--gelm-cyan); letter-spacing: 2px; font-weight: bold;">== BY GELM ==</div>
+      <small id="fechaActual" style="display:block; margin-top:10px;"></small>
     </footer>
+
   </div>
 </div>
 
 <script>
-  // ============================
-  // LÓGICA DE AGENDA 2026 (PRO)
-  // ============================
+  const STORAGE_KEY = "bitacora_transportes_2026";
+  let actividades = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  let fotoBase64 = "";
 
-  const STORAGE_KEY = "agenda_2026_gelm";
-
-  const fechaInput   = document.getElementById("fecha");
-  const categoriaSel = document.getElementById("categoria");
-  const servicioSel  = document.getElementById("servicio");
-  const lugarInput   = document.getElementById("lugar");
-  const detalleTxt   = document.getElementById("detalle");
-
-  const filtroMes    = document.getElementById("filtroMes");
-  const tbodyAgenda  = document.getElementById("tbodyAgenda");
-  const estadoVacio  = document.getElementById("estadoVacio");
-
-  const resumenVisible = document.getElementById("resumenVisible");
-  const resumenTotal   = document.getElementById("resumenTotal");
-  const resumenMes     = document.getElementById("resumenMes");
-  const ultimaActualizacion = document.getElementById("ultimaActualizacion");
-  const fechaActualLbl = document.getElementById("fechaActual");
-
-  const btnAgregar    = document.getElementById("btnAgregar");
-  const btnExcel      = document.getElementById("btnExcel");
-  const btnBorrarTodo = document.getElementById("btnBorrarTodo");
-
-  let actividades = [];
-
-  function cargarDesdeStorage() {
-    try {
-      const data = localStorage.getItem(STORAGE_KEY);
-      actividades = data ? JSON.parse(data) : [];
-    } catch (e) {
-      actividades = [];
+  // 1. Manejo y Compresión de Fotos
+  document.getElementById("foto").addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 800; 
+          const scaleSize = MAX_WIDTH / img.width;
+          canvas.width = MAX_WIDTH;
+          canvas.height = img.height * scaleSize;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          fotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          document.getElementById("imgPreview").src = fotoBase64;
+          document.getElementById("previewContainer").style.display = "block";
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  });
 
-  function guardarEnStorage() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(actividades));
-    actualizarResumen();
-  }
-
-  function formatearFechaISO(fechaStr) {
-    if (!fechaStr) return "";
-    const [year, month, day] = fechaStr.split("-");
-    return `${day}/${month}/${year}`;
-  }
-
-  function obtenerMesNumero(fechaStr) {
-    if (!fechaStr) return 0;
-    const [, month] = fechaStr.split("-");
-    return parseInt(month, 10) || 0;
-  }
-
-  function nombreMes(num) {
-    const nombres = [
-      "Todos",
-      "Enero","Febrero","Marzo","Abril","Mayo","Junio",
-      "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
-    ];
-    return nombres[num] || "Todos";
-  }
-
+  // 2. Renderizar Tabla
   function renderTabla() {
-    tbodyAgenda.innerHTML = "";
+    const tbody = document.getElementById("tbodyAgenda");
+    const mesFiltro = parseInt(document.getElementById("filtroMes").value);
+    tbody.innerHTML = "";
 
-    const mesSeleccionado = parseInt(filtroMes.value, 10);
-    const filtradas = actividades.filter(act => {
-      if (!act.fecha) return false;
-      const mes = obtenerMesNumero(act.fecha);
-      return mesSeleccionado === 0 || mes === mesSeleccionado;
+    const filtradas = actividades.filter(a => {
+      if (mesFiltro === 0) return true;
+      const fechaObj = new Date(a.fecha + "T00:00:00");
+      return (fechaObj.getMonth() + 1) === mesFiltro;
+    }).sort((a,b) => new Date(a.fecha) - new Date(b.fecha));
+
+    filtradas.forEach(act => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${act.fecha.split('-').reverse().join('/')}</td>
+        <td><strong>${act.categoria}</strong></td>
+        <td>${act.lugar}</td>
+        <td style="white-space: pre-wrap;">${act.detalle}</td>
+        <td>${act.foto ? `<img src="${act.foto}" class="img-mini" onclick="verFoto('${act.foto}')">` : '---'}</td>
+      `;
+      tbody.appendChild(tr);
     });
-
-    resumenTotal.textContent   = actividades.length;
-    resumenVisible.textContent = filtradas.length;
-    resumenMes.textContent     = nombreMes(mesSeleccionado);
-
-    if (filtradas.length === 0) {
-      estadoVacio.style.display = "block";
-      return;
-    }
-    estadoVacio.style.display = "none";
-
-    filtradas
-      .sort((a, b) => a.fecha.localeCompare(b.fecha))
-      .forEach(act => {
-        const tr = document.createElement("tr");
-
-        const tdFecha = document.createElement("td");
-        tdFecha.textContent = formatearFechaISO(act.fecha);
-
-        const tdCat = document.createElement("td");
-        tdCat.textContent = act.categoria || "-";
-
-        const tdServ = document.createElement("td");
-        tdServ.textContent = act.servicio || "-";
-
-        const tdLugar = document.createElement("td");
-        tdLugar.textContent = act.lugar || "-";
-
-        const tdDet = document.createElement("td");
-        tdDet.textContent = act.detalle || "-";
-
-        tr.appendChild(tdFecha);
-        tr.appendChild(tdCat);
-        tr.appendChild(tdServ);
-        tr.appendChild(tdLugar);
-        tr.appendChild(tdDet);
-
-        tbodyAgenda.appendChild(tr);
-      });
   }
 
-  function actualizarResumen() {
-    // Solo actualizamos la fecha/hora de última modificación
-    const ahora = new Date();
-    const opciones = {
-      day: "2-digit", month: "long", year: "numeric",
-      hour: "2-digit", minute: "2-digit"
-    };
-    ultimaActualizacion.textContent =
-      "Última actualización: " + ahora.toLocaleString("es-GT", opciones);
-  }
+  // 3. Guardar Actividad
+  document.getElementById("btnAgregar").onclick = () => {
+    const fecha = document.getElementById("fecha").value;
+    const categoria = document.getElementById("categoria").value;
+    const lugar = document.getElementById("lugar").value;
+    const detalle = document.getElementById("detalle").value;
 
-  function setFechaActualFooter() {
-    const hoy = new Date();
-    const opciones = {
-      day: "2-digit", month: "long", year: "numeric"
-    };
-    fechaActualLbl.textContent =
-      "Fecha actual: " + hoy.toLocaleDateString("es-GT", opciones);
-  }
+    if(!fecha || !detalle) return alert("Error: Debe ingresar al menos la fecha y el detalle.");
 
-  function agregarActividad() {
-    const fecha = fechaInput.value;
-    const categoria = categoriaSel.value;
-    const servicio = servicioSel.value;
-    const lugar = lugarInput.value.trim();
-    const detalle = detalleTxt.value.trim();
-
-    if (!fecha || !categoria || !detalle) {
-      alert("Por favor completa al menos la fecha, categoría y el detalle.");
-      return;
-    }
-
-    actividades.push({
-      fecha, categoria, servicio, lugar, detalle
-    });
-
-    guardarEnStorage();
+    actividades.push({ fecha, categoria, lugar, detalle, foto: fotoBase64 });
+    
+    // Guardar y Limpiar
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(actividades));
+    fotoBase64 = "";
+    document.getElementById("foto").value = "";
+    document.getElementById("detalle").value = "";
+    document.getElementById("previewContainer").style.display = "none";
+    
     renderTabla();
+    alert("Actividad guardada correctamente.");
+  };
 
-    // Limpieza ligera pero manteniendo el mes seleccionado
-    detalleTxt.value = "";
-    // No borramos fecha / lugar por si quieres agregar varias parecidas
-  }
-
-  function borrarTodo() {
-    if (!confirm("¿Seguro que deseas borrar TODA la agenda del año 2026?")) return;
-    actividades = [];
-    guardarEnStorage();
-    renderTabla();
-  }
-
+  // 4. Excel (Sin fotos, solo texto)
   function exportarExcel() {
-    if (actividades.length === 0) {
-      alert("No hay actividades para exportar.");
-      return;
-    }
+    if(actividades.length === 0) return alert("No hay datos para exportar.");
+    const mes = document.getElementById("filtroMes").value;
+    
+    const data = actividades
+      .filter(a => mes == 0 || (new Date(a.fecha + "T00:00:00").getMonth() + 1) == mes)
+      .map(a => ({
+        Fecha: a.fecha,
+        Categoria: a.categoria,
+        Lugar: a.lugar,
+        Reporte: a.detalle,
+        Evidencia: a.foto ? "SI" : "NO"
+      }));
 
-    const cabeceras = [
-      ["Fecha", "Categoría", "Servicio", "Lugar / ruta", "Detalle"]
-    ];
-
-    const datos = actividades
-      .sort((a, b) => a.fecha.localeCompare(b.fecha))
-      .map(act => [
-        formatearFechaISO(act.fecha),
-        act.categoria || "",
-        act.servicio  || "",
-        act.lugar     || "",
-        act.detalle   || ""
-      ]);
-
-    const hoja = XLSX.utils.aoa_to_sheet([...cabeceras, ...datos]);
-    const libro = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(libro, hoja, "Agenda 2026");
-
-    XLSX.writeFile(libro, "AGENDA_2026_PMT_CHIMALTENANGO.xlsx");
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Bitacora 2026");
+    XLSX.writeFile(wb, `BITACORA_GELM_MES_${mes}.xlsx`);
   }
 
-  // EVENTOS
-  btnAgregar.addEventListener("click", agregarActividad);
-  btnBorrarTodo.addEventListener("click", borrarTodo);
-  btnExcel.addEventListener("click", exportarExcel);
-  filtroMes.addEventListener("change", renderTabla);
+  function verFoto(src) {
+    const nuevaVentana = window.open("");
+    nuevaVentana.document.write(`<img src="${src}" style="width:100%;">`);
+  }
 
-  // INICIALIZACIÓN
-  cargarDesdeStorage();
-  setFechaActualFooter();
-  actualizarResumen();
+  // Fecha en footer
+  const hoy = new Date();
+  document.getElementById("fechaActual").innerText = "Documento generado el: " + hoy.toLocaleDateString();
+
+  document.getElementById("filtroMes").onchange = renderTabla;
   renderTabla();
 </script>
+
 </body>
 </html>
