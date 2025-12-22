@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>SISTEMA DE GELM 2026</title>
 
-    <!-- 🔹 PWA / APP REAL -->
     <meta name="theme-color" content="#00eaff">
     <meta name="background-color" content="#000000">
     <meta name="mobile-web-app-capable" content="yes">
@@ -13,17 +12,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="GELM 2026">
 
-    <!-- Iconos -->
     <link rel="apple-touch-icon" href="icons/icon-512.png">
     <link rel="icon" type="image/png" href="icons/icon-192.png">
-
-    <!-- Manifest PWA -->
     <link rel="manifest" href="manifest.webmanifest">
-
-    <!-- Estilos -->
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Service Worker -->
     <script>
     if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("service-worker.js");
@@ -31,7 +24,6 @@
     </script>
 
     <style>
-        /* BOTÓN VOLVER */
         #btnVolver {
             display: none;
             position: fixed;
@@ -47,17 +39,18 @@
             box-shadow: 0 0 10px #00ffcc;
             cursor: pointer;
         }
+        /* Estilo para resaltar el nuevo botón de Consignaciones */
+        .card-consignacion {
+            border: 1px solid var(--gelm-magenta) !important;
+            background: rgba(179, 0, 255, 0.1) !important;
+        }
     </style>
-
 </head>
 <body>
 
-    <!-- BOTÓN VOLVER -->
-    <button id="btnVolver" onclick="cerrarModulo()">⬅ Volver</button>
+    <button id="btnVolver" onclick="cerrarModulo()">⬅ Volver al Menú</button>
 
-    <!-- ENCABEZADO -->
     <header class="home-top-bar">
-
         <div class="home-logo-left">
             <img src="icons/YO.png" alt="Logo Izquierdo">
         </div>
@@ -71,104 +64,74 @@
         <div class="home-logo-right">
             <img src="icons/YO.png" alt="Logo Derecho">
         </div>
-
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <main class="home-main">
-
-        <!-- MENÚ -->
         <section class="home-menu-section">
             <div class="home-menu-grid">
 
-                <!-- Agenda -->
                 <a class="home-card" onclick="cargarModulo('agen2026.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/agenda.jpg" alt="Agenda 2026">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/agenda.jpg" alt="Agenda"></div>
                     <div class="home-card-text">Agenda 2026</div>
                 </a>
 
-                <!-- Operativos -->
                 <a class="home-card" onclick="cargarModulo('operativos.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/operativos.jpg" alt="Operativos">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/operativos.jpg" alt="Operativos"></div>
                     <div class="home-card-text">Operativos</div>
                 </a>
 
-                <!-- Denuncias -->
                 <a class="home-card" onclick="cargarModulo('denuncias.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/denuncias.jpg" alt="Denuncias">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/denuncias.jpg" alt="Denuncias"></div>
                     <div class="home-card-text">Denuncias</div>
                 </a>
 
-                <!-- 🔵 Registro Transportes (RESTABLECIDO) -->
+                <a class="home-card card-consignacion" onclick="cargarModulo('consignacion.html')">
+                    <div class="home-card-icon"><img src="icons/agenda.jpg" style="filter: hue-rotate(280deg);" alt="Consignaciones"></div>
+                    <div class="home-card-text" style="color: #ff00ff; font-weight: bold;">Consignaciones</div>
+                </a>
+
                 <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/gelm/')">
-                    <div class="home-card-icon">
-                        <img src="icons/buscar.jpg" alt="Registro Transportes">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/buscar.jpg" alt="Registro"></div>
                     <div class="home-card-text">Registro Transportes</div>
                 </a>
 
-                <!-- Buscar Multas -->
                 <a class="home-card" onclick="cargarModulo('https://gelm2mil.github.io/buscador/')">
-                    <div class="home-card-icon">
-                        <img src="icons/buscar.jpg" alt="Buscar Multas">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/buscar.jpg" alt="Multas"></div>
                     <div class="home-card-text">Buscar Multas</div>
                 </a>
 
-                <!-- Respaldos -->
                 <a class="home-card" onclick="cargarModulo('respaldo.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/respaldo.jpg" alt="Respaldos">
-                    </div>
+                    <div class="home-card-icon"><img src="icons/respaldo.jpg" alt="Respaldos"></div>
                     <div class="home-card-text">Respaldos</div>
-                </a>
-
-                <!-- Configuración -->
-                <a class="home-card" onclick="cargarModulo('confia.html')">
-                    <div class="home-card-icon">
-                        <img src="icons/configuracion.png" alt="Configuración">
-                    </div>
-                    <div class="home-card-text">Configuración</div>
                 </a>
 
             </div>
         </section>
 
-        <!-- SPA (iFrame) -->
         <section id="moduloSPA" class="home-module-zone">
             <iframe id="iframeSPA" title="Módulos GELM"></iframe>
         </section>
 
-        <!-- FOOTER -->
         <footer class="home-footer">
             © 2026 — BY GELM — PMT Chimaltenango
         </footer>
-
     </main>
 
-    <!-- LÓGICA SPA -->
     <script>
     function cargarModulo(url) {
-        const zona    = document.getElementById("moduloSPA");
-        const iframe  = document.getElementById("iframeSPA");
+        const zona = document.getElementById("moduloSPA");
+        const iframe = document.getElementById("iframeSPA");
         const btnBack = document.getElementById("btnVolver");
 
         zona.classList.add("activo");
         iframe.src = url;
         btnBack.style.display = "block";
-
         window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function cerrarModulo() {
-        const zona    = document.getElementById("moduloSPA");
-        const iframe  = document.getElementById("iframeSPA");
+        const zona = document.getElementById("moduloSPA");
+        const iframe = document.getElementById("iframeSPA");
         const btnBack = document.getElementById("btnVolver");
 
         iframe.src = "about:blank";
@@ -176,6 +139,5 @@
         btnBack.style.display = "none";
     }
     </script>
-
 </body>
 </html>
