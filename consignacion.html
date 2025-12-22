@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOJA DE CONSIGNACIÓN — PMT</title>
+    <style>
+        :root { --cyan: #00eaff; --bg: #020510; --card: rgba(255,255,255,0.05); }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 15px; }
+        .form-container { max-width: 800px; margin: auto; background: var(--card); border: 1px solid var(--cyan); border-radius: 20px; padding: 20px; }
+        h2 { color: var(--cyan); text-align: center; text-transform: uppercase; border-bottom: 1px solid var(--cyan); padding-bottom: 10px; }
+        .section-title { background: var(--cyan); color: black; padding: 5px 10px; font-weight: bold; margin-top: 20px; border-radius: 5px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        label { font-size: 0.8rem; display: block; margin-bottom: 3px; color: var(--cyan); }
+        input, select, textarea { width: 100%; padding: 8px; background: black; border: 1px solid #333; color: white; border-radius: 5px; box-sizing: border-box; }
+        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.8rem; }
+        .btn-save { background: var(--cyan); color: black; border: none; padding: 15px; width: 100%; border-radius: 30px; font-weight: bold; margin-top: 25px; cursor: pointer; }
+        @media print { .btn-save, input[type="file"] { display: none; } }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Hoja de Consignación</h2>
+    <p style="text-align: center; font-size: 0.8rem;">Juez de asuntos Municipales y de Tránsito</p>
+
+    <div class="grid">
+        <div><label>Fecha</label><input type="date" id="c_fecha"></div>
+        <div><label>Placas</label><input type="text" id="c_placas"></div>
+    </div>
+
+    <div class="section-title">Características del Vehículo</div>
+    <div class="grid">
+        <input type="text" id="c_marca" placeholder="Marca">
+        <input type="text" id="c_tipo" placeholder="Tipo">
+        <input type="text" id="c_color" placeholder="Color">
+        <input type="text" id="c_nit" placeholder="NIT">
+    </div>
+
+    <div class="section-title">Accesorios (Marque lo que presente)</div>
+    <div class="checkbox-group" style="margin-top:10px;">
+        <label><input type="checkbox" class="acc"> ¿Total, llantas?</label>
+        <label><input type="checkbox" class="acc"> ¿Radio?</label>
+        <label><input type="checkbox" class="acc"> ¿Antena?</label>
+        <label><input type="checkbox" class="acc"> ¿Vidrios?</label>
+        <label><input type="checkbox" class="acc"> ¿Herramienta?</label>
+        <label><input type="checkbox" class="acc"> ¿Placas?</label>
+    </div>
+
+    <div class="section-title">Datos de Consignación</div>
+    <div class="grid">
+        <input type="text" id="c_lugar" placeholder="Lugar de consignación">
+        <input type="text" id="c_motivo" placeholder="Motivo">
+        <input type="time" id="c_hora" placeholder="Hora">
+        <input type="text" id="c_boleta" placeholder="Boleta de infracción">
+    </div>
+
+    <div class="section-title">Evidencia de Daños</div>
+    <textarea id="c_danos" rows="3" placeholder="Describa daños a simple vista..." style="margin-top:10px;"></textarea>
+    <label style="margin-top:10px;">Fotografía de Prueba</label>
+    <input type="file" id="c_foto" accept="image/*">
+
+    <button class="btn-save" onclick="guardarConsignacion()">GUARDAR Y GENERAR REPORTE</button>
+</div>
+
+<script>
+    function guardarConsignacion() {
+        const data = {
+            fecha: document.getElementById('c_fecha').value,
+            placas: document.getElementById('c_placas').value,
+            lugar: document.getElementById('c_lugar').value,
+            tipo: "Consignación"
+        };
+        
+        let existentes = JSON.parse(localStorage.getItem('respaldo_total_gelm')) || [];
+        existentes.push(data);
+        localStorage.setItem('respaldo_total_gelm', JSON.stringify(existentes));
+        
+        alert("Consignación guardada. Ahora aparecerá en Respaldos.");
+        window.print();
+    }
+</script>
+</body>
+</html>
