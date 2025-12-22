@@ -1,84 +1,257 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOJA DE CONSIGNACIÓN — PMT</title>
-    <style>
-        :root { --cyan: #00eaff; --bg: #020510; --card: rgba(255,255,255,0.05); }
-        body { background: var(--bg); color: white; font-family: sans-serif; padding: 15px; }
-        .form-container { max-width: 800px; margin: auto; background: var(--card); border: 1px solid var(--cyan); border-radius: 20px; padding: 20px; }
-        h2 { color: var(--cyan); text-align: center; text-transform: uppercase; border-bottom: 1px solid var(--cyan); padding-bottom: 10px; }
-        .section-title { background: var(--cyan); color: black; padding: 5px 10px; font-weight: bold; margin-top: 20px; border-radius: 5px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        label { font-size: 0.8rem; display: block; margin-bottom: 3px; color: var(--cyan); }
-        input, select, textarea { width: 100%; padding: 8px; background: black; border: 1px solid #333; color: white; border-radius: 5px; box-sizing: border-box; }
-        .checkbox-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 0.8rem; }
-        .btn-save { background: var(--cyan); color: black; border: none; padding: 15px; width: 100%; border-radius: 30px; font-weight: bold; margin-top: 25px; cursor: pointer; }
-        @media print { .btn-save, input[type="file"] { display: none; } }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONSIGNACIONES — PMT TRANSPORTES</title>
+  <style>
+    :root {
+      --pmt-cyan: #00eaff;
+      --pmt-bg: #020510;
+      --pmt-card: rgba(10, 20, 40, 0.95);
+    }
+
+    body {
+      background: var(--pmt-bg);
+      color: #e0f7ff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 10px;
+    }
+
+    /* ESTILOS PARA EL FORMULARIO EN MÓVIL */
+    .container { max-width: 900px; margin: auto; }
+    
+    .card {
+      background: var(--pmt-card);
+      border: 1px solid rgba(0, 234, 255, 0.3);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    h2 { color: var(--pmt-cyan); border-bottom: 2px solid var(--pmt-cyan); padding-bottom: 10px; text-transform: uppercase; font-size: 1.2rem; }
+    h3 { font-size: 0.9rem; color: #7fffd4; margin-top: 20px; text-transform: uppercase; }
+
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .full { grid-column: 1 / -1; }
+
+    label { display: block; font-size: 0.75rem; margin-bottom: 5px; color: var(--pmt-cyan); }
+    input, select, textarea {
+      width: 100%; padding: 12px; background: #000; border: 1px solid #222;
+      color: white; border-radius: 10px; box-sizing: border-box; font-size: 1rem;
+    }
+
+    /* INVENTARIO MULTICOLUMNA */
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      background: rgba(255,255,255,0.05);
+      padding: 10px;
+      border-radius: 10px;
+    }
+    .inventory-grid label {
+      color: white; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;
+    }
+    .inventory-grid input[type="checkbox"] { width: 18px; height: 18px; }
+
+    /* BOTONES */
+    .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+    .btn {
+      flex: 1; padding: 15px; border-radius: 30px; border: none; font-weight: bold;
+      text-transform: uppercase; cursor: pointer; transition: 0.3s;
+    }
+    .btn-save { background: linear-gradient(135deg, #00eaff, #00ffc8); color: #000; }
+    .btn-print { background: #b300ff; color: #fff; }
+
+    /* TABLA DE PENDIENTES */
+    .table-wrapper { overflow-x: auto; margin-top: 30px; }
+    table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.3); font-size: 0.8rem; }
+    th { background: #111; color: var(--pmt-cyan); padding: 10px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #222; }
+
+    /* VISTA DE IMPRESIÓN (MEMBRETE) */
+    #printArea { display: none; }
+    
+    @media print {
+      body * { display: none; }
+      #printArea { display: block; color: black; background: white; padding: 0; }
+      .membrete-img { width: 100%; margin-bottom: 10px; }
+      .print-content { padding: 20px; border: 2px solid black; }
+      .print-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+      h1 { font-size: 18px; text-align: center; text-decoration: underline; }
+      .foto-print { width: 300px; border: 1px solid #000; margin-top: 10px; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="form-container">
-    <h2>Hoja de Consignación</h2>
-    <p style="text-align: center; font-size: 0.8rem;">Juez de asuntos Municipales y de Tránsito</p>
-
+<div class="container">
+  <div class="card">
+    <h2>Nueva Consignación</h2>
+    
     <div class="grid">
-        <div><label>Fecha</label><input type="date" id="c_fecha"></div>
-        <div><label>Placas</label><input type="text" id="c_placas"></div>
+      <div><label>Fecha</label><input type="date" id="fecha"></div>
+      <div><label>Hora</label><input type="time" id="hora"></div>
+      <div class="full"><label>Nombre del Conductor</label><input type="text" id="conductor" placeholder="Nombre completo"></div>
+      <div><label>Placas</label><input type="text" id="placas" placeholder="P-000XXX"></div>
+      <div><label>Licencia</label><input type="text" id="licencia" placeholder="No. de Licencia"></div>
+      <div><label>Marca</label><input type="text" id="marca"></div>
+      <div><label>Color</label><input type="text" id="color"></div>
     </div>
 
-    <div class="section-title">Características del Vehículo</div>
+    <h3>Inventario de Accesorios</h3>
+    <div class="inventory-grid">
+      <label><input type="checkbox" class="acc" value="Radio"> Radio / Pantalla</label>
+      <label><input type="checkbox" class="acc" value="Bocinas"> Bocinas</label>
+      <label><input type="checkbox" class="acc" value="Alfombras"> Alfombras</label>
+      <label><input type="checkbox" class="acc" value="Llanta Repuesto"> Llanta Repuesto</label>
+      <label><input type="checkbox" class="acc" value="Tricket"> Tricket/Llave</label>
+      <label><input type="checkbox" class="acc" value="Herramientas"> Herramientas</label>
+      <label><input type="checkbox" class="acc" value="Antena"> Antena</label>
+      <label><input type="checkbox" class="acc" value="Encendedor"> Encendedor</label>
+      <label><input type="checkbox" class="acc" value="Espejos"> Espejos Int/Ext</label>
+      <label><input type="checkbox" class="acc" value="Tapaderas"> Tapaderas/Copas</label>
+    </div>
+
+    <h3>Autoridad y Motivo</h3>
     <div class="grid">
-        <input type="text" id="c_marca" placeholder="Marca">
-        <input type="text" id="c_tipo" placeholder="Tipo">
-        <input type="text" id="c_color" placeholder="Color">
-        <input type="text" id="c_nit" placeholder="NIT">
+      <div class="full"><label>Lugar de Consignación</label><input type="text" id="lugar"></div>
+      <div class="full"><label>Motivo de Consignación</label><textarea id="motivo" rows="2"></textarea></div>
+      <div><label>Agente que Consigna</label><input type="text" id="agente" placeholder="Nombre del Agente"></div>
+      <div><label>No. de Chapa</label><input type="text" id="chapa"></div>
+      <div class="full"><label>Foto de Evidencia (Daños)</label><input type="file" id="fotoInput" accept="image/*"></div>
     </div>
 
-    <div class="section-title">Accesorios (Marque lo que presente)</div>
-    <div class="checkbox-group" style="margin-top:10px;">
-        <label><input type="checkbox" class="acc"> ¿Total, llantas?</label>
-        <label><input type="checkbox" class="acc"> ¿Radio?</label>
-        <label><input type="checkbox" class="acc"> ¿Antena?</label>
-        <label><input type="checkbox" class="acc"> ¿Vidrios?</label>
-        <label><input type="checkbox" class="acc"> ¿Herramienta?</label>
-        <label><input type="checkbox" class="acc"> ¿Placas?</label>
+    <div class="btn-group">
+      <button class="btn btn-save" onclick="guardarDato()">💾 Guardar en Memoria</button>
     </div>
+  </div>
 
-    <div class="section-title">Datos de Consignación</div>
-    <div class="grid">
-        <input type="text" id="c_lugar" placeholder="Lugar de consignación">
-        <input type="text" id="c_motivo" placeholder="Motivo">
-        <input type="time" id="c_hora" placeholder="Hora">
-        <input type="text" id="c_boleta" placeholder="Boleta de infracción">
+  <div class="card">
+    <h2>Pendientes para Imprimir</h2>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha/Hora</th>
+            <th>Placas</th>
+            <th>Conductor</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="listaConsignaciones"></tbody>
+      </table>
     </div>
+  </div>
+</div>
 
-    <div class="section-title">Evidencia de Daños</div>
-    <textarea id="c_danos" rows="3" placeholder="Describa daños a simple vista..." style="margin-top:10px;"></textarea>
-    <label style="margin-top:10px;">Fotografía de Prueba</label>
-    <input type="file" id="c_foto" accept="image/*">
-
-    <button class="btn-save" onclick="guardarConsignacion()">GUARDAR Y GENERAR REPORTE</button>
+<div id="printArea">
+  <img src="icons/membrete_2026.jpg" class="membrete-img">
+  <div class="print-content">
+    <h1>CONSIGNACIÓN PMT - TRANSPORTES</h1>
+    <div id="printData" class="print-grid"></div>
+    <div id="printAccesorios" style="margin-top:20px;"></div>
+    <div id="printFotoCont" style="text-align:center; margin-top:20px;"></div>
+    <div style="margin-top:50px; display:flex; justify-content: space-around; text-align: center;">
+      <div>__________________________<br>F. AGENTE CONSIGNATARIO</div>
+      <div>__________________________<br>F. CONDUCTOR / RECIBIDO</div>
+    </div>
+  </div>
 </div>
 
 <script>
-    function guardarConsignacion() {
-        const data = {
-            fecha: document.getElementById('c_fecha').value,
-            placas: document.getElementById('c_placas').value,
-            lugar: document.getElementById('c_lugar').value,
-            tipo: "Consignación"
-        };
-        
-        let existentes = JSON.parse(localStorage.getItem('respaldo_total_gelm')) || [];
-        existentes.push(data);
-        localStorage.setItem('respaldo_total_gelm', JSON.stringify(existentes));
-        
-        alert("Consignación guardada. Ahora aparecerá en Respaldos.");
-        window.print();
-    }
+  const DB_NAME = 'respaldo_total_gelm';
+  let consignaciones = JSON.parse(localStorage.getItem(DB_NAME)) || [];
+  let currentFoto = "";
+
+  // Procesar Foto
+  document.getElementById('fotoInput').onchange = (e) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 600; canvas.height = img.height * (600/img.width);
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        currentFoto = canvas.toDataURL('image/jpeg', 0.7);
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  function guardarDato() {
+    const acc = Array.from(document.querySelectorAll('.acc:checked')).map(cb => cb.value);
+    const nueva = {
+      id: Date.now(),
+      fecha: document.getElementById('fecha').value,
+      hora: document.getElementById('hora').value,
+      conductor: document.getElementById('conductor').value,
+      placas: document.getElementById('placas').value,
+      licencia: document.getElementById('licencia').value,
+      marca: document.getElementById('marca').value,
+      color: document.getElementById('color').value,
+      lugar: document.getElementById('lugar').value,
+      motivo: document.getElementById('motivo').value,
+      agente: document.getElementById('agente').value,
+      chapa: document.getElementById('chapa').value,
+      accesorios: acc,
+      foto: currentFoto
+    };
+
+    if(!nueva.placas || !nueva.conductor) return alert("Mínimo Placas y Conductor");
+
+    consignaciones.push(nueva);
+    localStorage.setItem(DB_NAME, JSON.stringify(consignaciones));
+    alert("Guardado exitosamente. Lo puedes imprimir al llegar a la oficina.");
+    location.reload();
+  }
+
+  function renderTabla() {
+    const body = document.getElementById('listaConsignaciones');
+    body.innerHTML = "";
+    consignaciones.forEach((c, index) => {
+      body.innerHTML += `
+        <tr>
+          <td>${c.fecha} ${c.hora}</td>
+          <td><b>${c.placas}</b></td>
+          <td>${c.conductor}</td>
+          <td><button class="btn btn-print" style="padding:5px 10px; font-size:10px;" onclick="prepararImpresion(${index})">IMPRIMIR PDF</button></td>
+        </tr>
+      `;
+    });
+  }
+
+  function prepararImpresion(index) {
+    const c = consignaciones[index];
+    const dataArea = document.getElementById('printData');
+    const accArea = document.getElementById('printAccesorios');
+    const fotoArea = document.getElementById('printFotoCont');
+
+    dataArea.innerHTML = `
+      <div><b>FECHA:</b> ${c.fecha}</div>
+      <div><b>HORA:</b> ${c.hora}</div>
+      <div><b>CONDUCTOR:</b> ${c.conductor}</div>
+      <div><b>LICENCIA:</b> ${c.licencia}</div>
+      <div><b>PLACAS:</b> ${c.placas}</div>
+      <div><b>MARCA/COLOR:</b> ${c.marca} / ${c.color}</div>
+      <div class="full"><b>MOTIVO:</b> ${c.motivo}</div>
+      <div class="full"><b>LUGAR:</b> ${c.lugar}</div>
+      <div><b>AGENTE:</b> ${c.agente}</div>
+      <div><b>CHAPA:</b> ${c.chapa}</div>
+    `;
+
+    accArea.innerHTML = `<b>ACCESORIOS PRESENTES:</b> ${c.accesorios.join(', ') || 'Ninguno'}`;
+    
+    fotoArea.innerHTML = c.foto ? `<h3>EVIDENCIA DE DAÑOS</h3><img src="${c.foto}" class="foto-print">` : '';
+
+    window.print();
+  }
+
+  renderTabla();
 </script>
 </body>
 </html>
