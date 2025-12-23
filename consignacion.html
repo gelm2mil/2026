@@ -7,54 +7,36 @@
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root { --cyan: #00eaff; --bg: #020510; --card: #0a1428; }
-    body { background: var(--bg); color: #e0f7ff; font-family: sans-serif; margin: 0; padding: 10px; -webkit-tap-highlight-color: transparent; }
-    .container { max-width: 900px; margin: auto; padding-bottom: 50px; }
-    
+    body { background: var(--bg); color: #e0f7ff; font-family: sans-serif; margin: 0; padding: 10px; }
+    .container { max-width: 800px; margin: auto; padding-bottom: 50px; }
     .card { background: var(--card); border: 1px solid rgba(0, 234, 255, 0.3); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
-    h2 { color: var(--cyan); border-bottom: 2px solid var(--cyan); padding-bottom: 8px; font-size: 1rem; text-transform: uppercase; margin-top:0; }
-    
+    h2 { color: var(--cyan); border-bottom: 2px solid var(--cyan); padding-bottom: 8px; font-size: 1rem; text-transform: uppercase; }
     .modulo { border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3); }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .full { grid-column: 1 / -1; }
-    
     label { display: block; font-size: 0.65rem; color: var(--cyan); margin-bottom: 3px; text-transform: uppercase; }
-    input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px !important; } /* Evita zoom en iPhone */
-
+    input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     .licencia-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
     .lic-item { display: flex; align-items: center; gap: 4px; background: #111; padding: 8px; border-radius: 6px; font-size: 0.8rem; border: 1px solid #333; }
-
-    .inv-row { display: grid; grid-template-columns: 130px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid #222; }
-    
-    .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; display: inline-block; text-align: center; text-decoration: none; }
-    .btn-save { background: var(--cyan); color: #000; width: 100%; margin-top: 5px; box-shadow: 0 4px 15px rgba(0,234,255,0.4); }
-    .btn-excel { background: #1d6f42; color: white; padding: 8px 15px; border-radius: 10px; }
-    .btn-del { background: #ff0044; color: white; padding: 5px 10px; border-radius: 5px; }
-    .btn-print { background: #b300ff; color: white; padding: 5px 10px; border-radius: 5px; }
-
-    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
+    .inv-row { display: grid; grid-template-columns: 120px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+    .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; width: 100%; }
+    .btn-save { background: var(--cyan); color: #000; box-shadow: 0 4px 15px rgba(0,234,255,0.4); }
+    .btn-excel { background: #1d6f42; color: white; padding: 8px; width: auto; border-radius: 10px; }
+    .btn-del { background: #ff0044; color: white; padding: 5px 10px; border-radius: 5px; width: auto; }
+    .btn-print { background: #b300ff; color: white; padding: 5px 10px; border-radius: 5px; width: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     th { background: #111; color: var(--cyan); padding: 10px; text-align: left; }
     td { padding: 10px; border-bottom: 1px solid #222; }
-
-    /* AREA IMPRESION */
-    #printArea { display: none; }
-    @media print {
-      body * { display: none !important; }
-      #printArea { display: block !important; position: absolute; left: 0; top: 0; width: 100%; color: black; background: white; }
-      .membrete-p { width: 100%; max-height: 150px; object-fit: contain; margin-bottom: 10px; }
-      .p-grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid black; }
-      .p-grid div { padding: 5px; border: 0.5px solid #ccc; font-size: 11px; }
-      .foto-p { max-width: 250px; display: block; margin: 10px auto; border: 1px solid #000; }
-    }
   </style>
 </head>
 <body>
 
 <div class="container">
   <div class="card">
-    <h2>📝 Hoja de Consignación</h2>
+    <h2>📝 Nueva Consignación</h2>
     
     <div class="modulo">
-      <label>Conductor y Licencia</label>
+      <label>Conductor</label>
       <input type="text" id="conductor" placeholder="Nombre Completo" class="full">
       <div class="grid" style="margin-top:8px;">
         <input type="text" id="licencia_num" placeholder="No. Licencia">
@@ -80,80 +62,61 @@
     </div>
 
     <div class="modulo">
-      <label>Inventario Detallado</label>
+      <label>Inventario</label>
       <div id="boxInv"></div>
     </div>
 
     <div class="modulo">
-      <label>Datos del Agente y Motivo</label>
+      <label>Agente y Motivo</label>
       <div class="grid">
         <input type="date" id="fecha">
         <input type="time" id="hora">
-        <input type="text" id="agente" placeholder="Nombre Agente" class="full">
+        <input type="text" id="agente" placeholder="Agente" class="full">
         <input type="text" id="chapa" placeholder="Chapa No." class="full">
-        <textarea id="motivo" placeholder="Motivo de consignación..." class="full" rows="2"></textarea>
+        <textarea id="motivo" placeholder="Motivo..." class="full" rows="2"></textarea>
       </div>
-      <label style="margin-top:10px;">Foto de Daños</label>
+      <label style="margin-top:10px;">Foto Evidencia</label>
       <input type="file" id="fotoInput" accept="image/*">
     </div>
 
-    <button class="btn btn-save" onclick="procesoGuardar()">💾 GUARDAR AHORA</button>
+    <button class="btn btn-save" onclick="procesoGuardar()">💾 GUARDAR REGISTRO</button>
   </div>
 
   <div class="card">
     <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-      <h2>📋 Pendientes</h2>
+      <h2>📋 Registros</h2>
       <button class="btn-excel" onclick="exportarExcel()">Excel</button>
     </div>
     <div style="overflow-x:auto;">
-      <table id="miTabla">
-        <thead><tr><th>Fecha</th><th>Placa</th><th>Acciones</th></tr></thead>
+      <table>
+        <thead><tr><th>Fecha</th><th>Placa</th><th>Acción</th></tr></thead>
         <tbody id="tablaBody"></tbody>
       </table>
     </div>
   </div>
 </div>
 
-<div id="printArea">
-  <img src="icons/membrete_2026.jpg" class="membrete-p" onerror="this.style.display='none'">
-  <h3 style="text-align:center;">BOLETA DE CONSIGNACIÓN PMT</h3>
-  <div id="p-content" class="p-grid"></div>
-  <div id="p-inv" style="padding:10px; font-size:11px;"></div>
-  <div id="p-foto"></div>
-  <div style="margin-top:50px; display:flex; justify-content:space-around; text-align:center; font-size:10px;">
-    <div>_______________________<br>Agente Consignatario</div>
-    <div>_______________________<br>Conductor / Recibido</div>
-  </div>
-</div>
-
 <script>
   const ITEMS = ["Antena", "Radio", "Bocinas", "Espejos", "Alfombras", "Llanta Repuesto", "Tricket", "Herramientas", "Tapaderas"];
   const DB_KEY = 'respaldo_total_gelm';
-  let dataStorage = [];
   let tempFoto = "";
 
-  // Cargar datos
-  function cargarData(){
-    const guardado = localStorage.getItem(DB_KEY);
-    dataStorage = guardado ? JSON.parse(guardado) : [];
-  }
-
-  // Dibujar Inventario
+  // Inventario
   const b = document.getElementById('boxInv');
   ITEMS.forEach(it => {
     b.innerHTML += `<div class="inv-row"><span><input type="checkbox" class="chk" data-n="${it}"> ${it}</span><input type="text" class="obs" data-n="${it}" placeholder="Obs..."></div>`;
   });
 
-  // Foto
+  // Foto optimizada
   document.getElementById('fotoInput').onchange = function(e){
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
         const canv = document.createElement('canvas');
-        canv.width = 500; canv.height = img.height*(500/img.width);
-        canv.getContext('2d').drawImage(img,0,0,500,canv.height);
-        tempFoto = canv.toDataURL('image/jpeg', 0.6);
+        canv.width = 600; canv.height = img.height*(600/img.width);
+        canv.getContext('2d').drawImage(img,0,0,600,canv.height);
+        tempFoto = canv.toDataURL('image/jpeg', 0.7);
       };
       img.src = ev.target.result;
     };
@@ -161,8 +124,7 @@
   };
 
   function procesoGuardar(){
-    cargarData();
-    const lic = document.querySelector('input[name="tipoLic"]:checked')?.value || "N/A";
+    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
     const invArr = [];
     document.querySelectorAll('.chk:checked').forEach(c => {
       const o = document.querySelector(`.obs[data-n="${c.dataset.n}"]`).value;
@@ -171,10 +133,10 @@
 
     const d = {
       id: Date.now(),
-      conductor: document.getElementById('conductor').value || "N/A",
-      placas: document.getElementById('placas').value || "",
+      conductor: document.getElementById('conductor').value,
+      placas: document.getElementById('placas').value,
       fecha: document.getElementById('fecha').value,
-      licencia: lic + " - " + document.getElementById('licencia_num').value,
+      licencia: (document.querySelector('input[name="tipoLic"]:checked')?.value || "") + " - " + document.getElementById('licencia_num').value,
       marca: document.getElementById('marca').value,
       color: document.getElementById('color').value,
       agente: document.getElementById('agente').value,
@@ -184,68 +146,82 @@
       foto: tempFoto
     };
 
-    if(!d.placas) return alert("Escribe el número de placa");
-
-    dataStorage.push(d);
-    localStorage.setItem(DB_KEY, JSON.stringify(dataStorage));
-    alert("¡REGISTRO GUARDADO CON ÉXITO!");
-    location.reload(); 
+    if(!d.placas) return alert("Ingrese Placa");
+    guardado.push(d);
+    localStorage.setItem(DB_KEY, JSON.stringify(guardado));
+    alert("Guardado!");
+    location.reload();
   }
 
   function borrar(id){
-    if(!confirm("¿Borrar este registro?")) return;
-    cargarData();
-    dataStorage = dataStorage.filter(x => x.id !== id);
-    localStorage.setItem(DB_KEY, JSON.stringify(dataStorage));
+    if(!confirm("¿Borrar?")) return;
+    let guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    guardado = guardado.filter(x => x.id !== id);
+    localStorage.setItem(DB_KEY, JSON.stringify(guardado));
     render();
   }
 
   function imprimir(id){
-    cargarData();
-    const d = dataStorage.find(x => x.id === id);
+    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    const d = guardado.find(x => x.id === id);
     if(!d) return;
 
-    document.getElementById('p-content').innerHTML = `
-      <div><b>FECHA:</b> ${d.fecha}</div><div><b>PLACA:</b> ${d.placas}</div>
-      <div class="full"><b>CONDUCTOR:</b> ${d.conductor}</div>
-      <div><b>LICENCIA:</b> ${d.licencia}</div><div><b>MARCA/COLOR:</b> ${d.marca}/${d.color}</div>
-      <div class="full"><b>MOTIVO:</b> ${d.motivo}</div>
-      <div><b>AGENTE:</b> ${d.agente}</div><div><b>CHAPA:</b> ${d.chapa}</div>
-    `;
-    document.getElementById('p-inv').innerHTML = "<b>INVENTARIO:</b> " + (d.inventario.join(' | ') || 'No especificado');
-    document.getElementById('p-foto').innerHTML = d.foto ? `<img src="${d.foto}" class="foto-p">` : '';
-
-    // Pequeña pausa para asegurar que el navegador rinda el HTML antes de imprimir
-    setTimeout(() => { window.print(); }, 800);
+    // AQUI ESTÁ EL TRUCO: Abrimos una ventana nueva para el PDF
+    const vent = window.open('', '_blank');
+    vent.document.write(`
+      <html>
+      <head><title>Consignación ${d.placas}</title>
+      <style>
+        body { font-family: sans-serif; padding: 20px; color: black; }
+        .membrete { width: 100%; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid black; }
+        .grid div { padding: 8px; border: 0.5px solid black; font-size: 14px; }
+        .full { grid-column: 1 / -1; }
+        .foto { max-width: 400px; display: block; margin: 20px auto; border: 1px solid black; }
+        .firmas { margin-top: 60px; display: flex; justify-content: space-around; text-align: center; }
+      </style>
+      </head>
+      <body>
+        <img src="icons/membrete_2026.jpg" class="membrete">
+        <h2 style="text-align:center;">BOLETA DE CONSIGNACIÓN PMT</h2>
+        <div class="grid">
+          <div><b>FECHA:</b> ${d.fecha}</div><div><b>PLACA:</b> ${d.placas}</div>
+          <div class="full"><b>CONDUCTOR:</b> ${d.conductor}</div>
+          <div><b>LICENCIA:</b> ${d.licencia}</div><div><b>MARCA/COLOR:</b> ${d.marca} / ${d.color}</div>
+          <div class="full"><b>MOTIVO:</b> ${d.motivo}</div>
+          <div><b>AGENTE:</b> ${d.agente}</div><div><b>CHAPA:</b> ${d.chapa}</div>
+        </div>
+        <p><b>INVENTARIO:</b> ${d.inventario.join(' | ') || 'Ninguno'}</p>
+        ${d.foto ? `<img src="${d.foto}" class="foto">` : ''}
+        <div class="firmas">
+          <div>_______________________<br>Agente Consignatario</div>
+          <div>_______________________<br>Conductor / Recibido</div>
+        </div>
+        <script>window.onload = function() { window.print(); window.close(); };<\/script>
+      </body>
+      </html>
+    `);
+    vent.document.close();
   }
 
   function exportarExcel(){
-    cargarData();
-    if(dataStorage.length === 0) return alert("No hay datos");
-    const ws = XLSX.utils.json_to_sheet(dataStorage);
+    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    const ws = XLSX.utils.json_to_sheet(guardado);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Datos");
-    XLSX.writeFile(wb, "Consignaciones_2026.xlsx");
+    XLSX.writeFile(wb, "Consignaciones.xlsx");
   }
 
   function render(){
-    cargarData();
+    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
     const t = document.getElementById('tablaBody');
     t.innerHTML = "";
-    dataStorage.forEach(d => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${d.fecha}</td>
-        <td><b>${d.placas}</b></td>
-        <td>
-          <button class="btn-print" onclick="imprimir(${d.id})">PDF</button>
-          <button class="btn-del" onclick="borrar(${d.id})">X</button>
-        </td>
-      `;
-      t.appendChild(tr);
+    guardado.forEach(d => {
+      t.innerHTML += `<tr><td>${d.fecha}</td><td>${d.placas}</td>
+        <td><button class="btn-print" onclick="imprimir(${d.id})">PDF</button>
+        <button class="btn-del" onclick="borrar(${d.id})">X</button></td></tr>`;
     });
   }
-
   render();
 </script>
 </body>
