@@ -1,212 +1,150 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Consignaciones PMT 2026</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AGEN2026 · Sistema de Consignaciones</title>
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:#f4f4f4;
-  color:#000;
-}
-.shell{
-  max-width:900px;
-  margin:auto;
-  background:#fff;
-  padding:15px;
-}
-h2{
-  text-align:center;
-  margin:5px 0;
-}
-.sec{
-  margin-top:15px;
-  font-weight:bold;
-  font-size:13px;
-  border-bottom:1px solid #ccc;
-}
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:8px;
-}
-.full{ grid-column:1 / -1; }
+  <!-- PWA / Base -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#00eaff" />
 
-input, select, textarea{
-  width:100%;
-  padding:10px;
-  font-size:15px;
-  box-sizing:border-box;
-}
+  <!-- Estilos base (AGEN2026) -->
+  <style>
+    :root{
+      --pri:#00eaff; --bg:#0b0f14; --card:#121826; --txt:#e6edf3; --mut:#9fb3c8;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
+      background:linear-gradient(180deg,#0b0f14,#0f1522);color:var(--txt)}
+    header{padding:16px 20px;border-bottom:1px solid #1f2a44}
+    header h1{margin:0;font-size:1.2rem;color:var(--pri)}
+    main{padding:20px;max-width:1100px;margin:auto}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+    .card{background:var(--card);border:1px solid #1f2a44;border-radius:14px;padding:16px}
+    .card h2{margin:0 0 8px 0;font-size:1rem}
+    label{font-size:.85rem;color:var(--mut)}
+    input,select,textarea,button{
+      width:100%;margin-top:6px;margin-bottom:12px;padding:10px 12px;
+      border-radius:10px;border:1px solid #26345a;background:#0e1422;color:var(--txt)
+    }
+    button{background:var(--pri);color:#001018;border:none;font-weight:600;cursor:pointer}
+    button.secondary{background:#233a5e;color:var(--txt)}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .row>*{flex:1}
+    footer{padding:16px;color:#7aa2c7;text-align:center}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#0e2230;color:#7fdcff;font-size:.75rem}
+  </style>
 
-canvas{
-  width:100%;
-  height:150px;
-  border:1px solid #000;
-  background:#fff;
-}
+  <script>
+    // Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
 
-button{
-  padding:12px;
-  font-size:15px;
-  cursor:pointer;
-}
+    // Utilidades de respaldo (misma lógica que ya usas en 2026)
+    const DB_KEY = 'AGEN2026_CONSIGNACIONES';
 
-.actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:15px;
-}
+    function saveLocal(data){
+      const all = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+      all.push({...data, _ts: new Date().toISOString()});
+      localStorage.setItem(DB_KEY, JSON.stringify(all));
+    }
 
-.log{
-  margin-top:25px;
-  border-top:2px solid #000;
-  padding-top:10px;
-}
+    function exportJSON(){
+      const blob = new Blob([localStorage.getItem(DB_KEY) || '[]'], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'consignaciones_respaldo.json';
+      a.click();
+    }
 
-.log-item{
-  border-bottom:1px solid #ccc;
-  padding:8px 0;
-  font-size:14px;
-}
-
-small{ color:#555; }
-</style>
+    function submitConsignacion(e){
+      e.preventDefault();
+      const f = e.target;
+      const data = {
+        tipo: f.tipo.value,
+        fecha: f.fecha.value,
+        lugar: f.lugar.value,
+        placa: f.placa.value,
+        conductor: f.conductor.value,
+        motivo: f.motivo.value,
+        fundamento: f.fundamento.value,
+        observaciones: f.obs.value
+      };
+      saveLocal(data);
+      alert('✔ Consignación guardada en respaldo local');
+      f.reset();
+    }
+  </script>
 </head>
-
 <body>
-<div class="shell">
+  <header>
+    <h1>AGEN2026 <span class="badge">Consignaciones</span></h1>
+  </header>
 
-<h2>CONS﻿IGNACIÓN PMT 2026</h2>
+  <main>
+    <div class="grid">
+      <!-- FORMULARIO DE CONSIGNACIÓN -->
+      <div class="card">
+        <h2>Registro de consignación</h2>
+        <form onsubmit="submitConsignacion(event)">
+          <label>Tipo de consignación</label>
+          <select name="tipo" required>
+            <option value="">Seleccione…</option>
+            <option>Motocicleta</option>
+            <option>Vehículo liviano</option>
+            <option>Camión</option>
+            <option>Otro</option>
+          </select>
 
-<div class="sec">Datos del Conductor</div>
-<div class="grid">
-  <input id="piloto" placeholder="Nombre del piloto" class="full">
-  <input id="licencia" placeholder="Licencia">
-  <input id="dpi" placeholder="DPI">
-</div>
+          <div class="row">
+            <div>
+              <label>Fecha</label>
+              <input type="date" name="fecha" required />
+            </div>
+            <div>
+              <label>Lugar</label>
+              <input type="text" name="lugar" placeholder="Zona / municipio" required />
+            </div>
+          </div>
 
-<div class="sec">Datos del Vehículo</div>
-<div class="grid">
-  <input id="placa" placeholder="Placa">
-  <input id="marca" placeholder="Marca">
-  <input id="color" placeholder="Color">
-  <input id="tipo" placeholder="Tipo (auto, moto, camión)">
-</div>
+          <div class="row">
+            <div>
+              <label>Placa</label>
+              <input type="text" name="placa" required />
+            </div>
+            <div>
+              <label>Conductor</label>
+              <input type="text" name="conductor" />
+            </div>
+          </div>
 
-<div class="sec">Datos del Agente</div>
-<div class="grid">
-  <input id="agente" placeholder="Nombre del agente">
-  <input id="chapa" placeholder="Chapa">
-</div>
+          <label>Motivo</label>
+          <textarea name="motivo" rows="3" required></textarea>
 
-<div class="sec">Motivo</div>
-<textarea id="motivo" rows="2" placeholder="Motivo de la consignación"></textarea>
+          <label>Fundamento legal</label>
+          <textarea name="fundamento" rows="3" placeholder="Artículos aplicables…"></textarea>
 
-<div class="sec">Evidencia Fotográfica</div>
-<input type="file" id="fotos" accept="image/*" multiple>
+          <label>Observaciones</label>
+          <textarea name="obs" rows="2"></textarea>
 
-<div class="sec">Firma del Agente</div>
-<canvas id="firmaAgente"></canvas>
-<button onclick="limpiarFirma('firmaAgente')">Limpiar firma agente</button>
+          <button type="submit">Guardar consignación</button>
+        </form>
+      </div>
 
-<div class="sec">Firma del Piloto</div>
-<canvas id="firmaPiloto"></canvas>
-<button onclick="limpiarFirma('firmaPiloto')">Limpiar firma piloto</button>
+      <!-- ACCIONES / RESPALDOS -->
+      <div class="card">
+        <h2>Respaldos y control</h2>
+        <p style="color:var(--mut)">Usa la misma lógica de guardado que ya funciona en <strong>/2026</strong>.</p>
+        <button class="secondary" onclick="exportJSON()">Exportar respaldo (JSON)</button>
+        <p style="font-size:.85rem;color:var(--mut)">Los datos se guardan offline en el navegador.</p>
+      </div>
+    </div>
+  </main>
 
-<div class="actions">
-  <button onclick="guardarConsignacion()">💾 Guardar consignación</button>
-  <button onclick="alert('PDF se activa en el siguiente paso')">📄 Generar PDF</button>
-</div>
-
-<div class="log">
-  <h3>📋 Bitácora de consignaciones</h3>
-  <div id="lista"></div>
-</div>
-
-</div>
-
-<script>
-/* ===== FIRMAS ===== */
-function prepararFirma(id){
-  const c=document.getElementById(id);
-  const ctx=c.getContext("2d");
-  let dib=false;
-
-  function resize(){
-    c.width=c.offsetWidth;
-    c.height=150;
-    ctx.lineWidth=2;
-    ctx.lineCap="round";
-    ctx.strokeStyle="#000";
-  }
-  resize(); window.addEventListener("resize",resize);
-
-  c.addEventListener("pointerdown",e=>{
-    dib=true; ctx.beginPath();
-    ctx.moveTo(e.offsetX,e.offsetY);
-  });
-  c.addEventListener("pointermove",e=>{
-    if(!dib) return;
-    ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke();
-  });
-  c.addEventListener("pointerup",()=>dib=false);
-}
-prepararFirma("firmaAgente");
-prepararFirma("firmaPiloto");
-
-function limpiarFirma(id){
-  const c=document.getElementById(id);
-  c.getContext("2d").clearRect(0,0,c.width,c.height);
-}
-
-/* ===== GUARDAR ===== */
-function guardarConsignacion(){
-  const data={
-    fecha:new Date().toLocaleString(),
-    piloto:piloto.value,
-    licencia:licencia.value,
-    dpi:dpi.value,
-    placa:placa.value,
-    marca:marca.value,
-    color:color.value,
-    tipo:tipo.value,
-    agente:agente.value,
-    chapa:chapa.value,
-    motivo:motivo.value,
-    firmaAgente:firmaAgente.toDataURL(),
-    firmaPiloto:firmaPiloto.toDataURL()
-  };
-
-  const arr=JSON.parse(localStorage.getItem("consignaciones")||"[]");
-  arr.push(data);
-  localStorage.setItem("consignaciones",JSON.stringify(arr));
-  mostrar();
-  alert("Consignación guardada");
-}
-
-/* ===== MOSTRAR ===== */
-function mostrar(){
-  const cont=document.getElementById("lista");
-  cont.innerHTML="";
-  const arr=JSON.parse(localStorage.getItem("consignaciones")||"[]");
-  arr.reverse().forEach(c=>{
-    const d=document.createElement("div");
-    d.className="log-item";
-    d.innerHTML=`
-    <strong>${c.fecha}</strong><br>
-    🚗 ${c.placa} — ${c.motivo}<br>
-    👮 ${c.agente} (${c.chapa})
-    `;
-    cont.appendChild(d);
-  });
-}
-mostrar();
-</script>
+  <footer>
+    AGEN2026 · Offline first · GitHub Pages
+  </footer>
 </body>
 </html>
