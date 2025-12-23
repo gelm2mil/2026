@@ -2,226 +2,211 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CONSIGNACIONES 2026 — GELM</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
       --gelm-cyan: #00eaff;
-      --gelm-cyan-soft: #00ffc8;
       --gelm-magenta: #b300ff;
-      --gelm-bg-panel: rgba(3, 5, 20, 0.96);
+      --gelm-bg: #020510;
     }
 
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #020510; color: white; display: flex; justify-content: center; }
-    .agenda-shell { width: 100%; max-width: 1200px; padding: 15px; }
-    .agenda-panel { background: var(--gelm-bg-panel); border-radius: 25px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 25px; box-shadow: 0 0 30px rgba(0, 234, 255, 0.2); }
+    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: var(--gelm-bg); color: white; padding: 10px; }
+    .agenda-panel { background: rgba(3, 5, 20, 0.96); border-radius: 20px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 15px; max-width: 800px; margin: auto; }
     
-    header { text-align: center; margin-bottom: 25px; border-bottom: 2px solid var(--gelm-cyan); padding-bottom: 15px; }
+    header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gelm-cyan); }
+    .modulo-titulo { color: var(--gelm-cyan); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin: 15px 0 8px 0; display: flex; align-items: center; }
+    .modulo-titulo::before { content: ""; width: 4px; height: 15px; background: var(--gelm-magenta); margin-right: 8px; }
     
-    .modulo-titulo { color: var(--gelm-cyan); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; margin: 20px 0 10px 0; border-left: 4px solid var(--gelm-magenta); padding-left: 10px; }
-    
-    .form-card { background: rgba(255,255,255,0.02); border-radius: 15px; padding: 20px; border: 1px solid rgba(255,255,255,0.05); }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .full { grid-column: 1 / -1; }
     
-    label { font-size: 0.7rem; color: #aaa; margin-bottom: 4px; display: block; }
-    input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-size: 0.9rem; }
-    input:focus { border-color: var(--gelm-cyan); outline: none; }
+    label { font-size: 0.65rem; color: #00eaff; margin-bottom: 3px; display: block; text-transform: uppercase; }
+    input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-size: 16px; } /* 16px evita zoom en iPhone */
 
-    .controls { display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap; }
-    .btn { padding: 12px 25px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
-    .btn-save { background: linear-gradient(135deg, #00eaff, #00ffc8); color: #000; flex-grow: 1; }
+    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+    .btn { padding: 15px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 14px; }
+    .btn-save { background: #00eaff; color: #000; grid-column: 1 / -1; }
     .btn-excel { background: #22c55e; color: white; }
-    .btn-pdf { background: var(--gelm-magenta); color: white; }
+    .btn-pdf { background: #b300ff; color: white; }
 
-    /* Estilo de Tabla */
-    .table-wrapper { overflow-x: auto; margin-top: 30px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    th { background: var(--gelm-cyan); color: #000; padding: 12px; text-align: left; }
-    td { padding: 12px; border-bottom: 1px solid #222; background: rgba(255,255,255,0.01); }
-    .img-mini { width: 50px; height: 40px; border-radius: 4px; border: 1px solid var(--gelm-cyan); cursor: pointer; }
-    .btn-del { background: #ff4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-
+    .table-wrapper { overflow-x: auto; margin-top: 25px; border-radius: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; background: rgba(255,255,255,0.02); }
+    th { background: #00eaff; color: #000; padding: 10px; text-align: left; }
+    td { padding: 10px; border-bottom: 1px solid #222; }
+    .img-mini { width: 50px; height: 40px; border-radius: 4px; border: 1px solid #00eaff; }
+    
     @media print {
-      .form-card, .controls, .btn-del, th:last-child, td:last-child { display: none !important; }
+      .btn, .modulo-titulo, .grid, label, input, select, textarea, th:last-child, td:last-child { display: none !important; }
       body { background: white; color: black; }
-      .agenda-panel { border: none; box-shadow: none; width: 100%; }
-      th { border: 1px solid black !important; background: #f0f0f0 !important; color: black !important; }
-      td { border: 1px solid #ccc !important; color: black !important; }
+      .agenda-panel { border: none; width: 100%; }
+      th { border: 1px solid black !important; background: #eee !important; }
+      td { border: 1px solid #ddd !important; }
     }
   </style>
 </head>
 <body>
 
-<div class="agenda-shell">
-  <div class="agenda-panel">
-    <header>
-      <h2 style="margin:0; color:var(--gelm-cyan);">REGISTRO DE CONSIGNACIONES 2026</h2>
-      <small>PMT CHIMALTENANGO — UNIDAD DE TRANSPORTES</small>
-    </header>
+<div class="agenda-panel">
+  <header>
+    <h2 style="margin:5px; color:#00ffc8;">CONSIGNACIONES 2026</h2>
+    <small>PMT CHIMALTENANGO</small>
+  </header>
 
-    <section class="form-card">
-      <div class="modulo-titulo">Datos del Conductor</div>
-      <div class="grid">
-        <div class="full"><label>Nombre del Piloto</label><input type="text" id="piloto" placeholder="Nombre completo"></div>
-        <div><label>Tipo de Licencia</label>
-          <select id="tipoLicencia">
-            <option>Tipo A</option><option>Tipo B</option><option>Tipo C</option><option>Tipo M</option><option>Tipo E</option><option>No Presenta</option>
-          </select>
-        </div>
-        <div><label>No. Licencia</label><input type="text" id="numLicencia" placeholder="0000 00000 0000"></div>
-        <div><label>No. Documento (DPI)</label><input type="text" id="dpi" placeholder="CUI"></div>
-      </div>
+  <div class="modulo-titulo">Datos del Conductor</div>
+  <div class="grid">
+    <div class="full"><label>Piloto</label><input type="text" id="piloto" placeholder="Nombre completo"></div>
+    <div><label>Licencia</label><input type="text" id="numLicencia" placeholder="No. Licencia"></div>
+    <div><label>DPI</label><input type="text" id="dpi" placeholder="No. DPI"></div>
+  </div>
 
-      <div class="modulo-titulo">Datos del Vehículo</div>
-      <div class="grid">
-        <div><label>Placa</label><input type="text" id="placa" placeholder="P-000XXX"></div>
-        <div><label>Tipo</label>
-          <select id="tipoVehiculo">
-            <option>Automóvil</option><option>Motocicleta</option><option>Camioneta</option><option>Camión</option><option>Bus</option><option>Tuk-Tuk</option>
-          </select>
-        </div>
-        <div><label>Marca</label><input type="text" id="marca" placeholder="Ej: Toyota"></div>
-        <div><label>Color</label><input type="text" id="color" placeholder="Ej: Blanco"></div>
-        <div><label>NIT Vehículo</label><input type="text" id="nit" placeholder="NIT"></div>
-      </div>
+  <div class="modulo-titulo">Datos del Vehículo</div>
+  <div class="grid">
+    <div><label>Placa</label><input type="text" id="placa" placeholder="P-000XXX"></div>
+    <div><label>Marca/Color</label><input type="text" id="marca" placeholder="Toyota Gris"></div>
+    <div class="full"><label>NIT</label><input type="text" id="nit" placeholder="NIT del vehículo"></div>
+  </div>
 
-      <div class="modulo-titulo">Datos del Operativo y Motivo</div>
-      <div class="grid">
-        <div><label>Fecha</label><input type="date" id="fecha"></div>
-        <div><label>Hora</label><input type="time" id="hora"></div>
-        <div><label>Nombre Agente</label><input type="text" id="agente" placeholder="Nombre del agente"></div>
-        <div><label>Chapa No.</label><input type="text" id="chapa" placeholder="Número de chapa"></div>
-        <div class="full"><label>Motivo de la Consignación</label><textarea id="motivo" rows="2" placeholder="Describa el motivo..."></textarea></div>
-        <div class="full"><label>Evidencia (Foto)</label><input type="file" id="foto" accept="image/*"></div>
-      </div>
+  <div class="modulo-titulo">Operativo</div>
+  <div class="grid">
+    <div><label>Fecha</label><input type="date" id="fecha"></div>
+    <div><label>Hora</label><input type="time" id="hora"></div>
+    <div><label>Agente</label><input type="text" id="agente" placeholder="Nombre"></div>
+    <div><label>Chapa</label><input type="text" id="chapa" placeholder="No."></div>
+    <div class="full"><label>Motivo</label><textarea id="motivo" rows="2"></textarea></div>
+    <div class="full"><label>Foto Prueba</label><input type="file" id="foto" accept="image/*"></div>
+  </div>
 
-      <div class="controls">
-        <button class="btn btn-save" id="btnGuardar">Guardar Registro</button>
-        <button class="btn btn-excel" onclick="exportarExcel()">Excel</button>
-        <button class="btn btn-pdf" onclick="window.print()">Imprimir PDF</button>
-      </div>
-    </section>
+  <div class="controls">
+    <button class="btn btn-save" onclick="guardarRegistro()">💾 GUARDAR CONSIGNACIÓN</button>
+    <button class="btn btn-excel" onclick="exportarExcel()">📊 EXCEL</button>
+    <button class="btn btn-pdf" onclick="window.print()">📑 PDF</button>
+  </div>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>Fecha/Hora</th>
-            <th>Conductor</th>
-            <th>Vehículo</th>
-            <th>Agente</th>
-            <th>Motivo</th>
-            <th>Foto</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody id="tablaBody"></tbody>
-      </table>
-    </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Placa</th>
+          <th>Motivo</th>
+          <th>Foto</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tablaBody"></tbody>
+    </table>
   </div>
 </div>
 
 <script>
-  const STORAGE_KEY = "gelm_consignaciones_v2_2026";
-  let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  let fotoData = "";
+  const DB_KEY = "CONSIGNACIONES_GELM_2026";
+  let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+  let temporalFoto = "";
 
-  // Inicialización
+  // Al cargar
   window.onload = () => {
-    const ahora = new Date();
-    document.getElementById('fecha').valueAsDate = ahora;
-    document.getElementById('hora').value = ahora.getHours().toString().padStart(2, '0') + ":" + ahora.getMinutes().toString().padStart(2, '0');
-    render();
+    const n = new Date();
+    document.getElementById('fecha').valueAsDate = n;
+    document.getElementById('hora').value = n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0');
+    actualizarTabla();
   };
 
-  // Procesar Imagen
-  document.getElementById("foto").onchange = (e) => {
+  // Procesar Foto (IGUAL QUE BITACORA)
+  document.getElementById("foto").onchange = function(e) {
     const reader = new FileReader();
-    reader.onload = (ev) => {
+    reader.onload = function(ev) {
       const img = new Image();
-      img.onload = () => {
+      img.onload = function() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        canvas.width = 500; canvas.height = img.height * (500 / img.width);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        fotoData = canvas.toDataURL('image/jpeg', 0.6);
+        const max = 500;
+        let w = img.width, h = img.height;
+        if (w > h) { if (w > max) { h *= max/w; w = max; } }
+        else { if (h > max) { w *= max/h; h = max; } }
+        canvas.width = w; canvas.height = h;
+        ctx.drawImage(img, 0, 0, w, h);
+        temporalFoto = canvas.toDataURL('image/jpeg', 0.5);
       };
       img.src = ev.target.result;
     };
     if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
   };
 
-  function render() {
-    const body = document.getElementById("tablaBody");
-    body.innerHTML = "";
-    
-    // Mostrar de más reciente a más antiguo
-    [...registros].reverse().forEach((r, index) => {
-      const realIndex = registros.length - 1 - index;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.fecha.split('-').reverse().join('/')}<br><small>${r.hora}</small></td>
-        <td><b>${r.piloto}</b><br><small>Lic: ${r.numLicencia}</small></td>
-        <td>${r.tipoVehiculo} <b>${r.placa}</b><br><small>${r.marca} ${r.color}</small></td>
-        <td>${r.agente}<br><small>Chapa: ${r.chapa}</small></td>
-        <td style="font-size: 0.75rem;">${r.motivo}</td>
-        <td>${r.foto ? `<img src="${r.foto}" class="img-mini" onclick="window.open(this.src)">` : 'N/A'}</td>
-        <td><button class="btn-del" onclick="eliminar(${realIndex})">X</button></td>
-      `;
-      body.appendChild(tr);
-    });
-  }
+  function guardarRegistro() {
+    const p = document.getElementById("piloto").value;
+    const pl = document.getElementById("placa").value;
+    if(!p || !pl) return alert("Escribe Piloto y Placa");
 
-  document.getElementById("btnGuardar").onclick = () => {
-    const reg = {
-      piloto: document.getElementById("piloto").value,
-      tipoLicencia: document.getElementById("tipoLicencia").value,
-      numLicencia: document.getElementById("numLicencia").value,
-      dpi: document.getElementById("dpi").value,
-      placa: document.getElementById("placa").value.toUpperCase(),
-      tipoVehiculo: document.getElementById("tipoVehiculo").value,
-      marca: document.getElementById("marca").value,
-      color: document.getElementById("color").value,
-      nit: document.getElementById("nit").value,
+    const nuevo = {
+      id: Date.now(),
       fecha: document.getElementById("fecha").value,
       hora: document.getElementById("hora").value,
+      piloto: p,
+      licencia: document.getElementById("numLicencia").value,
+      dpi: document.getElementById("dpi").value,
+      placa: pl.toUpperCase(),
+      marca: document.getElementById("marca").value,
+      nit: document.getElementById("nit").value,
       agente: document.getElementById("agente").value,
       chapa: document.getElementById("chapa").value,
       motivo: document.getElementById("motivo").value,
-      foto: fotoData
+      foto: temporalFoto
     };
 
-    if(!reg.piloto || !reg.placa) return alert("Faltan datos críticos (Piloto o Placa)");
-
-    registros.push(reg);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+    db.push(nuevo);
+    localStorage.setItem(DB_KEY, JSON.stringify(db));
     
-    // Limpiar campos específicos
+    // Limpiar
     document.getElementById("piloto").value = "";
     document.getElementById("placa").value = "";
     document.getElementById("motivo").value = "";
-    fotoData = ""; document.getElementById("foto").value = "";
-    
-    render();
-  };
+    temporalFoto = "";
+    document.getElementById("foto").value = "";
 
-  function eliminar(i) {
-    if(confirm("¿Eliminar registro?")) {
-      registros.splice(i, 1);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
-      render();
+    actualizarTabla();
+    alert("¡Guardado exitosamente!");
+  }
+
+  function actualizarTabla() {
+    const tbody = document.getElementById("tablaBody");
+    tbody.innerHTML = "";
+    
+    db.slice().reverse().forEach((r, idx) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.fecha}<br>${r.hora}</td>
+        <td><b>${r.placa}</b></td>
+        <td>${r.motivo.substring(0,20)}...</td>
+        <td>${r.foto ? `<img src="${r.foto}" class="img-mini">` : '—'}</td>
+        <td><button onclick="borrar(${db.length - 1 - idx})" style="background:red; color:white; border:none; border-radius:4px; padding:5px;">X</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function borrar(i) {
+    if(confirm("¿Borrar?")) {
+      db.splice(i, 1);
+      localStorage.setItem(DB_KEY, JSON.stringify(db));
+      actualizarTabla();
     }
   }
 
   function exportarExcel() {
-    if(registros.length === 0) return alert("No hay datos");
-    const ws = XLSX.utils.json_to_sheet(registros);
+    if(db.length === 0) return alert("No hay datos");
+    // Quitamos la foto para el excel porque los móviles no aguantan imágenes dentro de celdas excel
+    const datosSinFoto = db.map(item => {
+      const { foto, id, ...resto } = item;
+      return resto;
+    });
+    const ws = XLSX.utils.json_to_sheet(datosSinFoto);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Consignaciones");
-    XLSX.writeFile(wb, "Consignaciones_PMT_2026.xlsx");
+    XLSX.writeFile(wb, "Consignaciones_2026.xlsx");
   }
 </script>
+
 </body>
 </html>
