@@ -8,19 +8,20 @@
   <style>
     :root { --cyan: #00eaff; --bg: #020510; --card: #0a1428; }
     body { background: var(--bg); color: #e0f7ff; font-family: sans-serif; margin: 0; padding: 10px; }
-    .container { max-width: 800px; margin: auto; padding-bottom: 50px; }
+    .container { max-width: 850px; margin: auto; padding-bottom: 50px; }
     .card { background: var(--card); border: 1px solid rgba(0, 234, 255, 0.3); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
-    h2 { color: var(--cyan); border-bottom: 2px solid var(--cyan); padding-bottom: 8px; font-size: 1rem; text-transform: uppercase; }
+    h2 { color: var(--cyan); border-bottom: 2px solid var(--cyan); padding-bottom: 8px; font-size: 1rem; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
     .modulo { border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.3); }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .full { grid-column: 1 / -1; }
     label { display: block; font-size: 0.65rem; color: var(--cyan); margin-bottom: 3px; text-transform: uppercase; }
     input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     .inv-row { display: grid; grid-template-columns: 120px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; }
-    .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; }
+    .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; font-size: 0.9rem; transition: 0.3s; }
     .btn-save { background: var(--cyan); color: #000; box-shadow: 0 4px 15px rgba(0,234,255,0.4); }
-    .btn-print { background: #b300ff; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .btn-pdf { background: #b300ff; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; border: none; }
+    .btn-del { background: #ff4444; color: white; padding: 6px 12px; border-radius: 5px; cursor: pointer; border: none; margin-left: 5px; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
     th { background: #111; color: var(--cyan); padding: 10px; text-align: left; }
     td { padding: 10px; border-bottom: 1px solid #222; }
   </style>
@@ -29,7 +30,7 @@
 
 <div class="container">
   <div class="card">
-    <h2>📝 Registro de Consignación</h2>
+    <h2>📝 REGISTRO DE CONSIGNACIÓN</h2>
     
     <div class="modulo">
       <label>Datos del Conductor</label>
@@ -37,11 +38,12 @@
       <div class="grid" style="margin-top:8px;">
         <input type="text" id="licencia_num" placeholder="No. Licencia">
         <select id="tipoLic">
-            <option value="A">Clase A</option>
-            <option value="B">Clase B</option>
-            <option value="C">Clase C</option>
-            <option value="M">Clase M</option>
+            <option value="Clase A">Clase A</option>
+            <option value="Clase B">Clase B</option>
+            <option value="Clase C">Clase C</option>
+            <option value="Clase M">Clase M</option>
         </select>
+        <input type="text" id="dpi_doc" placeholder="DPI / No. Documento" class="full">
       </div>
     </div>
 
@@ -60,6 +62,7 @@
         </select>
         <input type="text" id="marca" placeholder="Marca">
         <input type="text" id="color" placeholder="Color">
+        <input type="text" id="nit_veh" placeholder="NIT Vehículo" class="full">
       </div>
     </div>
 
@@ -73,17 +76,19 @@
       <div class="grid">
         <input type="date" id="fecha">
         <input type="text" id="agente" placeholder="Nombre del Agente" class="full">
+        <input type="text" id="chapa_num" placeholder="Chapa No.">
+        <input type="text" id="boleta_num" placeholder="Boleta de Infracción">
         <textarea id="motivo" placeholder="Motivo de la consignación..." class="full" rows="2"></textarea>
       </div>
       <label style="margin-top:10px;">Foto de Prueba</label>
       <input type="file" id="fotoInput" accept="image/*">
     </div>
 
-    <button class="btn btn-save" onclick="procesoGuardar()">💾 GUARDAR Y GENERAR</button>
+    <button class="btn btn-save" onclick="procesoGuardar()">💾 GUARDAR Y GENERAR REPORTE</button>
   </div>
 
   <div class="card">
-    <h2>📋 Registros Recientes</h2>
+    <h2>📋 REGISTROS RECIENTES</h2>
     <div style="overflow-x:auto;">
       <table>
         <thead><tr><th>Fecha</th><th>Placa</th><th>Acción</th></tr></thead>
@@ -94,8 +99,8 @@
 </div>
 
 <script>
-  const ITEMS = ["Antena", "Radio", "Bocinas", "Espejos", "Alfombras", "Llanta Repuesto", "Tricket", "Herramientas"];
-  const DB_KEY = 'gelm_consignaciones_v4';
+  const ITEMS = ["Antena", "Radio", "Bocinas", "Espejos", "Alfombras", "Llanta Repuesto", "Tricket", "Herramientas", "Tapaderas"];
+  const DB_KEY = 'gelm_consignas_final_2026';
   let tempFoto = "";
 
   const b = document.getElementById('boxInv');
@@ -109,8 +114,8 @@
       const img = new Image();
       img.onload = () => {
         const canv = document.createElement('canvas');
-        canv.width = 400; canv.height = img.height*(400/img.width);
-        canv.getContext('2d').drawImage(img,0,0,400,canv.height);
+        canv.width = 450; canv.height = img.height*(450/img.width);
+        canv.getContext('2d').drawImage(img,0,0,450,canv.height);
         tempFoto = canv.toDataURL('image/jpeg', 0.6);
       };
       img.src = ev.target.result;
@@ -119,17 +124,23 @@
   };
 
   function procesoGuardar(){
+    if(!document.getElementById('placas').value) return alert("Por favor ingrese la Placa");
+    
     const d = {
       id: Date.now(),
-      conductor: document.getElementById('conductor').value || "N/A",
-      placas: document.getElementById('placas').value || "S/P",
+      conductor: document.getElementById('conductor').value,
+      licencia: document.getElementById('tipoLic').value + " - " + document.getElementById('licencia_num').value,
+      dpi: document.getElementById('dpi_doc').value,
+      placas: document.getElementById('placas').value,
       tipo: document.getElementById('tipoVehiculo').value,
       marca: document.getElementById('marca').value,
       color: document.getElementById('color').value,
+      nit: document.getElementById('nit_veh').value,
       fecha: document.getElementById('fecha').value,
       agente: document.getElementById('agente').value,
+      chapa: document.getElementById('chapa_num').value,
+      boleta: document.getElementById('boleta_num').value,
       motivo: document.getElementById('motivo').value,
-      licencia: document.getElementById('tipoLic').value + " - " + document.getElementById('licencia_num').value,
       inventario: Array.from(document.querySelectorAll('.chk:checked')).map(c => c.dataset.n + ": " + (document.querySelector(`.obs[data-n="${c.dataset.n}"]`).value || 'OK')),
       foto: tempFoto
     };
@@ -137,8 +148,16 @@
     let data = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
     data.push(d);
     localStorage.setItem(DB_KEY, JSON.stringify(data));
-    alert("¡Registro guardado!");
+    alert("✅ Registro guardado con éxito");
     location.reload();
+  }
+
+  function eliminar(id){
+    if(!confirm("¿Desea eliminar este registro permanentemente?")) return;
+    let data = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    data = data.filter(x => x.id !== id);
+    localStorage.setItem(DB_KEY, JSON.stringify(data));
+    render();
   }
 
   function imprimir(id){
@@ -146,62 +165,56 @@
     const d = data.find(x => x.id === id);
     if(!d) return;
 
-    const vent = window.open('', '_blank');
-    vent.document.write(`
+    const v = window.open('', '_blank');
+    v.document.write(`
       <html>
       <head>
         <style>
-          @page { size: letter; margin: 10mm; }
-          body { font-family: sans-serif; color: #333; line-height: 1.4; }
-          .hoja { width: 180mm; margin: auto; border: 1px solid #ccc; padding: 15px; min-height: 250mm; position: relative; }
-          .header { text-align: center; border-bottom: 3px double #000; margin-bottom: 20px; padding-bottom: 10px; }
-          .titulo { font-size: 20px; font-weight: bold; color: #000; margin: 5px 0; }
-          .grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; margin-bottom: 15px; }
-          .grid div { padding: 8px; border: 0.5px solid #000; font-size: 12px; }
-          .full { grid-column: 1 / -1; background: #f2f2f2; font-weight: bold; }
-          .foto { max-width: 350px; display: block; margin: 15px auto; border: 2px solid #000; border-radius: 5px; }
-          .firmas { margin-top: 50px; display: flex; justify-content: space-around; text-align: center; font-size: 12px; }
-          .btn-print { background: red; color: white; padding: 15px; width: 100%; border: none; font-weight: bold; font-size: 16px; margin-bottom: 20px; }
-          @media print { .btn-print { display: none; } .hoja { border: none; } }
+          @page { size: letter; margin: 15mm; }
+          body { font-family: sans-serif; padding: 10px; color: black; }
+          .hoja { width: 100%; max-width: 190mm; margin: auto; }
+          .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 15px; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; margin-bottom: 10px; }
+          .grid div { padding: 6px; border: 0.5px solid #000; font-size: 12px; }
+          .full { grid-column: 1 / -1; background: #eee; font-weight: bold; text-align: center; }
+          .foto { max-width: 380px; display: block; margin: 15px auto; border: 1px solid black; }
+          .btn-print { background: #000; color: #fff; padding: 15px; width: 100%; border: none; font-weight: bold; margin-bottom: 20px; border-radius: 8px; font-size: 16px; cursor: pointer; }
+          @media print { .btn-print { display: none; } }
         </style>
       </head>
       <body>
-        <button class="btn-print" onclick="window.print()">CLIC AQUÍ PARA IMPRIMIR (TAMAÑO CARTA)</button>
+        <button class="btn-print" onclick="window.print()">🖨️ IMPRIMIR AHORA (TAMAÑO CARTA)</button>
         <div class="hoja">
           <div class="header">
-            <div class="titulo">POLICÍA MUNICIPAL DE TRÁNSITO</div>
-            <div style="font-size: 14px;">MUNICIPALIDAD DE CHIMALTENANGO</div>
-            <div style="font-weight: bold; margin-top:10px; text-decoration: underline;">HOJA DE CONSIGNACIÓN OFICIAL</div>
+            <h2 style="margin:0;">POLICÍA MUNICIPAL DE TRÁNSITO</h2>
+            <h3 style="margin:2px;">MUNICIPALIDAD DE CHIMALTENANGO</h3>
+            <p style="margin:0; font-weight:bold;">BOLETA DE CONSIGNACIÓN - UNIDAD DE TRANSPORTES</p>
           </div>
-
           <div class="grid">
-            <div class="full">DATOS GENERALES</div>
-            <div><b>FECHA:</b> ${d.fecha}</div><div><b>PLACA:</b> ${d.placas}</div>
+            <div class="full">DATOS DEL CONDUCTOR Y DOCUMENTOS</div>
+            <div><b>CONDUCTOR:</b> ${d.conductor}</div><div><b>DPI/DOC:</b> ${d.dpi}</div>
+            <div><b>LICENCIA:</b> ${d.licencia}</div><div><b>FECHA:</b> ${d.fecha}</div>
+            
             <div class="full">DATOS DEL VEHÍCULO</div>
-            <div><b>TIPO:</b> ${d.tipo}</div><div><b>MARCA:</b> ${d.marca}</div>
-            <div><b>COLOR:</b> ${d.color}</div><div><b>CONDUCTOR:</b> ${d.conductor}</div>
-            <div class="full">DETALLES DE LA CONSIGNACIÓN</div>
+            <div><b>TIPO:</b> ${d.tipo}</div><div><b>PLACA:</b> ${d.placas}</div>
+            <div><b>MARCA/COLOR:</b> ${d.marca} / ${d.color}</div><div><b>NIT:</b> ${d.nit}</div>
+            
+            <div class="full">DATOS DE CONSIGNACIÓN</div>
             <div class="full"><b>MOTIVO:</b> ${d.motivo}</div>
-            <div><b>AGENTE:</b> ${d.agente}</div><div><b>LICENCIA:</b> ${d.licencia}</div>
+            <div><b>AGENTE:</b> ${d.agente}</div><div><b>CHAPA NO:</b> ${d.chapa}</div>
+            <div><b>BOLETA INF.:</b> ${d.boleta}</div><div><b>ESTADO:</b> CONSIGNADO</div>
           </div>
-
-          <p style="font-size: 11px;"><b>INVENTARIO DETALLADO:</b><br>${d.inventario.join(' — ') || 'No se reportan accesorios.'}</p>
-
+          <p style="font-size:11px;"><b>INVENTARIO:</b> ${d.inventario.join(' | ') || 'No reportado'}</p>
           ${d.foto ? `<img src="${d.foto}" class="foto">` : ''}
-
-          <div class="firmas">
-            <div>__________________________<br>F. AGENTE CONSIGNATARIO</div>
-            <div>__________________________<br>F. CONDUCTOR / RECIBIDO</div>
-          </div>
-          
-          <div style="position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 9px; color: #888;">
-            Documento generado por Sistema GELM 2026 - Control de Transportes
+          <div style="margin-top:60px; display:flex; justify-content:space-around; text-align:center; font-size:12px;">
+            <div>__________________________<br>F. AGENTE</div>
+            <div>__________________________<br>F. CONDUCTOR</div>
           </div>
         </div>
       </body>
       </html>
     `);
-    vent.document.close();
+    v.document.close();
   }
 
   function render(){
@@ -209,11 +222,15 @@
     const t = document.getElementById('tablaBody');
     t.innerHTML = "";
     data.reverse().forEach(d => {
-      t.innerHTML += `<tr>
+      const row = `<tr>
         <td>${d.fecha}</td>
         <td><b>${d.placas}</b></td>
-        <td><button class="btn-print" onclick="imprimir(${d.id})">PDF</button></td>
+        <td>
+          <button class="btn-pdf" onclick="imprimir(${d.id})">PDF</button>
+          <button class="btn-del" onclick="eliminar(${d.id})">X</button>
+        </td>
       </tr>`;
+      t.innerHTML += row;
     });
   }
   render();
