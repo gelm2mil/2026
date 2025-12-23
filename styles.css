@@ -177,3 +177,13 @@ body {
     .home-card-icon img { width: 90px; height: 90px; }
     .home-card-text { font-size: 20px; }
 }
+
+<h3>Firma del Conductor</h3>
+
+<canvas id="firmaCanvas"
+        style="width:100%; height:150px; border:1px solid #000; background:#fff;">
+</canvas>
+
+<button type="button" onclick="limpiarFirma()">
+  Limpiar firma
+</button>
