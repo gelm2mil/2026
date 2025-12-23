@@ -1,172 +1,212 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Formulario de Consignación</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consignaciones PMT 2026</title>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f2f2f2;
-      margin: 0;
-      padding: 15px;
-    }
+<style>
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:#f4f4f4;
+  color:#000;
+}
+.shell{
+  max-width:900px;
+  margin:auto;
+  background:#fff;
+  padding:15px;
+}
+h2{
+  text-align:center;
+  margin:5px 0;
+}
+.sec{
+  margin-top:15px;
+  font-weight:bold;
+  font-size:13px;
+  border-bottom:1px solid #ccc;
+}
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:8px;
+}
+.full{ grid-column:1 / -1; }
 
-    h2, h3 {
-      text-align: center;
-      color: #333;
-    }
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  font-size:15px;
+  box-sizing:border-box;
+}
 
-    form {
-      background: #fff;
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+canvas{
+  width:100%;
+  height:150px;
+  border:1px solid #000;
+  background:#fff;
+}
 
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
+button{
+  padding:12px;
+  font-size:15px;
+  cursor:pointer;
+}
 
-    input, textarea, select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
+.actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
 
-    textarea {
-      resize: vertical;
-    }
+.log{
+  margin-top:25px;
+  border-top:2px solid #000;
+  padding-top:10px;
+}
 
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      background: #007bff;
-      color: #fff;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+.log-item{
+  border-bottom:1px solid #ccc;
+  padding:8px 0;
+  font-size:14px;
+}
 
-    button:hover {
-      background: #0056b3;
-    }
-
-    #previewFotos img {
-      width: 120px;
-      margin: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-  </style>
+small{ color:#555; }
+</style>
 </head>
 
 <body>
+<div class="shell">
 
-<h2>🚨 Formulario de Consignación</h2>
+<h2>CONS﻿IGNACIÓN PMT 2026</h2>
 
-<form id="formConsignacion">
+<div class="sec">Datos del Conductor</div>
+<div class="grid">
+  <input id="piloto" placeholder="Nombre del piloto" class="full">
+  <input id="licencia" placeholder="Licencia">
+  <input id="dpi" placeholder="DPI">
+</div>
 
-  <label>No. de Boleta</label>
-  <input type="text" name="boleta" required>
+<div class="sec">Datos del Vehículo</div>
+<div class="grid">
+  <input id="placa" placeholder="Placa">
+  <input id="marca" placeholder="Marca">
+  <input id="color" placeholder="Color">
+  <input id="tipo" placeholder="Tipo (auto, moto, camión)">
+</div>
 
-  <label>Fecha</label>
-  <input type="date" name="fecha" required>
+<div class="sec">Datos del Agente</div>
+<div class="grid">
+  <input id="agente" placeholder="Nombre del agente">
+  <input id="chapa" placeholder="Chapa">
+</div>
 
-  <label>Hora</label>
-  <input type="time" name="hora" required>
+<div class="sec">Motivo</div>
+<textarea id="motivo" rows="2" placeholder="Motivo de la consignación"></textarea>
 
-  <label>Lugar de la Consignación</label>
-  <input type="text" name="lugar" required>
+<div class="sec">Evidencia Fotográfica</div>
+<input type="file" id="fotos" accept="image/*" multiple>
 
-  <label>Nombre del Infractor</label>
-  <input type="text" name="infractor">
+<div class="sec">Firma del Agente</div>
+<canvas id="firmaAgente"></canvas>
+<button onclick="limpiarFirma('firmaAgente')">Limpiar firma agente</button>
 
-  <label>Placa / Identificación</label>
-  <input type="text" name="placa">
+<div class="sec">Firma del Piloto</div>
+<canvas id="firmaPiloto"></canvas>
+<button onclick="limpiarFirma('firmaPiloto')">Limpiar firma piloto</button>
 
-  <label>Descripción de los Hechos</label>
-  <textarea name="descripcion" rows="5" required></textarea>
+<div class="actions">
+  <button onclick="guardarConsignacion()">💾 Guardar consignación</button>
+  <button onclick="alert('PDF se activa en el siguiente paso')">📄 Generar PDF</button>
+</div>
 
-  <h3>📷 Evidencia Fotográfica</h3>
+<div class="log">
+  <h3>📋 Bitácora de consignaciones</h3>
+  <div id="lista"></div>
+</div>
 
-  <input 
-    type="file" 
-    id="fotoEvidencia"
-    accept="image/*"
-    capture="environment"
-    multiple
-  >
-
-  <div id="previewFotos"></div>
-
-  <button type="submit">Guardar Consignación</button>
-
-</form>
+</div>
 
 <script>
-const input = document.getElementById("fotoEvidencia");
-const preview = document.getElementById("previewFotos");
+/* ===== FIRMAS ===== */
+function prepararFirma(id){
+  const c=document.getElementById(id);
+  const ctx=c.getContext("2d");
+  let dib=false;
 
-let imagenesComprimidas = [];
+  function resize(){
+    c.width=c.offsetWidth;
+    c.height=150;
+    ctx.lineWidth=2;
+    ctx.lineCap="round";
+    ctx.strokeStyle="#000";
+  }
+  resize(); window.addEventListener("resize",resize);
 
-input.addEventListener("change", () => {
-  preview.innerHTML = "";
-  imagenesComprimidas = [];
-
-  [...input.files].forEach(file => {
-    if (!file.type.startsWith("image/")) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-
-        const maxWidth = 1024;
-        const scale = Math.min(maxWidth / img.width, 1);
-
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-        canvas.toBlob(blob => {
-          const compressedFile = new File(
-            [blob],
-            file.name.replace(/\.[^/.]+$/, ".jpg"),
-            { type: "image/jpeg" }
-          );
-
-          imagenesComprimidas.push(compressedFile);
-
-          const imgPreview = document.createElement("img");
-          imgPreview.src = URL.createObjectURL(blob);
-          preview.appendChild(imgPreview);
-        }, "image/jpeg", 0.7);
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+  c.addEventListener("pointerdown",e=>{
+    dib=true; ctx.beginPath();
+    ctx.moveTo(e.offsetX,e.offsetY);
   });
-});
+  c.addEventListener("pointermove",e=>{
+    if(!dib) return;
+    ctx.lineTo(e.offsetX,e.offsetY); ctx.stroke();
+  });
+  c.addEventListener("pointerup",()=>dib=false);
+}
+prepararFirma("firmaAgente");
+prepararFirma("firmaPiloto");
 
-document.getElementById("formConsignacion").addEventListener("submit", e => {
-  e.preventDefault();
-  alert("✔️ Consignación lista (formulario funcional y fotos comprimidas)");
-});
+function limpiarFirma(id){
+  const c=document.getElementById(id);
+  c.getContext("2d").clearRect(0,0,c.width,c.height);
+}
+
+/* ===== GUARDAR ===== */
+function guardarConsignacion(){
+  const data={
+    fecha:new Date().toLocaleString(),
+    piloto:piloto.value,
+    licencia:licencia.value,
+    dpi:dpi.value,
+    placa:placa.value,
+    marca:marca.value,
+    color:color.value,
+    tipo:tipo.value,
+    agente:agente.value,
+    chapa:chapa.value,
+    motivo:motivo.value,
+    firmaAgente:firmaAgente.toDataURL(),
+    firmaPiloto:firmaPiloto.toDataURL()
+  };
+
+  const arr=JSON.parse(localStorage.getItem("consignaciones")||"[]");
+  arr.push(data);
+  localStorage.setItem("consignaciones",JSON.stringify(arr));
+  mostrar();
+  alert("Consignación guardada");
+}
+
+/* ===== MOSTRAR ===== */
+function mostrar(){
+  const cont=document.getElementById("lista");
+  cont.innerHTML="";
+  const arr=JSON.parse(localStorage.getItem("consignaciones")||"[]");
+  arr.reverse().forEach(c=>{
+    const d=document.createElement("div");
+    d.className="log-item";
+    d.innerHTML=`
+    <strong>${c.fecha}</strong><br>
+    🚗 ${c.placa} — ${c.motivo}<br>
+    👮 ${c.agente} (${c.chapa})
+    `;
+    cont.appendChild(d);
+  });
+}
+mostrar();
 </script>
-
 </body>
 </html>
