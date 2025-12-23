@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CONSIGNACIONES 2026 — GELM</title>
+  <title>SISTEMA PMT CHIMALTENANGO</title>
   <style>
     :root {
       --gelm-cyan: #00eaff;
@@ -11,170 +11,171 @@
       --gelm-card: rgba(10, 20, 40, 0.95);
     }
 
-    /* ESTILOS DE PANTALLA */
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--gelm-bg); color: white; }
-    .shell { width: 100%; max-width: 900px; margin: auto; padding: 10px; }
-    .panel { background: var(--gelm-card); border-radius: 20px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 20px; box-shadow: 0 0 20px rgba(0, 234, 255, 0.2); }
+    body { margin: 0; font-family: sans-serif; background: var(--gelm-bg); color: white; }
+    .shell { width: 100%; max-width: 800px; margin: auto; padding: 15px; box-sizing: border-box; }
+    .panel { background: var(--gelm-card); border-radius: 15px; border: 1px solid #00eaff44; padding: 20px; }
     
-    header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gelm-cyan); padding-bottom: 10px; }
-    .modulo { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 234, 255, 0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-    .full { grid-column: 1 / -1; }
+    header { text-align: center; border-bottom: 2px solid var(--gelm-cyan); margin-bottom: 20px; padding-bottom: 10px; }
+    .modulo { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
     
-    label { font-size: 0.75rem; color: var(--gelm-cyan); text-transform: uppercase; margin-bottom: 5px; display: block; font-weight: bold; }
-    input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-size: 16px; }
+    label { font-size: 12px; color: var(--gelm-cyan); display: block; margin-bottom: 5px; font-weight: bold; }
+    input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; }
+
+    .btn-save { background: linear-gradient(135deg, #00eaff, #0099ff); color: black; padding: 15px; border: none; border-radius: 30px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; }
     
-    .chk-group { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 5px 0; }
-    input[type="checkbox"] { width: 20px; height: 20px; }
+    /* Historial */
+    .historial { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
+    .item-registro { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .btn-reprint { background: #b300ff; border: none; color: white; padding: 5px 10px; border-radius: 5px; }
+    .btn-del { background: #ff4444; border: none; color: white; padding: 5px 10px; border-radius: 5px; margin-left: 5px; }
 
-    .btn { padding: 16px; border-radius: 35px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; margin-top: 10px; font-size: 1rem; }
-    .btn-save { background: linear-gradient(135deg, #00eaff, #00ffc8); color: #000; box-shadow: 0 4px 15px rgba(0, 234, 255, 0.3); }
-
-    /* REPORTE OCULTO */
-    #boleta-reporte { display: none; background: white; color: black; padding: 10mm; font-family: Arial, sans-serif; }
-    .tabla-rep { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    .tabla-rep td { border: 1px solid black; padding: 8px; font-size: 13px; }
-
+    /* Impresion */
+    #boleta-print { display: none; color: black; background: white; padding: 20px; }
     @media print {
-      body { background: white; }
-      #form-main, .no-print { display: none !important; }
-      #boleta-reporte { display: block !important; }
+      #main-ui { display: none !important; }
+      #boleta-print { display: block !important; }
     }
-
-    .btn-pdf { background: #b300ff; color: white; padding: 6px 12px; border-radius: 6px; border: none; }
-    .btn-del { background: #ff4444; color: white; padding: 6px 10px; border-radius: 6px; border: none; margin-left: 5px; }
   </style>
 </head>
 <body>
 
-<div class="shell" id="form-main">
+<div id="main-ui" class="shell">
   <div class="panel">
     <header>
-      <h2 style="margin:0; color:var(--gelm-cyan);">CONSIGNACIONES 2026</h2>
-      <small>PMT CHIMALTENANGO — UNIDAD DE TRANSPORTES</small>
+      <h2 style="margin:0;">PMT CHIMALTENANGO</h2>
+      <small>REGISTRO DE CONSIGNACIONES</small>
     </header>
 
     <div class="modulo">
-      <label>Conductor</label>
-      <div class="grid">
-        <input type="text" id="conductor" placeholder="Nombre Completo" class="full">
-        <input type="text" id="licencia" placeholder="No. Licencia">
-        <input type="text" id="dpi" placeholder="DPI / Documento">
-      </div>
+      <label>DATOS GENERALES</label>
+      <input type="text" id="conductor" placeholder="Nombre del Conductor">
+      <input type="text" id="placas" placeholder="No. de Placa">
+      <input type="date" id="fecha">
+      <textarea id="motivo" placeholder="Motivo de la consignación..."></textarea>
     </div>
 
-    <div class="modulo">
-      <label>Vehículo</label>
-      <div class="grid">
-        <input type="text" id="placas" placeholder="Placas">
-        <input type="text" id="marca" placeholder="Marca">
-        <input type="text" id="color" placeholder="Color">
-      </div>
-    </div>
+    <button class="btn-save" onclick="procesarTodo()">💾 GUARDAR Y GENERAR</button>
 
-    <div class="modulo">
-      <label>Operativo</label>
-      <div class="grid">
-        <input type="date" id="fecha">
-        <input type="text" id="agente" placeholder="Nombre Agente">
-        <input type="text" id="chapa" placeholder="Chapa No.">
-        <textarea id="motivo" placeholder="Motivo..." class="full" rows="2"></textarea>
-      </div>
-    </div>
-
-    <button class="btn btn-save" onclick="guardarYReporte()">💾 GUARDAR Y GENERAR REPORTE</button>
-
-    <div style="margin-top:20px;">
-      <h3 style="font-size: 0.8rem;">REGISTROS GUARDADOS</h3>
-      <table width="100%" id="tabla">
-        <tbody id="tablaBody"></tbody>
-      </table>
+    <div class="historial">
+      <h3 style="font-size: 14px; color: var(--gelm-cyan);">REGISTROS EN MEMORIA</h3>
+      <div id="listaRegistros"></div>
     </div>
   </div>
 </div>
 
-<div id="boleta-reporte">
-  <div style="text-align:center; border-bottom: 2px solid black;">
-    <h3>POLICÍA MUNICIPAL DE TRÁNSITO</h3>
-    <h4>CHIMALTENANGO, GUATEMALA</h4>
-    <p><b>BOLETA DE CONSIGNACIÓN</b></p>
-  </div>
-  <table class="tabla-rep">
-    <tr><td><b>CONDUCTOR:</b> <span id="r-conductor"></span></td><td><b>DPI:</b> <span id="r-dpi"></span></td></tr>
-    <tr><td><b>PLACA:</b> <span id="r-placa"></span></td><td><b>FECHA:</b> <span id="r-fecha"></span></td></tr>
-    <tr><td><b>MARCA:</b> <span id="r-marca"></span></td><td><b>COLOR:</b> <span id="r-color"></span></td></tr>
-    <tr><td colspan="2"><b>MOTIVO:</b> <br><span id="r-motivo"></span></td></tr>
-    <tr><td><b>AGENTE:</b> <span id="r-agente"></span></td><td><b>CHAPA:</b> <span id="r-chapa"></span></td></tr>
-  </table>
-  <div style="margin-top:50px; display:flex; justify-content:space-around; text-align:center;">
-    <div>________________<br>F. AGENTE</div>
-    <div>________________<br>F. CONDUCTOR</div>
-  </div>
+<div id="boleta-print">
+  <center>
+    <h2>PMT CHIMALTENANGO</h2>
+    <p>BOLETA DE CONSIGNACIÓN OFICIAL</p>
+  </center>
+  <hr>
+  <p><b>Fecha:</b> <span id="p-fecha"></span></p>
+  <p><b>Conductor:</b> <span id="p-conductor"></span></p>
+  <p><b>Placas:</b> <span id="p-placa"></span></p>
+  <p><b>Motivo:</b> <br><span id="p-motivo"></span></p>
+  <br><br><br>
+  <p style="text-align: center;">__________________________<br>Firma Autorizada</p>
 </div>
 
 <script>
-  const KEY = "gelm_consignas_2026";
+  // Nombre de la base de datos local
+  const DB_NAME = "DB_PMT_CHIMAL_2026";
 
-  function guardarYReporte() {
-    const d = {
+  // 1. FUNCIÓN AL CARGAR LA PÁGINA: Recupera los datos
+  window.onload = function() {
+    renderizarLista();
+    // Poner fecha de hoy por defecto
+    document.getElementById('fecha').valueAsDate = new Date();
+  };
+
+  // 2. FUNCIÓN PRINCIPAL
+  function procesarTodo() {
+    const conductor = document.getElementById('conductor').value;
+    const placa = document.getElementById('placas').value;
+    const fecha = document.getElementById('fecha').value;
+    const motivo = document.getElementById('motivo').value;
+
+    if(!placa || !conductor) {
+      alert("Por favor llena los campos principales (Placa y Conductor)");
+      return;
+    }
+
+    const nuevoRegistro = {
       id: Date.now(),
-      conductor: document.getElementById('conductor').value,
-      dpi: document.getElementById('dpi').value,
-      placas: document.getElementById('placas').value,
-      marca: document.getElementById('marca').value,
-      color: document.getElementById('color').value,
-      fecha: document.getElementById('fecha').value,
-      agente: document.getElementById('agente').value,
-      chapa: document.getElementById('chapa').value,
-      motivo: document.getElementById('motivo').value
+      conductor: conductor,
+      placa: placa,
+      fecha: fecha,
+      motivo: motivo
     };
 
-    if(!d.placas) return alert("Falta Placa");
+    // GUARDAR EN LOCALSTORAGE
+    let datosExistentes = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+    datosExistentes.push(nuevoRegistro);
+    localStorage.setItem(DB_NAME, JSON.stringify(datosExistentes));
 
-    let logs = JSON.parse(localStorage.getItem(KEY) || '[]');
-    logs.push(d);
-    localStorage.setItem(KEY, JSON.stringify(logs));
-
-    // Llenar reporte
-    document.getElementById('r-conductor').innerText = d.conductor;
-    document.getElementById('r-dpi').innerText = d.dpi;
-    document.getElementById('r-placa').innerText = d.placas;
-    document.getElementById('r-fecha').innerText = d.fecha;
-    document.getElementById('r-marca').innerText = d.marca;
-    document.getElementById('r-color').innerText = d.color;
-    document.getElementById('r-agente').innerText = d.agente;
-    document.getElementById('r-chapa').innerText = d.chapa;
-    document.getElementById('r-motivo').innerText = d.motivo;
-
-    window.print();
-    render();
+    // PREPARAR E IMPRIMIR
+    lanzarImpresion(nuevoRegistro);
+    
+    // LIMPIAR FORMULARIO
+    document.getElementById('conductor').value = "";
+    document.getElementById('placas').value = "";
+    document.getElementById('motivo').value = "";
+    
+    // ACTUALIZAR LISTA VISIBLE
+    renderizarLista();
   }
 
-  function render() {
-    const b = document.getElementById('tablaBody');
-    let logs = JSON.parse(localStorage.getItem(KEY) || '[]');
-    b.innerHTML = "";
-    logs.reverse().forEach(l => {
-      b.innerHTML += `<tr>
-        <td>${l.fecha} - ${l.placas}</td>
-        <td><button class="btn-pdf" onclick="reimprimir(${l.id})">PDF</button></td>
-      </tr>`;
+  // 3. DIBUJAR LA LISTA EN PANTALLA
+  function renderizarLista() {
+    const contenedor = document.getElementById('listaRegistros');
+    let datos = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+    
+    contenedor.innerHTML = "";
+    
+    // Mostrar del más reciente al más viejo
+    datos.reverse().forEach(reg => {
+      const div = document.createElement('div');
+      div.className = 'item-registro';
+      div.innerHTML = `
+        <div>
+          <b style="color:#00eaff">${reg.placa}</b><br>
+          <small>${reg.fecha}</small>
+        </div>
+        <div>
+          <button class="btn-reprint" onclick="reimprimir(${reg.id})">PDF</button>
+          <button class="btn-del" onclick="borrar(${reg.id})">X</button>
+        </div>
+      `;
+      contenedor.appendChild(div);
     });
   }
 
-  function reimprimir(id) {
-    let logs = JSON.parse(localStorage.getItem(KEY) || '[]');
-    let l = logs.find(x => x.id === id);
-    if(l) {
-        document.getElementById('r-conductor').innerText = l.conductor;
-        document.getElementById('r-dpi').innerText = l.dpi;
-        document.getElementById('r-placa').innerText = l.placas;
-        document.getElementById('r-fecha').innerText = l.fecha;
-        window.print();
-    }
+  // 4. LANZAR VENTANA DE IMPRESIÓN
+  function lanzarImpresion(obj) {
+    document.getElementById('p-fecha').innerText = obj.fecha;
+    document.getElementById('p-conductor').innerText = obj.conductor;
+    document.getElementById('p-placa').innerText = obj.placa;
+    document.getElementById('p-motivo').innerText = obj.motivo;
+    window.print();
   }
 
-  render();
+  // 5. RE-IMPRIMIR DESDE EL HISTORIAL
+  function reimprimir(id) {
+    let datos = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+    let encontrado = datos.find(x => x.id === id);
+    if(encontrado) lanzarImpresion(encontrado);
+  }
+
+  // 6. BORRAR REGISTRO
+  function borrar(id) {
+    if(confirm("¿Seguro que quieres eliminar este registro de la memoria?")) {
+      let datos = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+      datos = datos.filter(x => x.id !== id);
+      localStorage.setItem(DB_NAME, JSON.stringify(datos));
+      renderizarLista();
+    }
+  }
 </script>
+
 </body>
 </html>
