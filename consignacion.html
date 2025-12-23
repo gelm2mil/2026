@@ -3,210 +3,224 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>CONSIGNACIONES 2026 — GELM</title>
+  <title>CONSIGNACIONES PMT 2026</title>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    :root {
-      --gelm-cyan: #00eaff;
-      --gelm-magenta: #b300ff;
-      --gelm-bg: #020510;
-    }
-
-    body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background: var(--gelm-bg); color: white; padding: 10px; }
-    .agenda-panel { background: rgba(3, 5, 20, 0.96); border-radius: 20px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 15px; max-width: 800px; margin: auto; }
+    :root { --cyan: #00eaff; --magenta: #b300ff; --bg: #020510; }
+    body { margin: 0; font-family: sans-serif; background: var(--bg); color: white; padding: 10px; }
+    .shell { max-width: 800px; margin: auto; background: rgba(3, 5, 20, 0.95); border: 1px solid #00eaff44; border-radius: 20px; padding: 15px; }
     
-    header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gelm-cyan); }
-    .modulo-titulo { color: var(--gelm-cyan); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin: 15px 0 8px 0; display: flex; align-items: center; }
-    .modulo-titulo::before { content: ""; width: 4px; height: 15px; background: var(--gelm-magenta); margin-right: 8px; }
+    header { text-align: center; border-bottom: 2px solid var(--cyan); margin-bottom: 20px; }
+    .sec-t { color: var(--cyan); font-size: 11px; text-transform: uppercase; font-weight: bold; margin: 15px 0 5px; display: block; }
     
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .full { grid-column: 1 / -1; }
     
-    label { font-size: 0.65rem; color: #00eaff; margin-bottom: 3px; display: block; text-transform: uppercase; }
-    input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-size: 16px; } /* 16px evita zoom en iPhone */
+    input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-size: 16px; }
+    .chk-group { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; }
+    .chk-item { font-size: 12px; display: flex; align-items: center; gap: 5px; }
+    .chk-item input { width: 18px; height: 18px; }
 
-    .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-    .btn { padding: 15px; border-radius: 12px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 14px; }
-    .btn-save { background: #00eaff; color: #000; grid-column: 1 / -1; }
-    .btn-excel { background: #22c55e; color: white; }
-    .btn-pdf { background: #b300ff; color: white; }
+    .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+    .btn { padding: 15px; border-radius: 12px; border: none; font-weight: bold; text-transform: uppercase; cursor: pointer; }
+    .b-save { background: var(--cyan); color: #000; grid-column: 1 / -1; }
+    .b-excel { background: #22c55e; color: white; }
+    .b-pdf { background: var(--magenta); color: white; }
 
-    .table-wrapper { overflow-x: auto; margin-top: 25px; border-radius: 10px; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; background: rgba(255,255,255,0.02); }
-    th { background: #00eaff; color: #000; padding: 10px; text-align: left; }
-    td { padding: 10px; border-bottom: 1px solid #222; }
-    .img-mini { width: 50px; height: 40px; border-radius: 4px; border: 1px solid #00eaff; }
-    
+    /* TABLA */
+    .table-w { overflow-x: auto; margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th { background: var(--cyan); color: #000; padding: 8px; }
+    td { padding: 8px; border-bottom: 1px solid #222; text-align: center; }
+    .img-p { width: 45px; height: 35px; border: 1px solid var(--cyan); border-radius: 4px; }
+
+    /* DISEÑO BOLETA PDF (OCULTO EN PANTALLA) */
+    #boleta-print { display: none; color: black; background: white; padding: 40px; }
     @media print {
-      .btn, .modulo-titulo, .grid, label, input, select, textarea, th:last-child, td:last-child { display: none !important; }
-      body { background: white; color: black; }
-      .agenda-panel { border: none; width: 100%; }
-      th { border: 1px solid black !important; background: #eee !important; }
-      td { border: 1px solid #ddd !important; }
+      body * { visibility: hidden; }
+      #boleta-print, #boleta-print * { visibility: visible; }
+      #boleta-print { display: block; position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none; }
     }
   </style>
 </head>
 <body>
 
-<div class="agenda-panel">
+<div class="shell no-print">
   <header>
-    <h2 style="margin:5px; color:#00ffc8;">CONSIGNACIONES 2026</h2>
-    <small>PMT CHIMALTENANGO</small>
+    <h2 style="margin:5px; color:var(--cyan);">CONSIGNACIONES 2026</h2>
+    <small>UNIDAD DE TRANSPORTES — CHIMAL</small>
   </header>
 
-  <div class="modulo-titulo">Datos del Conductor</div>
+  <span class="sec-t">Datos del Conductor</span>
   <div class="grid">
-    <div class="full"><label>Piloto</label><input type="text" id="piloto" placeholder="Nombre completo"></div>
-    <div><label>Licencia</label><input type="text" id="numLicencia" placeholder="No. Licencia"></div>
-    <div><label>DPI</label><input type="text" id="dpi" placeholder="No. DPI"></div>
+    <input type="text" id="piloto" placeholder="Nombre Piloto" class="full">
+    <input type="text" id="licencia" placeholder="No. Licencia">
+    <select id="clase"><option>Clase A</option><option>Clase B</option><option>Clase C</option><option>Clase M</option></select>
+    <input type="text" id="dpi" placeholder="DPI / Documento" class="full">
   </div>
 
-  <div class="modulo-titulo">Datos del Vehículo</div>
+  <span class="sec-t">Datos del Vehículo</span>
   <div class="grid">
-    <div><label>Placa</label><input type="text" id="placa" placeholder="P-000XXX"></div>
-    <div><label>Marca/Color</label><input type="text" id="marca" placeholder="Toyota Gris"></div>
-    <div class="full"><label>NIT</label><input type="text" id="nit" placeholder="NIT del vehículo"></div>
+    <input type="text" id="placa" placeholder="Placas">
+    <select id="tipoV"><option>Automóvil</option><option>Motocicleta</option><option>Camión</option><option>Bus</option></select>
+    <input type="text" id="marca" placeholder="Marca">
+    <input type="text" id="color" placeholder="Color">
+    <input type="text" id="nit" placeholder="NIT Vehículo" class="full">
   </div>
 
-  <div class="modulo-titulo">Operativo</div>
+  <span class="sec-t">Inventario</span>
+  <div class="chk-group" id="inventario">
+    <div class="chk-item"><input type="checkbox" value="Antena"> Antena</div>
+    <div class="chk-item"><input type="checkbox" value="Radio"> Radio</div>
+    <div class="chk-item"><input type="checkbox" value="Bocinas"> Bocinas</div>
+    <div class="chk-item"><input type="checkbox" value="Espejos"> Espejos</div>
+    <div class="chk-item"><input type="checkbox" value="Alfombras"> Alfombras</div>
+    <div class="chk-item"><input type="checkbox" value="Llanta Rep."> Llanta Rep.</div>
+  </div>
+
+  <span class="sec-t">Operativo y Motivo</span>
   <div class="grid">
-    <div><label>Fecha</label><input type="date" id="fecha"></div>
-    <div><label>Hora</label><input type="time" id="hora"></div>
-    <div><label>Agente</label><input type="text" id="agente" placeholder="Nombre"></div>
-    <div><label>Chapa</label><input type="text" id="chapa" placeholder="No."></div>
-    <div class="full"><label>Motivo</label><textarea id="motivo" rows="2"></textarea></div>
-    <div class="full"><label>Foto Prueba</label><input type="file" id="foto" accept="image/*"></div>
+    <input type="date" id="fecha">
+    <input type="text" id="agente" placeholder="Nombre Agente">
+    <input type="text" id="chapa" placeholder="Chapa No.">
+    <input type="text" id="boleta" placeholder="No. Boleta Infracción">
+    <textarea id="motivo" placeholder="Motivo de la consignación..." class="full" rows="2"></textarea>
+    <input type="file" id="foto" accept="image/*" class="full">
   </div>
 
-  <div class="controls">
-    <button class="btn btn-save" onclick="guardarRegistro()">💾 GUARDAR CONSIGNACIÓN</button>
-    <button class="btn btn-excel" onclick="exportarExcel()">📊 EXCEL</button>
-    <button class="btn btn-pdf" onclick="window.print()">📑 PDF</button>
+  <div class="btn-group">
+    <button class="btn b-save" onclick="guardar()">💾 GUARDAR REGISTRO</button>
+    <button class="btn b-excel" onclick="excel()">📊 EXCEL</button>
+    <button class="btn b-pdf" onclick="window.print()">📑 IMPRIMIR PDF</button>
   </div>
 
-  <div class="table-wrapper">
+  <div class="table-w">
     <table>
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Placa</th>
-          <th>Motivo</th>
-          <th>Foto</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody id="tablaBody"></tbody>
+      <thead><tr><th>Fecha</th><th>Placa</th><th>Acción</th></tr></thead>
+      <tbody id="res"></tbody>
     </table>
   </div>
 </div>
 
-<script>
-  const DB_KEY = "CONSIGNACIONES_GELM_2026";
-  let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-  let temporalFoto = "";
+<div id="boleta-print">
+  <center>
+    <h3>POLICÍA MUNICIPAL DE TRÁNSITO</h3>
+    <h4>CHIMALTENANGO, GUATEMALA</h4>
+    <p><b>BOLETA DE CONSIGNACIÓN OFICIAL</b></p>
+  </center>
+  <table border="1" style="width:100%; border-collapse: collapse; margin-top:20px;">
+    <tr><td colspan="2" bgcolor="#eee"><b>DATOS DEL CONDUCTOR</b></td></tr>
+    <tr><td><b>NOMBRE:</b> <span id="p-nom"></span></td><td><b>DPI:</b> <span id="p-dpi"></span></td></tr>
+    <tr><td><b>LICENCIA:</b> <span id="p-lic"></span></td><td><b>FECHA:</b> <span id="p-fec"></span></td></tr>
+    <tr><td colspan="2" bgcolor="#eee"><b>DATOS DEL VEHÍCULO</b></td></tr>
+    <tr><td><b>PLACA:</b> <span id="p-pla"></span></td><td><b>TIPO:</b> <span id="p-tip"></span></td></tr>
+    <tr><td><b>MARCA:</b> <span id="p-mar"></span></td><td><b>COLOR:</b> <span id="p-col"></span></td></tr>
+    <tr><td colspan="2"><b>NIT:</b> <span id="p-nit"></span></td></tr>
+    <tr><td colspan="2" bgcolor="#eee"><b>CONSIGNACIÓN</b></td></tr>
+    <tr><td colspan="2"><b>MOTIVO:</b> <span id="p-mot"></span></td></tr>
+    <tr><td><b>AGENTE:</b> <span id="p-age"></span></td><td><b>CHAPA:</b> <span id="p-cha"></span></td></tr>
+    <tr><td colspan="2"><b>BOLETA INFRACCIÓN:</b> <span id="p-bol"></span></td></tr>
+  </table>
+  <p style="font-size: 10px; margin-top:10px;"><b>INVENTARIO:</b> <span id="p-inv"></span></p>
+  <center><img id="p-img" style="max-width:300px; margin-top:20px; border:1px solid #000;"></center>
+  <div style="margin-top:50px; display:flex; justify-content: space-around;">
+    <span>____________________<br>F. AGENTE</span>
+    <span>____________________<br>F. CONDUCTOR</span>
+  </div>
+</div>
 
-  // Al cargar
-  window.onload = () => {
-    const n = new Date();
-    document.getElementById('fecha').valueAsDate = n;
-    document.getElementById('hora').value = n.getHours().toString().padStart(2,'0')+":"+n.getMinutes().toString().padStart(2,'0');
-    actualizarTabla();
+<script>
+  let db = JSON.parse(localStorage.getItem("DATA_CONS_2026")) || [];
+  let fData = "";
+
+  window.onload = () => { 
+    document.getElementById('fecha').valueAsDate = new Date(); 
+    render(); 
   };
 
-  // Procesar Foto (IGUAL QUE BITACORA)
-  document.getElementById("foto").onchange = function(e) {
+  document.getElementById("foto").onchange = (e) => {
     const reader = new FileReader();
-    reader.onload = function(ev) {
+    reader.onload = (ev) => {
       const img = new Image();
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const max = 500;
-        let w = img.width, h = img.height;
-        if (w > h) { if (w > max) { h *= max/w; w = max; } }
-        else { if (h > max) { w *= max/h; h = max; } }
-        canvas.width = w; canvas.height = h;
-        ctx.drawImage(img, 0, 0, w, h);
-        temporalFoto = canvas.toDataURL('image/jpeg', 0.5);
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        const ctx = c.getContext('2d');
+        c.width = 400; c.height = img.height * (400/img.width);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        fData = c.toDataURL('image/jpeg', 0.5);
       };
       img.src = ev.target.result;
     };
-    if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+    reader.readAsDataURL(e.target.files[0]);
   };
 
-  function guardarRegistro() {
-    const p = document.getElementById("piloto").value;
-    const pl = document.getElementById("placa").value;
-    if(!p || !pl) return alert("Escribe Piloto y Placa");
-
-    const nuevo = {
-      id: Date.now(),
-      fecha: document.getElementById("fecha").value,
-      hora: document.getElementById("hora").value,
-      piloto: p,
-      licencia: document.getElementById("numLicencia").value,
+  function guardar() {
+    const inv = Array.from(document.querySelectorAll('#inventario input:checked')).map(c => c.value).join(", ");
+    const r = {
+      piloto: document.getElementById("piloto").value,
+      licencia: document.getElementById("licencia").value + " ("+document.getElementById("clase").value+")",
       dpi: document.getElementById("dpi").value,
-      placa: pl.toUpperCase(),
+      placa: document.getElementById("placa").value.toUpperCase(),
+      tipo: document.getElementById("tipoV").value,
       marca: document.getElementById("marca").value,
+      color: document.getElementById("color").value,
       nit: document.getElementById("nit").value,
+      fecha: document.getElementById("fecha").value,
       agente: document.getElementById("agente").value,
       chapa: document.getElementById("chapa").value,
+      boleta: document.getElementById("boleta").value,
       motivo: document.getElementById("motivo").value,
-      foto: temporalFoto
+      inventario: inv,
+      foto: fData
     };
 
-    db.push(nuevo);
-    localStorage.setItem(DB_KEY, JSON.stringify(db));
+    if(!r.piloto || !r.placa) return alert("Nombre y Placa son obligatorios");
     
-    // Limpiar
-    document.getElementById("piloto").value = "";
-    document.getElementById("placa").value = "";
-    document.getElementById("motivo").value = "";
-    temporalFoto = "";
-    document.getElementById("foto").value = "";
-
-    actualizarTabla();
-    alert("¡Guardado exitosamente!");
+    db.push(r);
+    localStorage.setItem("DATA_CONS_2026", JSON.stringify(db));
+    prepPrint(r);
+    render();
+    alert("Guardado. Ahora puedes imprimir el PDF.");
   }
 
-  function actualizarTabla() {
-    const tbody = document.getElementById("tablaBody");
-    tbody.innerHTML = "";
-    
-    db.slice().reverse().forEach((r, idx) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.fecha}<br>${r.hora}</td>
-        <td><b>${r.placa}</b></td>
-        <td>${r.motivo.substring(0,20)}...</td>
-        <td>${r.foto ? `<img src="${r.foto}" class="img-mini">` : '—'}</td>
-        <td><button onclick="borrar(${db.length - 1 - idx})" style="background:red; color:white; border:none; border-radius:4px; padding:5px;">X</button></td>
-      `;
-      tbody.appendChild(tr);
+  function prepPrint(r) {
+    document.getElementById("p-nom").innerText = r.piloto;
+    document.getElementById("p-dpi").innerText = r.dpi;
+    document.getElementById("p-lic").innerText = r.licencia;
+    document.getElementById("p-fec").innerText = r.fecha;
+    document.getElementById("p-pla").innerText = r.placa;
+    document.getElementById("p-tip").innerText = r.tipo;
+    document.getElementById("p-mar").innerText = r.marca;
+    document.getElementById("p-col").innerText = r.color;
+    document.getElementById("p-nit").innerText = r.nit;
+    document.getElementById("p-mot").innerText = r.motivo;
+    document.getElementById("p-age").innerText = r.agente;
+    document.getElementById("p-cha").innerText = r.chapa;
+    document.getElementById("p-bol").innerText = r.boleta;
+    document.getElementById("p-inv").innerText = r.inventario;
+    document.getElementById("p-img").src = r.foto;
+  }
+
+  function render() {
+    const t = document.getElementById("res");
+    t.innerHTML = "";
+    db.slice().reverse().forEach((r, i) => {
+      t.innerHTML += `<tr><td>${r.fecha}</td><td>${r.placa}</td>
+      <td><button onclick="ver(${db.length-1-i})" style="background:#b300ff; color:white; border:none; padding:5px; border-radius:5px;">PDF</button>
+      <button onclick="del(${db.length-1-i})" style="background:red; color:white; border:none; padding:5px; border-radius:5px;">X</button></td></tr>`;
     });
   }
 
-  function borrar(i) {
-    if(confirm("¿Borrar?")) {
-      db.splice(i, 1);
-      localStorage.setItem(DB_KEY, JSON.stringify(db));
-      actualizarTabla();
-    }
-  }
+  function ver(i) { prepPrint(db[i]); window.print(); }
+  function del(i) { if(confirm("¿Borrar?")) { db.splice(i,1); localStorage.setItem("DATA_CONS_2026", JSON.stringify(db)); render(); } }
 
-  function exportarExcel() {
-    if(db.length === 0) return alert("No hay datos");
-    // Quitamos la foto para el excel porque los móviles no aguantan imágenes dentro de celdas excel
-    const datosSinFoto = db.map(item => {
-      const { foto, id, ...resto } = item;
-      return resto;
-    });
-    const ws = XLSX.utils.json_to_sheet(datosSinFoto);
+  function excel() {
+    const ws = XLSX.utils.json_to_sheet(db.map(item => { const {foto, ...r} = item; return r; }));
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Consignaciones");
-    XLSX.writeFile(wb, "Consignaciones_2026.xlsx");
+    XLSX.writeFile(wb, "Reporte_PMT_2026.xlsx");
   }
 </script>
-
 </body>
 </html>
