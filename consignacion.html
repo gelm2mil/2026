@@ -3,155 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SISTEMA PMT CHIMALTENANGO</title>
+  <title>PMT CHIMALTENANGO - CONSIGNACIONES</title>
   <style>
     :root {
-      --gelm-cyan: #00eaff;
-      --gelm-bg: #020510;
-      --gelm-card: rgba(10, 20, 40, 0.95);
+      --cyan: #00eaff;
+      --bg: #020510;
+      --card: rgba(10, 20, 40, 0.95);
     }
 
-    body { margin: 0; font-family: sans-serif; background: var(--gelm-bg); color: white; }
-    .shell { width: 100%; max-width: 800px; margin: auto; padding: 15px; box-sizing: border-box; }
-    .panel { background: var(--gelm-card); border-radius: 15px; border: 1px solid #00eaff44; padding: 20px; }
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; padding: 10px; }
+    .container { max-width: 600px; margin: auto; }
+    .panel { background: var(--card); border-radius: 15px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 20px; }
     
-    header { text-align: center; border-bottom: 2px solid var(--gelm-cyan); margin-bottom: 20px; padding-bottom: 10px; }
-    .modulo { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    header { text-align: center; border-bottom: 2px solid var(--cyan); margin-bottom: 20px; padding-bottom: 10px; }
+    .modulo { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
     
-    label { font-size: 12px; color: var(--gelm-cyan); display: block; margin-bottom: 5px; font-weight: bold; }
+    label { font-size: 11px; color: var(--cyan); display: block; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
     input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; }
 
-    .btn-save { background: linear-gradient(135deg, #00eaff, #0099ff); color: black; padding: 15px; border: none; border-radius: 30px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; }
+    .btn-save { background: linear-gradient(135deg, #00eaff, #0099ff); color: black; padding: 15px; border: none; border-radius: 30px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
     
     /* Historial */
     .historial { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
-    .item-registro { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-    .btn-reprint { background: #b300ff; border: none; color: white; padding: 5px 10px; border-radius: 5px; }
-    .btn-del { background: #ff4444; border: none; color: white; padding: 5px 10px; border-radius: 5px; margin-left: 5px; }
+    .item-registro { background: rgba(0, 234, 255, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--cyan); }
+    .btn-pdf { background: #b300ff; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
+    .btn-del { background: #ff4444; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-left: 5px; }
 
-    /* Impresion */
-    #boleta-print { display: none; color: black; background: white; padding: 20px; }
+    /* Estilos para el PDF de Impresión */
+    #area-impresion { display: none; color: black; background: white; padding: 40px; }
     @media print {
-      #main-ui { display: none !important; }
-      #boleta-print { display: block !important; }
+      body * { visibility: hidden; }
+      #area-impresion, #area-impresion * { visibility: visible; }
+      #area-impresion { display: block; position: absolute; left: 0; top: 0; width: 100%; }
     }
   </style>
 </head>
 <body>
 
-<div id="main-ui" class="shell">
+<div class="container">
   <div class="panel">
     <header>
       <h2 style="margin:0;">PMT CHIMALTENANGO</h2>
-      <small>REGISTRO DE CONSIGNACIONES</small>
+      <small>UNIDAD DE TRANSPORTES - 2026</small>
     </header>
 
     <div class="modulo">
-      <label>DATOS GENERALES</label>
-      <input type="text" id="conductor" placeholder="Nombre del Conductor">
-      <input type="text" id="placas" placeholder="No. de Placa">
+      <label>Datos del Conductor</label>
+      <input type="text" id="conductor" placeholder="Nombre Completo">
+      <label>Vehículo (Placa)</label>
+      <input type="text" id="placas" placeholder="P-000XXX">
+      <label>Fecha del Operativo</label>
       <input type="date" id="fecha">
-      <textarea id="motivo" placeholder="Motivo de la consignación..."></textarea>
+      <label>Motivo</label>
+      <textarea id="motivo" rows="2" placeholder="Escriba el motivo..."></textarea>
     </div>
 
-    <button class="btn-save" onclick="procesarTodo()">💾 GUARDAR Y GENERAR</button>
+    <button class="btn-save" onclick="guardarRegistro()">💾 GUARDAR Y GENERAR BOLETA</button>
 
     <div class="historial">
-      <h3 style="font-size: 14px; color: var(--gelm-cyan);">REGISTROS EN MEMORIA</h3>
+      <h3 style="font-size: 14px; color: var(--cyan);">REGISTROS GUARDADOS (MEMORIA)</h3>
       <div id="listaRegistros"></div>
     </div>
   </div>
 </div>
 
-<div id="boleta-print">
-  <center>
-    <h2>PMT CHIMALTENANGO</h2>
-    <p>BOLETA DE CONSIGNACIÓN OFICIAL</p>
-  </center>
-  <hr>
-  <p><b>Fecha:</b> <span id="p-fecha"></span></p>
-  <p><b>Conductor:</b> <span id="p-conductor"></span></p>
-  <p><b>Placas:</b> <span id="p-placa"></span></p>
-  <p><b>Motivo:</b> <br><span id="p-motivo"></span></p>
-  <br><br><br>
-  <p style="text-align: center;">__________________________<br>Firma Autorizada</p>
+<div id="area-impresion">
+  <div style="text-align:center; border-bottom: 2px solid black; padding-bottom: 10px;">
+    <h2>POLICÍA MUNICIPAL DE TRÁNSITO</h2>
+    <h3>CHIMALTENANGO, GUATEMALA</h3>
+    <p>BOLETA DE CONSIGNACIÓN DE VEHÍCULO</p>
+  </div>
+  <div style="padding: 20px 0; line-height: 1.6; font-size: 18px;">
+    <p><b>FECHA:</b> <span id="p-fecha"></span></p>
+    <p><b>CONDUCTOR:</b> <span id="p-conductor"></span></p>
+    <p><b>PLACA:</b> <span id="p-placa"></span></p>
+    <p><b>MOTIVO:</b> <br><span id="p-motivo"></span></p>
+  </div>
+  <div style="margin-top: 100px; display: flex; justify-content: space-between;">
+    <div style="text-align: center; width: 45%; border-top: 1px solid black;">Firma Agente PMT</div>
+    <div style="text-align: center; width: 45%; border-top: 1px solid black;">Firma Conductor</div>
+  </div>
 </div>
 
 <script>
-  // Nombre de la base de datos local
-  const DB_NAME = "DB_PMT_CHIMAL_2026";
+  const DB_NAME = "PMT_Data_Storage_2026";
 
-  // 1. FUNCIÓN AL CARGAR LA PÁGINA: Recupera los datos
-  window.onload = function() {
-    renderizarLista();
-    // Poner fecha de hoy por defecto
+  // Al cargar la página, dibujar la lista
+  window.onload = () => {
     document.getElementById('fecha').valueAsDate = new Date();
+    mostrarHistorial();
   };
 
-  // 2. FUNCIÓN PRINCIPAL
-  function procesarTodo() {
+  function guardarRegistro() {
     const conductor = document.getElementById('conductor').value;
     const placa = document.getElementById('placas').value;
     const fecha = document.getElementById('fecha').value;
     const motivo = document.getElementById('motivo').value;
 
-    if(!placa || !conductor) {
-      alert("Por favor llena los campos principales (Placa y Conductor)");
-      return;
-    }
+    if (!placa || !conductor) return alert("Llena los campos obligatorios");
 
-    const nuevoRegistro = {
-      id: Date.now(),
-      conductor: conductor,
-      placa: placa,
-      fecha: fecha,
-      motivo: motivo
-    };
+    const registro = { id: Date.now(), conductor, placa, fecha, motivo };
 
-    // GUARDAR EN LOCALSTORAGE
-    let datosExistentes = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
-    datosExistentes.push(nuevoRegistro);
-    localStorage.setItem(DB_NAME, JSON.stringify(datosExistentes));
+    // Guardar
+    let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+    historial.push(registro);
+    localStorage.setItem(DB_NAME, JSON.stringify(historial));
 
-    // PREPARAR E IMPRIMIR
-    lanzarImpresion(nuevoRegistro);
-    
-    // LIMPIAR FORMULARIO
+    // Limpiar campos
     document.getElementById('conductor').value = "";
     document.getElementById('placas').value = "";
     document.getElementById('motivo').value = "";
-    
-    // ACTUALIZAR LISTA VISIBLE
-    renderizarLista();
+
+    // Actualizar lista e Imprimir
+    mostrarHistorial();
+    imprimirBoleta(registro);
   }
 
-  // 3. DIBUJAR LA LISTA EN PANTALLA
-  function renderizarLista() {
+  function mostrarHistorial() {
     const contenedor = document.getElementById('listaRegistros');
-    let datos = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+    let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
     
-    contenedor.innerHTML = "";
-    
-    // Mostrar del más reciente al más viejo
-    datos.reverse().forEach(reg => {
-      const div = document.createElement('div');
-      div.className = 'item-registro';
-      div.innerHTML = `
+    contenedor.innerHTML = historial.length === 0 ? "<small>No hay registros guardados.</small>" : "";
+
+    // Mostrar de más nuevo a más viejo
+    historial.reverse().forEach(reg => {
+      const card = document.createElement('div');
+      card.className = 'item-registro';
+      card.innerHTML = `
         <div>
-          <b style="color:#00eaff">${reg.placa}</b><br>
+          <strong>${reg.placa}</strong><br>
           <small>${reg.fecha}</small>
         </div>
         <div>
-          <button class="btn-reprint" onclick="reimprimir(${reg.id})">PDF</button>
-          <button class="btn-del" onclick="borrar(${reg.id})">X</button>
+          <button class="btn-pdf" onclick='reimprimir(${reg.id})'>PDF</button>
+          <button class="btn-del" onclick="borrarRegistro(${reg.id})">X</button>
         </div>
       `;
-      contenedor.appendChild(div);
+      contenedor.appendChild(card);
     });
   }
 
-  // 4. LANZAR VENTANA DE IMPRESIÓN
-  function lanzarImpresion(obj) {
+  function imprimirBoleta(obj) {
     document.getElementById('p-fecha').innerText = obj.fecha;
     document.getElementById('p-conductor').innerText = obj.conductor;
     document.getElementById('p-placa').innerText = obj.placa;
@@ -159,20 +151,18 @@
     window.print();
   }
 
-  // 5. RE-IMPRIMIR DESDE EL HISTORIAL
   function reimprimir(id) {
-    let datos = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
-    let encontrado = datos.find(x => x.id === id);
-    if(encontrado) lanzarImpresion(encontrado);
+    let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+    let reg = historial.find(x => x.id === id);
+    if (reg) imprimirBoleta(reg);
   }
 
-  // 6. BORRAR REGISTRO
-  function borrar(id) {
-    if(confirm("¿Seguro que quieres eliminar este registro de la memoria?")) {
-      let datos = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
-      datos = datos.filter(x => x.id !== id);
-      localStorage.setItem(DB_NAME, JSON.stringify(datos));
-      renderizarLista();
+  function borrarRegistro(id) {
+    if (confirm("¿Eliminar este registro permanentemente?")) {
+      let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+      historial = historial.filter(x => x.id !== id);
+      localStorage.setItem(DB_NAME, JSON.stringify(historial));
+      mostrarHistorial();
     }
   }
 </script>
