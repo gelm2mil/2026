@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>CONSIGNACIONES 2026 — GELM</title>
   <style>
     :root {
@@ -11,51 +11,52 @@
       --gelm-card: rgba(10, 20, 40, 0.95);
     }
 
-    /* Estilos de Pantalla (Igual a tu Bitácora) */
-    body { margin: 0; font-family: sans-serif; background: var(--gelm-bg); color: white; }
-    .shell { width: 100%; max-width: 900px; margin: auto; padding: 15px; }
-    .panel { background: var(--gelm-card); border-radius: 25px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 20px; box-shadow: 0 0 25px rgba(0, 234, 255, 0.2); }
+    /* Estilos de Pantalla */
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--gelm-bg); color: white; }
+    .shell { width: 100%; max-width: 900px; margin: auto; padding: 10px; }
+    .panel { background: var(--gelm-card); border-radius: 20px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 20px; box-shadow: 0 0 20px rgba(0, 234, 255, 0.2); }
     
-    header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--gelm-cyan); padding-bottom: 10px; }
-    .modulo { background: rgba(255,255,255,0.03); border: 1px solid rgba(0, 234, 255, 0.1); border-radius: 15px; padding: 15px; margin-bottom: 15px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+    header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid var(--gelm-cyan); padding-bottom: 10px; }
+    .modulo { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 234, 255, 0.1); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
     .full { grid-column: 1 / -1; }
     
-    label { font-size: 0.7rem; color: var(--gelm-cyan); text-transform: uppercase; margin-bottom: 4px; display: block; }
-    input, select, textarea { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-size: 16px; }
+    label { font-size: 0.75rem; color: var(--gelm-cyan); text-transform: uppercase; margin-bottom: 5px; display: block; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; font-size: 16px; }
     
-    .inv-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; margin-bottom: 5px; }
-    .inv-item input[type="checkbox"] { width: 18px; height: 18px; }
+    .chk-group { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 5px 0; }
+    input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
 
-    .btn { padding: 15px; border-radius: 30px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; margin-top: 10px; }
-    .btn-save { background: linear-gradient(135deg, #00eaff, #00ffc8); color: #000; }
+    .btn { padding: 16px; border-radius: 35px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; width: 100%; margin-top: 10px; font-size: 1rem; }
+    .btn-save { background: linear-gradient(135deg, #00eaff, #00ffc8); color: #000; box-shadow: 0 4px 15px rgba(0, 234, 255, 0.3); transition: 0.3s; }
+    .btn-save:active { transform: scale(0.98); }
     
     /* AREA DE REPORTE (OCULTA EN PANTALLA) */
-    #boleta-reporte { display: none; background: white; color: black; padding: 10mm; font-family: 'Arial', sans-serif; }
-    .tabla-rep { width: 100%; border-collapse: collapse; margin-top: 10px; }
-    .tabla-rep td { border: 1px solid black; padding: 8px; font-size: 12px; }
-    .encabezado-rep { text-align: center; border-bottom: 3px double black; margin-bottom: 15px; }
+    #boleta-reporte { display: none; background: white; color: black; padding: 15mm; }
+    .tabla-rep { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .tabla-rep td { border: 1px solid black; padding: 10px; font-size: 13px; }
+    .encabezado-rep { text-align: center; border-bottom: 3px solid black; margin-bottom: 20px; }
 
-    /* ESTILOS DE IMPRESIÓN (MAGIA DEL PDF) */
+    /* ESTILOS DE IMPRESIÓN */
     @media print {
       @page { size: letter; margin: 0; }
       body { background: white; }
-      .panel, #form-area { display: none !important; } /* Esconde el formulario */
-      #boleta-reporte { display: block !important; } /* Muestra solo la boleta */
-      .no-print { display: none !important; }
+      #form-main, .no-print { display: none !important; }
+      #boleta-reporte { display: block !important; }
     }
 
-    .btn-del { background: #ff0044; color: white; padding: 5px; border-radius: 5px; border: none; cursor: pointer; }
-    .btn-pdf-list { background: #b300ff; color: white; padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; }
+    /* Tabla de registros */
+    .btn-pdf { background: #b300ff; color: white; padding: 6px 12px; border-radius: 6px; border: none; font-size: 0.8rem; }
+    .btn-del { background: #ff4444; color: white; padding: 6px 10px; border-radius: 6px; border: none; font-size: 0.8rem; margin-left: 5px; }
   </style>
 </head>
 <body>
 
-<div class="shell">
-  <div class="panel" id="form-area">
+<div class="shell" id="form-main">
+  <div class="panel">
     <header>
       <h2 style="margin:0; color:var(--gelm-cyan);">CONSIGNACIONES 2026</h2>
-      <small>UNIDAD DE TRANSPORTES — PMT CHIMALTENANGO</small>
+      <small>PMT CHIMALTENANGO — UNIDAD DE TRANSPORTES</small>
     </header>
 
     <div class="modulo">
@@ -83,9 +84,8 @@
     </div>
 
     <div class="modulo">
-      <label>Inventario (Marque lo que presente)</label>
-      <div class="grid" id="inv-grid">
-        </div>
+      <label>Inventario de Accesorios</label>
+      <div class="grid" id="inv-container"></div>
     </div>
 
     <div class="modulo">
@@ -95,92 +95,100 @@
         <input type="text" id="agente" placeholder="Nombre Agente">
         <input type="text" id="chapa" placeholder="Chapa No.">
         <input type="text" id="boleta" placeholder="No. Boleta Infracción">
-        <textarea id="motivo" placeholder="Motivo de la consignación..." class="full" rows="2"></textarea>
+        <textarea id="motivo" placeholder="Motivo detallado de la consignación..." class="full" rows="2"></textarea>
       </div>
-      <label style="margin-top:10px;">Evidencia</label>
+      <label style="margin-top:10px;">Evidencia Fotográfica</label>
       <input type="file" id="fotoInput" accept="image/*">
     </div>
 
-    <button class="btn btn-save" onclick="guardar()">💾 GUARDAR Y GENERAR REPORTE</button>
+    <button class="btn btn-save" onclick="ejecutarGuardado()">💾 GUARDAR Y GENERAR REPORTE</button>
 
-    <div style="margin-top:20px; overflow-x:auto;">
-      <table width="100%" style="font-size:0.8rem; text-align:left;">
-        <thead><tr style="color:var(--gelm-cyan);"><th>Fecha</th><th>Placa</th><th>Acción</th></tr></thead>
+    <div style="margin-top:30px; overflow-x:auto;">
+      <h3 style="font-size: 0.9rem; border-bottom: 1px solid #333; padding-bottom: 10px;">📋 REGISTROS RECIENTES</h3>
+      <table width="100%" style="font-size:0.85rem; text-align:left; border-collapse: collapse;">
+        <thead><tr style="color:var(--gelm-cyan); border-bottom: 1px solid #333;">
+          <th style="padding:10px;">Fecha</th>
+          <th>Placa</th>
+          <th>Acción</th>
+        </tr></thead>
         <tbody id="tablaBody"></tbody>
       </table>
     </div>
   </div>
+</div>
 
-  <div id="boleta-reporte">
-    <div class="encabezado-rep">
-      <h2 style="margin:0;">POLICÍA MUNICIPAL DE TRÁNSITO</h2>
-      <h3 style="margin:0;">CHIMALTENANGO, GUATEMALA</h3>
-      <p style="margin:5px; font-weight:bold;">BOLETA DE CONSIGNACIÓN OFICIAL</p>
-    </div>
+<div id="boleta-reporte">
+  <div class="encabezado-rep">
+    <h2 style="margin:0;">POLICÍA MUNICIPAL DE TRÁNSITO</h2>
+    <h3 style="margin:0;">CHIMALTENANGO, GUATEMALA</h3>
+    <p style="margin:5px; font-weight:bold;">BOLETA DE CONSIGNACIÓN OFICIAL</p>
+  </div>
 
-    <table class="tabla-rep">
-      <tr><td colspan="2" style="background:#eee; font-weight:bold; text-align:center;">DATOS DEL CONDUCTOR</td></tr>
-      <tr><td><b>NOMBRE:</b> <span id="r-conductor"></span></td><td><b>DPI:</b> <span id="r-dpi"></span></td></tr>
-      <tr><td><b>LICENCIA:</b> <span id="r-licencia"></span></td><td><b>FECHA:</b> <span id="r-fecha"></span></td></tr>
-      
-      <tr><td colspan="2" style="background:#eee; font-weight:bold; text-align:center;">DATOS DEL VEHÍCULO</td></tr>
-      <tr><td><b>PLACA:</b> <span id="r-placa"></span></td><td><b>TIPO:</b> <span id="r-tipo"></span></td></tr>
-      <tr><td><b>MARCA:</b> <span id="r-marca"></span></td><td><b>COLOR:</b> <span id="r-color"></span></td></tr>
-      <tr><td colspan="2"><b>NIT:</b> <span id="r-nit"></span></td></tr>
-
-      <tr><td colspan="2" style="background:#eee; font-weight:bold; text-align:center;">DATOS DE CONSIGNACIÓN</td></tr>
-      <tr><td colspan="2"><b>MOTIVO:</b> <span id="r-motivo"></span></td></tr>
-      <tr><td><b>AGENTE:</b> <span id="r-agente"></span></td><td><b>CHAPA:</b> <span id="r-chapa"></span></td></tr>
-      <tr><td colspan="2"><b>BOLETA DE INFRACCIÓN:</b> <span id="r-boleta"></span></td></tr>
-    </table>
-
-    <p style="font-size:10px; margin-top:10px;"><b>INVENTARIO:</b> <span id="r-inv"></span></p>
+  <table class="tabla-rep">
+    <tr><td colspan="2" style="background:#f0f0f0; font-weight:bold; text-align:center;">DATOS DEL CONDUCTOR</td></tr>
+    <tr><td><b>CONDUCTOR:</b> <span id="r-conductor"></span></td><td><b>DPI:</b> <span id="r-dpi"></span></td></tr>
+    <tr><td><b>LICENCIA:</b> <span id="r-licencia"></span></td><td><b>FECHA:</b> <span id="r-fecha"></span></td></tr>
     
-    <div style="text-align:center; margin-top:15px;">
-      <img id="r-foto" style="max-width:300px; border:1px solid #000; display:none;">
-    </div>
+    <tr><td colspan="2" style="background:#f0f0f0; font-weight:bold; text-align:center;">DATOS DEL VEHÍCULO</td></tr>
+    <tr><td><b>PLACA:</b> <span id="r-placa"></span></td><td><b>TIPO:</b> <span id="r-tipo"></span></td></tr>
+    <tr><td><b>MARCA/COLOR:</b> <span id="r-marca-color"></span></td><td><b>NIT:</b> <span id="r-nit"></span></td></tr>
 
-    <div style="margin-top:60px; display:flex; justify-content:space-around; text-align:center; font-size:11px;">
-      <div>__________________________<br>F. AGENTE</div>
-      <div>__________________________<br>F. CONDUCTOR</div>
-    </div>
+    <tr><td colspan="2" style="background:#f0f0f0; font-weight:bold; text-align:center;">DATOS DE CONSIGNACIÓN</td></tr>
+    <tr><td colspan="2"><b>MOTIVO:</b> <span id="r-motivo"></span></td></tr>
+    <tr><td><b>AGENTE:</b> <span id="r-agente"></span></td><td><b>CHAPA:</b> <span id="r-chapa"></span></td></tr>
+    <tr><td colspan="2"><b>BOLETA DE INFRACCIÓN:</b> <span id="r-boleta"></span></td></tr>
+  </table>
+
+  <p style="font-size:11px; margin-top:15px;"><b>INVENTARIO:</b> <span id="r-inv"></span></p>
+  
+  <div style="text-align:center; margin-top:20px;">
+    <img id="r-foto" style="max-width:350px; border:1px solid #000; display:none;">
+  </div>
+
+  <div style="margin-top:80px; display:flex; justify-content:space-around; text-align:center; font-size:12px;">
+    <div>__________________________<br>F. AGENTE</div>
+    <div>__________________________<br>F. CONDUCTOR</div>
   </div>
 </div>
 
 <script>
-  const DB_KEY = "consignas_2026_v5";
+  const STORAGE_KEY = "consignas_final_v2026";
   const ACCESORIOS = ["Antena", "Radio", "Bocinas", "Espejos", "Alfombras", "Llanta Repuesto", "Tricket", "Herramientas", "Tapaderas"];
-  let fotoData = "";
+  let fotoBase64 = "";
 
-  // Generar inventario en pantalla
-  const grid = document.getElementById('inv-grid');
-  ACCESORIOS.forEach(acc => {
-    grid.innerHTML += `<div class="inv-item"><input type="checkbox" class="chk-inv" value="${acc}"> ${acc}</div>`;
+  // Dibujar accesorios
+  const invBox = document.getElementById('inv-container');
+  ACCESORIOS.forEach(item => {
+    invBox.innerHTML += `<div class="chk-group"><input type="checkbox" class="chk-item" value="${item}"> ${item}</div>`;
   });
 
-  // Procesar Foto
+  // Cámara / Foto
   document.getElementById("fotoInput").onchange = (e) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = 500; canvas.height = img.height * (500 / img.width);
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        fotoData = canvas.toDataURL('image/jpeg', 0.6);
+        const canv = document.createElement('canvas');
+        const ctx = canv.getContext('2d');
+        canv.width = 600; canv.height = img.height * (600 / img.width);
+        ctx.drawImage(img, 0, 0, canv.width, canv.height);
+        fotoBase64 = canv.toDataURL('image/jpeg', 0.7);
       };
       img.src = ev.target.result;
     };
     reader.readAsDataURL(e.target.files[0]);
   };
 
-  function guardar() {
-    const d = {
+  function ejecutarGuardado() {
+    const placa = document.getElementById('placas').value;
+    if(!placa) return alert("Ingrese el número de placa");
+
+    const registro = {
       id: Date.now(),
       conductor: document.getElementById('conductor').value,
       licencia: document.getElementById('tipoLic').value + " " + document.getElementById('licencia').value,
       dpi: document.getElementById('dpi').value,
-      placas: document.getElementById('placas').value,
+      placas: placa,
       tipo: document.getElementById('tipoVeh').value,
       marca: document.getElementById('marca').value,
       color: document.getElementById('color').value,
@@ -190,73 +198,77 @@
       chapa: document.getElementById('chapa').value,
       boleta: document.getElementById('boleta').value,
       motivo: document.getElementById('motivo').value,
-      foto: fotoData,
-      inv: Array.from(document.querySelectorAll('.chk-inv:checked')).map(c => c.value).join(', ')
+      foto: fotoBase64,
+      inv: Array.from(document.querySelectorAll('.chk-item:checked')).map(c => c.value).join(', ')
     };
 
-    if(!d.placas) return alert("Ingrese la placa");
-    let logs = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    logs.push(d);
-    localStorage.setItem(DB_KEY, JSON.stringify(logs));
-    alert("¡Guardado!");
-    prepararReporte(d);
+    // Guardar
+    let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    data.push(registro);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+
+    // Preparar boleta e imprimir
+    prepararBoleta(registro);
+    alert("✅ Datos guardados. Abriendo reporte...");
     window.print();
-    location.reload();
+    renderTabla();
   }
 
-  function prepararReporte(d) {
-    document.getElementById('r-conductor').innerText = d.conductor;
-    document.getElementById('r-dpi').innerText = d.dpi;
+  function prepararBoleta(d) {
+    document.getElementById('r-conductor').innerText = d.conductor || "---";
+    document.getElementById('r-dpi').innerText = d.dpi || "---";
     document.getElementById('r-licencia').innerText = d.licencia;
     document.getElementById('r-fecha').innerText = d.fecha;
     document.getElementById('r-placa').innerText = d.placas;
     document.getElementById('r-tipo').innerText = d.tipo;
-    document.getElementById('r-marca').innerText = d.marca;
-    document.getElementById('r-color').innerText = d.color;
-    document.getElementById('r-nit').innerText = d.nit;
-    document.getElementById('r-motivo').innerText = d.motivo;
+    document.getElementById('r-marca-color').innerText = d.marca + " / " + d.color;
+    document.getElementById('r-nit').innerText = d.nit || "---";
+    document.getElementById('r-motivo').innerText = d.motivo || "---";
     document.getElementById('r-agente').innerText = d.agente;
     document.getElementById('r-chapa').innerText = d.chapa;
     document.getElementById('r-boleta').innerText = d.boleta;
     document.getElementById('r-inv').innerText = d.inv || "Ninguno";
-    if(d.foto) {
-      document.getElementById('r-foto').src = d.foto;
-      document.getElementById('r-foto').style.display = "inline-block";
-    }
+    
+    const imgTag = document.getElementById('r-foto');
+    if(d.foto) { imgTag.src = d.foto; imgTag.style.display = "inline-block"; }
+    else { imgTag.style.display = "none"; }
   }
 
   function eliminar(id) {
-    if(confirm("¿Borrar registro?")) {
-      let logs = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-      logs = logs.filter(x => x.id !== id);
-      localStorage.setItem(DB_KEY, JSON.stringify(logs));
-      render();
+    if(confirm("¿Eliminar este registro de la memoria?")) {
+      let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      data = data.filter(x => x.id !== id);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      renderTabla();
     }
   }
 
-  function imprimirExistente(id) {
-    let logs = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    let d = logs.find(x => x.id === id);
-    prepararReporte(d);
-    window.print();
+  function imprimirViejo(id) {
+    let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    let d = data.find(x => x.id === id);
+    if(d) {
+      prepararBoleta(d);
+      window.print();
+    }
   }
 
-  function render() {
+  function renderTabla() {
     const body = document.getElementById('tablaBody');
-    let logs = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    let data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
     body.innerHTML = "";
-    logs.reverse().forEach(d => {
-      body.innerHTML += `<tr>
-        <td>${d.fecha}</td>
+    data.reverse().forEach(d => {
+      body.innerHTML += `<tr style="border-bottom: 1px solid #222;">
+        <td style="padding:10px;">${d.fecha}</td>
         <td><b>${d.placas}</b></td>
         <td>
-          <button class="btn-pdf-list" onclick="imprimirExistente(${d.id})">PDF</button>
+          <button class="btn-pdf" onclick="imprimirViejo(${d.id})">PDF</button>
           <button class="btn-del" onclick="eliminar(${d.id})">X</button>
         </td>
       </tr>`;
     });
   }
-  render();
+
+  renderTabla();
 </script>
 </body>
 </html>
