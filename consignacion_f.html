@@ -1,283 +1,171 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Consignación PMT 2026</title>
+  <meta charset="UTF-8">
+  <title>Formulario de Consignación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-:root{
-  --cyan:#00eaff;
-  --magenta:#b300ff;
-  --bg:#020510;
-}
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 15px;
+    }
 
-body{
-  margin:0;
-  font-family:Arial, Helvetica, sans-serif;
-  background:var(--bg);
-  color:white;
-  padding:10px;
-}
+    h2, h3 {
+      text-align: center;
+      color: #333;
+    }
 
-.shell{
-  max-width:800px;
-  margin:auto;
-  background:#030514;
-  border:1px solid #00eaff44;
-  border-radius:18px;
-  padding:15px;
-}
+    form {
+      background: #fff;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-header{
-  text-align:center;
-  border-bottom:2px solid var(--cyan);
-  margin-bottom:15px;
-}
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
 
-.sec-t{
-  display:block;
-  margin:15px 0 5px;
-  font-size:11px;
-  text-transform:uppercase;
-  color:var(--cyan);
-  font-weight:bold;
-}
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-}
+    textarea {
+      resize: vertical;
+    }
 
-.full{ grid-column:1/-1; }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #007bff;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-input,select,textarea{
-  width:100%;
-  padding:10px;
-  border-radius:8px;
-  border:1px solid #333;
-  background:#000;
-  color:white;
-  font-size:15px;
-}
+    button:hover {
+      background: #0056b3;
+    }
 
-textarea{ resize:none; }
-
-.firma-box{
-  background:#000;
-  padding:10px;
-  border:1px solid #333;
-  border-radius:10px;
-}
-
-canvas{
-  width:100%;
-  height:150px;
-  background:white;
-  border:2px solid var(--cyan);
-  border-radius:6px;
-  touch-action:none;
-}
-
-.firma-btns{
-  text-align:right;
-  margin-top:5px;
-}
-
-.firma-btns button{
-  background:#111;
-  color:var(--cyan);
-  border:1px solid var(--cyan);
-  padding:5px 10px;
-  border-radius:5px;
-  cursor:pointer;
-}
-
-.btn-group{
-  display:grid;
-  gap:10px;
-  margin-top:20px;
-}
-
-.btn{
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.b-pdf{ background:var(--magenta); color:white; }
-.b-save{ background:var(--cyan); color:black; }
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:10px;
-  font-size:12px;
-}
-
-th,td{
-  border:1px solid #444;
-  padding:5px;
-  text-align:left;
-}
-
-/* ===== MODO PDF ===== */
-body.modo-pdf{
-  background:white;
-  color:black;
-}
-
-body.modo-pdf .shell,
-body.modo-pdf header{
-  background:white;
-  color:black;
-  border:none;
-}
-
-body.modo-pdf input,
-body.modo-pdf textarea,
-body.modo-pdf select{
-  background:white;
-  color:black;
-  border:1px solid #000;
-}
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    #previewFotos img {
+      width: 120px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="shell">
+<h2>🚨 Formulario de Consignación</h2>
 
-<header>
-  <h2 style="margin:5px;color:var(--cyan)">CONSIGNACIÓN PMT 2026</h2>
-  <small>Unidad de Transportes</small>
-</header>
+<form id="formConsignacion">
 
-<span class="sec-t">Datos del Conductor</span>
-<div class="grid">
-  <input id="piloto" class="full" placeholder="Nombre del piloto">
-  <input id="licencia" placeholder="Licencia">
-  <select id="clase">
-    <option>Clase A</option><option>Clase B</option>
-    <option>Clase C</option><option>Clase M</option>
-  </select>
-  <input id="dpi" class="full" placeholder="DPI">
-</div>
+  <label>No. de Boleta</label>
+  <input type="text" name="boleta" required>
 
-<span class="sec-t">Datos del Vehículo</span>
-<div class="grid">
-  <input id="placa" placeholder="Placa">
-  <select id="tipo">
-    <option>Automóvil</option><option>Motocicleta</option>
-    <option>Camión</option><option>Bus</option>
-  </select>
-  <input id="marca" placeholder="Marca">
-  <input id="color" placeholder="Color">
-</div>
+  <label>Fecha</label>
+  <input type="date" name="fecha" required>
 
-<span class="sec-t">Motivo</span>
-<textarea id="motivo" rows="2" placeholder="Motivo de la consignación"></textarea>
+  <label>Hora</label>
+  <input type="time" name="hora" required>
 
-<span class="sec-t">Firma del Agente</span>
-<div class="firma-box">
-  <canvas id="firmaAgente"></canvas>
-  <div class="firma-btns">
-    <button onclick="limpiar('firmaAgente')">Limpiar</button>
-  </div>
-</div>
+  <label>Lugar de la Consignación</label>
+  <input type="text" name="lugar" required>
 
-<span class="sec-t">Firma del Piloto</span>
-<div class="firma-box">
-  <canvas id="firmaPiloto"></canvas>
-  <div class="firma-btns">
-    <button onclick="limpiar('firmaPiloto')">Limpiar</button>
-  </div>
-</div>
+  <label>Nombre del Infractor</label>
+  <input type="text" name="infractor">
 
-<div class="btn-group">
-  <button class="btn b-save" onclick="guardar()">💾 Guardar registro</button>
-  <button class="btn b-pdf" onclick="pdf()">📄 Generar PDF</button>
-  <button class="btn b-save" onclick="excel()">📊 Exportar Excel</button>
-</div>
+  <label>Placa / Identificación</label>
+  <input type="text" name="placa">
 
-<span class="sec-t">Registro Anual</span>
-<table>
-<thead>
-<tr><th>Placa</th><th>Piloto</th><th>Motivo</th></tr>
-</thead>
-<tbody id="tabla"></tbody>
-</table>
+  <label>Descripción de los Hechos</label>
+  <textarea name="descripcion" rows="5" required></textarea>
 
-</div>
+  <h3>📷 Evidencia Fotográfica</h3>
+
+  <input 
+    type="file" 
+    id="fotoEvidencia"
+    accept="image/*"
+    capture="environment"
+    multiple
+  >
+
+  <div id="previewFotos"></div>
+
+  <button type="submit">Guardar Consignación</button>
+
+</form>
 
 <script>
-function preparar(id){
-  const c=document.getElementById(id),ctx=c.getContext("2d");
-  let d=false;
-  function resize(){
-    c.width=c.offsetWidth;
-    c.height=150;
-    ctx.lineWidth=2;
-    ctx.lineCap="round";
-    ctx.strokeStyle="#000";
-  }
-  resize(); window.addEventListener("resize",resize);
-  c.onpointerdown=e=>{d=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY);}
-  c.onpointermove=e=>{if(d){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke();}}
-  c.onpointerup=()=>d=false;
-  c.onpointerleave=()=>d=false;
-}
-preparar("firmaAgente");
-preparar("firmaPiloto");
+const input = document.getElementById("fotoEvidencia");
+const preview = document.getElementById("previewFotos");
 
-function limpiar(id){
-  const c=document.getElementById(id);
-  c.getContext("2d").clearRect(0,0,c.width,c.height);
-}
+let imagenesComprimidas = [];
 
-function guardar(){
-  const r=JSON.parse(localStorage.getItem("consignaciones")||"[]");
-  r.push({
-    placa:placa.value,
-    piloto:piloto.value,
-    motivo:motivo.value
+input.addEventListener("change", () => {
+  preview.innerHTML = "";
+  imagenesComprimidas = [];
+
+  [...input.files].forEach(file => {
+    if (!file.type.startsWith("image/")) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+
+        const maxWidth = 1024;
+        const scale = Math.min(maxWidth / img.width, 1);
+
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob(blob => {
+          const compressedFile = new File(
+            [blob],
+            file.name.replace(/\.[^/.]+$/, ".jpg"),
+            { type: "image/jpeg" }
+          );
+
+          imagenesComprimidas.push(compressedFile);
+
+          const imgPreview = document.createElement("img");
+          imgPreview.src = URL.createObjectURL(blob);
+          preview.appendChild(imgPreview);
+        }, "image/jpeg", 0.7);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
   });
-  localStorage.setItem("consignaciones",JSON.stringify(r));
-  render();
-}
+});
 
-function render(){
-  const t=document.getElementById("tabla");
-  t.innerHTML="";
-  (JSON.parse(localStorage.getItem("consignaciones")||"[]")).forEach(e=>{
-    t.innerHTML+=`<tr><td>${e.placa}</td><td>${e.piloto}</td><td>${e.motivo}</td></tr>`;
-  });
-}
-render();
-
-function pdf(){
-  document.body.classList.add("modo-pdf");
-  html2pdf().from(document.querySelector(".shell")).set({
-    margin:0.4,
-    filename:"Consignacion_PMT_2026.pdf",
-    html2canvas:{scale:2,backgroundColor:"#fff"},
-    jsPDF:{unit:"in",format:"letter"}
-  }).save().then(()=>document.body.classList.remove("modo-pdf"));
-}
-
-function excel(){
-  const r=JSON.parse(localStorage.getItem("consignaciones")||"[]");
-  const ws=XLSX.utils.json_to_sheet(r);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Consignaciones");
-  XLSX.writeFile(wb,"Registro_Consignaciones_2026.xlsx");
-}
+document.getElementById("formConsignacion").addEventListener("submit", e => {
+  e.preventDefault();
+  alert("✔️ Consignación lista (formulario funcional y fotos comprimidas)");
+});
 </script>
 
 </body>
