@@ -15,15 +15,11 @@
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .full { grid-column: 1 / -1; }
     label { display: block; font-size: 0.65rem; color: var(--cyan); margin-bottom: 3px; text-transform: uppercase; }
-    input, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
-    .licencia-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
-    .lic-item { display: flex; align-items: center; gap: 4px; background: #111; padding: 8px; border-radius: 6px; font-size: 0.8rem; border: 1px solid #333; }
+    input, select, textarea { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     .inv-row { display: grid; grid-template-columns: 120px 1fr; gap: 8px; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #222; padding-bottom: 5px; }
-    .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; width: 100%; }
+    .btn { padding: 15px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; }
     .btn-save { background: var(--cyan); color: #000; box-shadow: 0 4px 15px rgba(0,234,255,0.4); }
-    .btn-excel { background: #1d6f42; color: white; padding: 8px; width: auto; border-radius: 10px; }
-    .btn-del { background: #ff0044; color: white; padding: 5px 10px; border-radius: 5px; width: auto; }
-    .btn-print { background: #b300ff; color: white; padding: 5px 10px; border-radius: 5px; width: auto; }
+    .btn-print { background: #b300ff; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
     table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
     th { background: #111; color: var(--cyan); padding: 10px; text-align: left; }
     td { padding: 10px; border-bottom: 1px solid #222; }
@@ -33,60 +29,61 @@
 
 <div class="container">
   <div class="card">
-    <h2>📝 Nueva Consignación</h2>
+    <h2>📝 Registro de Consignación</h2>
     
     <div class="modulo">
-      <label>Conductor</label>
+      <label>Datos del Conductor</label>
       <input type="text" id="conductor" placeholder="Nombre Completo" class="full">
       <div class="grid" style="margin-top:8px;">
         <input type="text" id="licencia_num" placeholder="No. Licencia">
-        <input type="text" id="dpi" placeholder="No. DPI">
-      </div>
-      <div class="licencia-grid">
-        <label class="lic-item"><input type="radio" name="tipoLic" value="A"> A</label>
-        <label class="lic-item"><input type="radio" name="tipoLic" value="B"> B</label>
-        <label class="lic-item"><input type="radio" name="tipoLic" value="C"> C</label>
-        <label class="lic-item"><input type="radio" name="tipoLic" value="E"> E</label>
-        <label class="lic-item"><input type="radio" name="tipoLic" value="M"> M</label>
+        <select id="tipoLic">
+            <option value="A">Clase A</option>
+            <option value="B">Clase B</option>
+            <option value="C">Clase C</option>
+            <option value="M">Clase M</option>
+        </select>
       </div>
     </div>
 
     <div class="modulo">
-      <label>Vehículo</label>
+      <label>Características del Vehículo</label>
       <div class="grid">
         <input type="text" id="placas" placeholder="Placas">
+        <select id="tipoVehiculo">
+            <option value="AUTOMOVIL">Automóvil</option>
+            <option value="MOTO">Motocicleta</option>
+            <option value="CAMIONETA">Camioneta</option>
+            <option value="CAMION">Camión</option>
+            <option value="TRIMOTO">Trimoto / Mototaxi</option>
+            <option value="CABEZAL">Cabezal</option>
+            <option value="PLATAFORMA">Plataforma</option>
+        </select>
         <input type="text" id="marca" placeholder="Marca">
         <input type="text" id="color" placeholder="Color">
-        <input type="text" id="nit" placeholder="NIT">
       </div>
     </div>
 
     <div class="modulo">
-      <label>Inventario</label>
+      <label>Inventario de Accesorios</label>
       <div id="boxInv"></div>
     </div>
 
     <div class="modulo">
-      <label>Agente y Motivo</label>
+      <label>Datos de Operativo</label>
       <div class="grid">
         <input type="date" id="fecha">
-        <input type="time" id="hora">
-        <input type="text" id="agente" placeholder="Agente" class="full">
-        <input type="text" id="chapa" placeholder="Chapa No." class="full">
-        <textarea id="motivo" placeholder="Motivo..." class="full" rows="2"></textarea>
+        <input type="text" id="agente" placeholder="Nombre del Agente" class="full">
+        <textarea id="motivo" placeholder="Motivo de la consignación..." class="full" rows="2"></textarea>
       </div>
-      <label style="margin-top:10px;">Foto Evidencia (Daños)</label>
+      <label style="margin-top:10px;">Foto de Prueba</label>
       <input type="file" id="fotoInput" accept="image/*">
     </div>
 
-    <button class="btn btn-save" onclick="procesoGuardar()">💾 GUARDAR REGISTRO</button>
+    <button class="btn btn-save" onclick="procesoGuardar()">💾 GUARDAR Y GENERAR</button>
   </div>
 
   <div class="card">
-    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-      <h2>📋 Pendientes</h2>
-      <button class="btn-excel" onclick="exportarExcel()">Excel</button>
-    </div>
+    <h2>📋 Registros Recientes</h2>
     <div style="overflow-x:auto;">
       <table>
         <thead><tr><th>Fecha</th><th>Placa</th><th>Acción</th></tr></thead>
@@ -97,17 +94,15 @@
 </div>
 
 <script>
-  const ITEMS = ["Antena", "Radio", "Bocinas", "Espejos", "Alfombras", "Llanta Repuesto", "Tricket", "Herramientas", "Tapaderas"];
-  const DB_KEY = 'respaldo_total_gelm';
+  const ITEMS = ["Antena", "Radio", "Bocinas", "Espejos", "Alfombras", "Llanta Repuesto", "Tricket", "Herramientas"];
+  const DB_KEY = 'gelm_consignaciones_v4';
   let tempFoto = "";
 
-  // Inventario
   const b = document.getElementById('boxInv');
   ITEMS.forEach(it => {
     b.innerHTML += `<div class="inv-row"><span><input type="checkbox" class="chk" data-n="${it}"> ${it}</span><input type="text" class="obs" data-n="${it}" placeholder="Obs..."></div>`;
   });
 
-  // Foto
   document.getElementById('fotoInput').onchange = function(e){
     const reader = new FileReader();
     reader.onload = (ev) => {
@@ -116,7 +111,7 @@
         const canv = document.createElement('canvas');
         canv.width = 400; canv.height = img.height*(400/img.width);
         canv.getContext('2d').drawImage(img,0,0,400,canv.height);
-        tempFoto = canv.toDataURL('image/jpeg', 0.5);
+        tempFoto = canv.toDataURL('image/jpeg', 0.6);
       };
       img.src = ev.target.result;
     };
@@ -127,72 +122,81 @@
     const d = {
       id: Date.now(),
       conductor: document.getElementById('conductor').value || "N/A",
-      placas: document.getElementById('placas').value || "",
-      fecha: document.getElementById('fecha').value,
-      licencia: (document.querySelector('input[name="tipoLic"]:checked')?.value || "") + " - " + document.getElementById('licencia_num').value,
+      placas: document.getElementById('placas').value || "S/P",
+      tipo: document.getElementById('tipoVehiculo').value,
       marca: document.getElementById('marca').value,
       color: document.getElementById('color').value,
+      fecha: document.getElementById('fecha').value,
       agente: document.getElementById('agente').value,
-      chapa: document.getElementById('chapa').value,
       motivo: document.getElementById('motivo').value,
+      licencia: document.getElementById('tipoLic').value + " - " + document.getElementById('licencia_num').value,
       inventario: Array.from(document.querySelectorAll('.chk:checked')).map(c => c.dataset.n + ": " + (document.querySelector(`.obs[data-n="${c.dataset.n}"]`).value || 'OK')),
       foto: tempFoto
     };
 
-    if(!d.placas) return alert("Falta Placa");
-    let guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    guardado.push(d);
-    localStorage.setItem(DB_KEY, JSON.stringify(guardado));
-    alert("Guardado!");
+    let data = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    data.push(d);
+    localStorage.setItem(DB_KEY, JSON.stringify(data));
+    alert("¡Registro guardado!");
     location.reload();
   }
 
-  function borrar(id){
-    if(!confirm("¿Borrar?")) return;
-    let guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    guardado = guardado.filter(x => x.id !== id);
-    localStorage.setItem(DB_KEY, JSON.stringify(guardado));
-    render();
-  }
-
   function imprimir(id){
-    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    const d = guardado.find(x => x.id === id);
+    const data = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    const d = data.find(x => x.id === id);
     if(!d) return;
 
     const vent = window.open('', '_blank');
     vent.document.write(`
       <html>
-      <head><title>Consignación ${d.placas}</title>
-      <style>
-        body { font-family: sans-serif; padding: 10px; color: black; background: white; }
-        .header { text-align: center; border-bottom: 2px solid black; margin-bottom: 10px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid black; }
-        .grid div { padding: 6px; border: 0.5px solid black; font-size: 13px; }
-        .full { grid-column: 1 / -1; }
-        .btn-print { background: #000; color: #fff; padding: 20px; width: 100%; border: none; font-weight: bold; margin-bottom: 20px; border-radius: 10px; }
-        @media print { .btn-print { display: none; } }
-      </style>
+      <head>
+        <style>
+          @page { size: letter; margin: 10mm; }
+          body { font-family: sans-serif; color: #333; line-height: 1.4; }
+          .hoja { width: 180mm; margin: auto; border: 1px solid #ccc; padding: 15px; min-height: 250mm; position: relative; }
+          .header { text-align: center; border-bottom: 3px double #000; margin-bottom: 20px; padding-bottom: 10px; }
+          .titulo { font-size: 20px; font-weight: bold; color: #000; margin: 5px 0; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #000; margin-bottom: 15px; }
+          .grid div { padding: 8px; border: 0.5px solid #000; font-size: 12px; }
+          .full { grid-column: 1 / -1; background: #f2f2f2; font-weight: bold; }
+          .foto { max-width: 350px; display: block; margin: 15px auto; border: 2px solid #000; border-radius: 5px; }
+          .firmas { margin-top: 50px; display: flex; justify-content: space-around; text-align: center; font-size: 12px; }
+          .btn-print { background: red; color: white; padding: 15px; width: 100%; border: none; font-weight: bold; font-size: 16px; margin-bottom: 20px; }
+          @media print { .btn-print { display: none; } .hoja { border: none; } }
+        </style>
       </head>
       <body>
-        <button class="btn-print" onclick="window.print()">PRESIONAR AQUÍ PARA IMPRIMIR</button>
-        <div class="header">
-          <h3>POLICÍA MUNICIPAL DE TRÁNSITO</h3>
-          <h4>UNIDAD DE TRANSPORTES — CHIMALTENANGO</h4>
-          <p>BOLETA DE CONSIGNACIÓN OFICIAL</p>
-        </div>
-        <div class="grid">
-          <div><b>FECHA:</b> ${d.fecha}</div><div><b>PLACA:</b> ${d.placas}</div>
-          <div class="full"><b>CONDUCTOR:</b> ${d.conductor}</div>
-          <div><b>LICENCIA:</b> ${d.licencia}</div><div><b>MARCA/COLOR:</b> ${d.marca} / ${d.color}</div>
-          <div class="full"><b>MOTIVO:</b> ${d.motivo}</div>
-          <div><b>AGENTE:</b> ${d.agente}</div><div><b>CHAPA:</b> ${d.chapa}</div>
-        </div>
-        <p style="font-size:12px;"><b>INVENTARIO:</b> ${d.inventario.join(' | ') || 'Ninguno'}</p>
-        ${d.foto ? `<center><img src="${d.foto}" style="max-width:300px; border:1px solid black; margin-top:10px;"></center>` : ''}
-        <div style="margin-top:50px; display:flex; justify-content:space-around; text-align:center; font-size:12px;">
-          <div>_______________________<br>F. Agente</div>
-          <div>_______________________<br>F. Conductor</div>
+        <button class="btn-print" onclick="window.print()">CLIC AQUÍ PARA IMPRIMIR (TAMAÑO CARTA)</button>
+        <div class="hoja">
+          <div class="header">
+            <div class="titulo">POLICÍA MUNICIPAL DE TRÁNSITO</div>
+            <div style="font-size: 14px;">MUNICIPALIDAD DE CHIMALTENANGO</div>
+            <div style="font-weight: bold; margin-top:10px; text-decoration: underline;">HOJA DE CONSIGNACIÓN OFICIAL</div>
+          </div>
+
+          <div class="grid">
+            <div class="full">DATOS GENERALES</div>
+            <div><b>FECHA:</b> ${d.fecha}</div><div><b>PLACA:</b> ${d.placas}</div>
+            <div class="full">DATOS DEL VEHÍCULO</div>
+            <div><b>TIPO:</b> ${d.tipo}</div><div><b>MARCA:</b> ${d.marca}</div>
+            <div><b>COLOR:</b> ${d.color}</div><div><b>CONDUCTOR:</b> ${d.conductor}</div>
+            <div class="full">DETALLES DE LA CONSIGNACIÓN</div>
+            <div class="full"><b>MOTIVO:</b> ${d.motivo}</div>
+            <div><b>AGENTE:</b> ${d.agente}</div><div><b>LICENCIA:</b> ${d.licencia}</div>
+          </div>
+
+          <p style="font-size: 11px;"><b>INVENTARIO DETALLADO:</b><br>${d.inventario.join(' — ') || 'No se reportan accesorios.'}</p>
+
+          ${d.foto ? `<img src="${d.foto}" class="foto">` : ''}
+
+          <div class="firmas">
+            <div>__________________________<br>F. AGENTE CONSIGNATARIO</div>
+            <div>__________________________<br>F. CONDUCTOR / RECIBIDO</div>
+          </div>
+          
+          <div style="position: absolute; bottom: 10px; width: 100%; text-align: center; font-size: 9px; color: #888;">
+            Documento generado por Sistema GELM 2026 - Control de Transportes
+          </div>
         </div>
       </body>
       </html>
@@ -200,22 +204,16 @@
     vent.document.close();
   }
 
-  function exportarExcel(){
-    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    const ws = XLSX.utils.json_to_sheet(guardado);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Datos");
-    XLSX.writeFile(wb, "Consignaciones.xlsx");
-  }
-
   function render(){
-    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    const data = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
     const t = document.getElementById('tablaBody');
     t.innerHTML = "";
-    guardado.forEach(d => {
-      t.innerHTML += `<tr><td>${d.fecha}</td><td><b>${d.placas}</b></td>
-        <td><button class="btn-print" onclick="imprimir(${d.id})">PDF</button>
-        <button class="btn-del" onclick="borrar(${d.id})">X</button></td></tr>`;
+    data.reverse().forEach(d => {
+      t.innerHTML += `<tr>
+        <td>${d.fecha}</td>
+        <td><b>${d.placas}</b></td>
+        <td><button class="btn-print" onclick="imprimir(${d.id})">PDF</button></td>
+      </tr>`;
     });
   }
   render();
