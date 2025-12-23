@@ -75,7 +75,7 @@
         <input type="text" id="chapa" placeholder="Chapa No." class="full">
         <textarea id="motivo" placeholder="Motivo..." class="full" rows="2"></textarea>
       </div>
-      <label style="margin-top:10px;">Foto Evidencia</label>
+      <label style="margin-top:10px;">Foto Evidencia (Daños)</label>
       <input type="file" id="fotoInput" accept="image/*">
     </div>
 
@@ -84,7 +84,7 @@
 
   <div class="card">
     <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-      <h2>📋 Registros</h2>
+      <h2>📋 Pendientes</h2>
       <button class="btn-excel" onclick="exportarExcel()">Excel</button>
     </div>
     <div style="overflow-x:auto;">
@@ -107,16 +107,16 @@
     b.innerHTML += `<div class="inv-row"><span><input type="checkbox" class="chk" data-n="${it}"> ${it}</span><input type="text" class="obs" data-n="${it}" placeholder="Obs..."></div>`;
   });
 
-  // Foto optimizada
+  // Foto
   document.getElementById('fotoInput').onchange = function(e){
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
         const canv = document.createElement('canvas');
-        canv.width = 600; canv.height = img.height*(600/img.width);
-        canv.getContext('2d').drawImage(img,0,0,600,canv.height);
-        tempFoto = canv.toDataURL('image/jpeg', 0.7);
+        canv.width = 400; canv.height = img.height*(400/img.width);
+        canv.getContext('2d').drawImage(img,0,0,400,canv.height);
+        tempFoto = canv.toDataURL('image/jpeg', 0.5);
       };
       img.src = ev.target.result;
     };
@@ -124,17 +124,10 @@
   };
 
   function procesoGuardar(){
-    const guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
-    const invArr = [];
-    document.querySelectorAll('.chk:checked').forEach(c => {
-      const o = document.querySelector(`.obs[data-n="${c.dataset.n}"]`).value;
-      invArr.push(`${c.dataset.n}: ${o || 'OK'}`);
-    });
-
     const d = {
       id: Date.now(),
-      conductor: document.getElementById('conductor').value,
-      placas: document.getElementById('placas').value,
+      conductor: document.getElementById('conductor').value || "N/A",
+      placas: document.getElementById('placas').value || "",
       fecha: document.getElementById('fecha').value,
       licencia: (document.querySelector('input[name="tipoLic"]:checked')?.value || "") + " - " + document.getElementById('licencia_num').value,
       marca: document.getElementById('marca').value,
@@ -142,11 +135,12 @@
       agente: document.getElementById('agente').value,
       chapa: document.getElementById('chapa').value,
       motivo: document.getElementById('motivo').value,
-      inventario: invArr,
+      inventario: Array.from(document.querySelectorAll('.chk:checked')).map(c => c.dataset.n + ": " + (document.querySelector(`.obs[data-n="${c.dataset.n}"]`).value || 'OK')),
       foto: tempFoto
     };
 
-    if(!d.placas) return alert("Ingrese Placa");
+    if(!d.placas) return alert("Falta Placa");
+    let guardado = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
     guardado.push(d);
     localStorage.setItem(DB_KEY, JSON.stringify(guardado));
     alert("Guardado!");
@@ -166,24 +160,27 @@
     const d = guardado.find(x => x.id === id);
     if(!d) return;
 
-    // AQUI ESTÁ EL TRUCO: Abrimos una ventana nueva para el PDF
     const vent = window.open('', '_blank');
     vent.document.write(`
       <html>
       <head><title>Consignación ${d.placas}</title>
       <style>
-        body { font-family: sans-serif; padding: 20px; color: black; }
-        .membrete { width: 100%; margin-bottom: 20px; }
+        body { font-family: sans-serif; padding: 10px; color: black; background: white; }
+        .header { text-align: center; border-bottom: 2px solid black; margin-bottom: 10px; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid black; }
-        .grid div { padding: 8px; border: 0.5px solid black; font-size: 14px; }
+        .grid div { padding: 6px; border: 0.5px solid black; font-size: 13px; }
         .full { grid-column: 1 / -1; }
-        .foto { max-width: 400px; display: block; margin: 20px auto; border: 1px solid black; }
-        .firmas { margin-top: 60px; display: flex; justify-content: space-around; text-align: center; }
+        .btn-print { background: #000; color: #fff; padding: 20px; width: 100%; border: none; font-weight: bold; margin-bottom: 20px; border-radius: 10px; }
+        @media print { .btn-print { display: none; } }
       </style>
       </head>
       <body>
-        <img src="icons/membrete_2026.jpg" class="membrete">
-        <h2 style="text-align:center;">BOLETA DE CONSIGNACIÓN PMT</h2>
+        <button class="btn-print" onclick="window.print()">PRESIONAR AQUÍ PARA IMPRIMIR</button>
+        <div class="header">
+          <h3>POLICÍA MUNICIPAL DE TRÁNSITO</h3>
+          <h4>UNIDAD DE TRANSPORTES — CHIMALTENANGO</h4>
+          <p>BOLETA DE CONSIGNACIÓN OFICIAL</p>
+        </div>
         <div class="grid">
           <div><b>FECHA:</b> ${d.fecha}</div><div><b>PLACA:</b> ${d.placas}</div>
           <div class="full"><b>CONDUCTOR:</b> ${d.conductor}</div>
@@ -191,13 +188,12 @@
           <div class="full"><b>MOTIVO:</b> ${d.motivo}</div>
           <div><b>AGENTE:</b> ${d.agente}</div><div><b>CHAPA:</b> ${d.chapa}</div>
         </div>
-        <p><b>INVENTARIO:</b> ${d.inventario.join(' | ') || 'Ninguno'}</p>
-        ${d.foto ? `<img src="${d.foto}" class="foto">` : ''}
-        <div class="firmas">
-          <div>_______________________<br>Agente Consignatario</div>
-          <div>_______________________<br>Conductor / Recibido</div>
+        <p style="font-size:12px;"><b>INVENTARIO:</b> ${d.inventario.join(' | ') || 'Ninguno'}</p>
+        ${d.foto ? `<center><img src="${d.foto}" style="max-width:300px; border:1px solid black; margin-top:10px;"></center>` : ''}
+        <div style="margin-top:50px; display:flex; justify-content:space-around; text-align:center; font-size:12px;">
+          <div>_______________________<br>F. Agente</div>
+          <div>_______________________<br>F. Conductor</div>
         </div>
-        <script>window.onload = function() { window.print(); window.close(); };<\/script>
       </body>
       </html>
     `);
@@ -217,7 +213,7 @@
     const t = document.getElementById('tablaBody');
     t.innerHTML = "";
     guardado.forEach(d => {
-      t.innerHTML += `<tr><td>${d.fecha}</td><td>${d.placas}</td>
+      t.innerHTML += `<tr><td>${d.fecha}</td><td><b>${d.placas}</b></td>
         <td><button class="btn-print" onclick="imprimir(${d.id})">PDF</button>
         <button class="btn-del" onclick="borrar(${d.id})">X</button></td></tr>`;
     });
