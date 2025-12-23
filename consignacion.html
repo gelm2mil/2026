@@ -2,169 +2,233 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>PMT CHIMALTENANGO - CONSIGNACIONES</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CONSIGNACIONES 2026 — GELM</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
     :root {
-      --cyan: #00eaff;
-      --bg: #020510;
-      --card: rgba(10, 20, 40, 0.95);
+      --gelm-cyan: #00eaff;
+      --gelm-cyan-soft: #00ffc8;
+      --gelm-magenta: #b300ff;
+      --gelm-bg-panel: rgba(3, 5, 20, 0.96);
+      --gelm-text-main: #e9f9ff;
     }
 
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; padding: 10px; }
-    .container { max-width: 600px; margin: auto; }
-    .panel { background: var(--card); border-radius: 15px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 20px; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #020510; color: white; display: flex; justify-content: center; }
+    .agenda-shell { width: 100%; max-width: 1280px; padding: 15px; }
+    .agenda-panel { background: var(--gelm-bg-panel); border-radius: 32px; border: 1px solid rgba(0, 234, 255, 0.3); padding: 20px; box-shadow: 0 0 30px rgba(0, 234, 255, 0.2); }
     
-    header { text-align: center; border-bottom: 2px solid var(--cyan); margin-bottom: 20px; padding-bottom: 10px; }
-    .modulo { background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
+    header { display: grid; grid-template-columns: 80px 1fr 80px; align-items: center; text-align: center; margin-bottom: 20px; }
+    header img { width: 70px; filter: drop-shadow(0 0 8px var(--gelm-cyan)); }
     
-    label { font-size: 11px; color: var(--cyan); display: block; margin-bottom: 5px; font-weight: bold; text-transform: uppercase; }
-    input, textarea { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; margin-bottom: 10px; font-size: 16px; }
+    .form-card { background: rgba(255,255,255,0.03); border-radius: 20px; border: 1px solid rgba(0, 234, 255, 0.2); padding: 20px; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .full { grid-column: 1 / -1; }
+    
+    label { font-size: 0.7rem; color: var(--gelm-cyan); text-transform: uppercase; margin-bottom: 4px; display: block; font-weight: bold; }
+    input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
 
-    .btn-save { background: linear-gradient(135deg, #00eaff, #0099ff); color: black; padding: 15px; border: none; border-radius: 30px; width: 100%; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+    .btn { padding: 12px 20px; border-radius: 25px; border: none; cursor: pointer; font-weight: bold; text-transform: uppercase; }
+    .btn-add { background: linear-gradient(135deg, #00eaff, #00ffc8); color: #000; }
+    .btn-pdf { background: var(--gelm-magenta); color: white; margin-left: auto; }
+    .btn-excel { background: #22c55e; color: white; }
     
-    /* Historial */
-    .historial { margin-top: 30px; border-top: 1px solid #333; padding-top: 20px; }
-    .item-registro { background: rgba(0, 234, 255, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--cyan); }
-    .btn-pdf { background: #b300ff; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; }
-    .btn-del { background: #ff4444; border: none; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; margin-left: 5px; }
+    .table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 15px; }
+    table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.2); }
+    th { background: var(--gelm-cyan); color: #000; padding: 10px; font-size: 0.75rem; text-transform: uppercase; }
+    td { padding: 10px; border-bottom: 1px solid #222; font-size: 0.85rem; vertical-align: top; }
+    
+    .img-mini { width: 60px; height: 45px; object-fit: cover; border-radius: 5px; border: 1px solid var(--gelm-cyan); }
+    .btn-del { background: #ff0044 !important; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.7rem; }
 
-    /* Estilos para el PDF de Impresión */
-    #area-impresion { display: none; color: black; background: white; padding: 40px; }
     @media print {
-      body * { visibility: hidden; }
-      #area-impresion, #area-impresion * { visibility: visible; }
-      #area-impresion { display: block; position: absolute; left: 0; top: 0; width: 100%; }
+      .form-card, .btn-del, .btn-add, .btn-excel, #filtroMes, th:last-child, td:last-child { display: none !important; }
+      body { background: white; color: black; }
+      .agenda-panel { box-shadow: none; border: none; width: 100%; }
+      th { border: 1px solid black !important; background: #eee !important; color: black !important; }
+      td { border: 1px solid #ddd !important; color: black !important; }
+      header img { filter: grayscale(1); }
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="panel">
+<div class="agenda-shell">
+  <div class="agenda-panel">
     <header>
-      <h2 style="margin:0;">PMT CHIMALTENANGO</h2>
-      <small>UNIDAD DE TRANSPORTES - 2026</small>
+      <img src="icons/icon-192.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1022/1022215.png'">
+      <div>
+        <h2 style="margin:0; color:var(--gelm-cyan-soft);">CONSIGNACIONES DE VEHÍCULOS</h2>
+        <small>PMT CHIMALTENANGO — UNIDAD DE TRANSPORTES</small>
+      </div>
+      <img src="icons/icon-192.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1022/1022215.png'">
     </header>
 
-    <div class="modulo">
-      <label>Datos del Conductor</label>
-      <input type="text" id="conductor" placeholder="Nombre Completo">
-      <label>Vehículo (Placa)</label>
-      <input type="text" id="placas" placeholder="P-000XXX">
-      <label>Fecha del Operativo</label>
-      <input type="date" id="fecha">
-      <label>Motivo</label>
-      <textarea id="motivo" rows="2" placeholder="Escriba el motivo..."></textarea>
+    <section class="form-card">
+      <div class="grid">
+        <div><label>Fecha</label><input type="date" id="fecha"></div>
+        <div><label>Nombre del Piloto</label><input type="text" id="piloto" placeholder="Nombre completo"></div>
+        <div><label>Licencia / DPI</label><input type="text" id="documento" placeholder="No. de documento"></div>
+        
+        <div><label>Placa</label><input type="text" id="placa" placeholder="P-000XXX"></div>
+        <div><label>Tipo de Vehículo</label>
+          <select id="tipo">
+            <option>Automóvil</option><option>Motocicleta</option><option>Camión</option><option>Pick-up</option><option>Bus</option><option>Otro</option>
+          </select>
+        </div>
+        <div><label>Color / Marca</label><input type="text" id="marca_color" placeholder="Ej: Toyota Gris"></div>
+        
+        <div class="full"><label>Lugar de la Consignación</label><input type="text" id="lugar" placeholder="Ubicación exacta"></div>
+        <div class="full"><label>Motivo de la Consignación</label><textarea id="motivo" rows="2" placeholder="Describa la infracción o motivo"></textarea></div>
+        <div class="full"><label>Evidencia de Vehículo (Foto)</label><input type="file" id="foto" accept="image/*"></div>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:15px; flex-wrap: wrap; align-items:center;">
+        <button class="btn btn-add" id="btnGuardar">Guardar Consignación</button>
+        <button class="btn btn-excel" onclick="exportarExcel()">Excel</button>
+        <select id="filtroMes" style="width:120px;">
+          <option value="0">Todo el año</option>
+          <option value="1">Enero</option><option value="2">Febrero</option><option value="3">Marzo</option>
+          <option value="4">Abril</option><option value="5">Mayo</option><option value="6">Junio</option>
+          <option value="7">Julio</option><option value="8">Agosto</option><option value="9">Septiembre</option>
+          <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
+        </select>
+        <button class="btn btn-pdf" onclick="window.print()">Generar PDF</button>
+      </div>
+    </section>
+
+    <div class="table-wrapper">
+      <table id="tablaConsignaciones">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Piloto / Doc</th>
+            <th>Vehículo / Placa</th>
+            <th>Ubicación</th>
+            <th>Motivo</th>
+            <th>Evidencia</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tablaBody"></tbody>
+      </table>
     </div>
-
-    <button class="btn-save" onclick="guardarRegistro()">💾 GUARDAR Y GENERAR BOLETA</button>
-
-    <div class="historial">
-      <h3 style="font-size: 14px; color: var(--cyan);">REGISTROS GUARDADOS (MEMORIA)</h3>
-      <div id="listaRegistros"></div>
-    </div>
-  </div>
-</div>
-
-<div id="area-impresion">
-  <div style="text-align:center; border-bottom: 2px solid black; padding-bottom: 10px;">
-    <h2>POLICÍA MUNICIPAL DE TRÁNSITO</h2>
-    <h3>CHIMALTENANGO, GUATEMALA</h3>
-    <p>BOLETA DE CONSIGNACIÓN DE VEHÍCULO</p>
-  </div>
-  <div style="padding: 20px 0; line-height: 1.6; font-size: 18px;">
-    <p><b>FECHA:</b> <span id="p-fecha"></span></p>
-    <p><b>CONDUCTOR:</b> <span id="p-conductor"></span></p>
-    <p><b>PLACA:</b> <span id="p-placa"></span></p>
-    <p><b>MOTIVO:</b> <br><span id="p-motivo"></span></p>
-  </div>
-  <div style="margin-top: 100px; display: flex; justify-content: space-between;">
-    <div style="text-align: center; width: 45%; border-top: 1px solid black;">Firma Agente PMT</div>
-    <div style="text-align: center; width: 45%; border-top: 1px solid black;">Firma Conductor</div>
   </div>
 </div>
 
 <script>
-  const DB_NAME = "PMT_Data_Storage_2026";
+  const STORAGE_KEY = "consignaciones_pmt_2026";
+  let registros = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  let fotoData = "";
 
-  // Al cargar la página, dibujar la lista
+  // Establecer fecha actual por defecto
   window.onload = () => {
     document.getElementById('fecha').valueAsDate = new Date();
-    mostrarHistorial();
+    render();
   };
 
-  function guardarRegistro() {
-    const conductor = document.getElementById('conductor').value;
-    const placa = document.getElementById('placas').value;
-    const fecha = document.getElementById('fecha').value;
-    const motivo = document.getElementById('motivo').value;
+  // Procesamiento de Imagen (Igual que bitácora)
+  document.getElementById("foto").onchange = (e) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const scale = 600 / img.width;
+        canvas.width = 600;
+        canvas.height = img.height * scale;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        fotoData = canvas.toDataURL('image/jpeg', 0.6);
+      };
+      img.src = ev.target.result;
+    };
+    if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+  };
 
-    if (!placa || !conductor) return alert("Llena los campos obligatorios");
-
-    const registro = { id: Date.now(), conductor, placa, fecha, motivo };
-
-    // Guardar
-    let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
-    historial.push(registro);
-    localStorage.setItem(DB_NAME, JSON.stringify(historial));
-
-    // Limpiar campos
-    document.getElementById('conductor').value = "";
-    document.getElementById('placas').value = "";
-    document.getElementById('motivo').value = "";
-
-    // Actualizar lista e Imprimir
-    mostrarHistorial();
-    imprimirBoleta(registro);
-  }
-
-  function mostrarHistorial() {
-    const contenedor = document.getElementById('listaRegistros');
-    let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
+  function render() {
+    const body = document.getElementById("tablaBody");
+    const mesFiltro = parseInt(document.getElementById("filtroMes").value);
+    body.innerHTML = "";
     
-    contenedor.innerHTML = historial.length === 0 ? "<small>No hay registros guardados.</small>" : "";
+    const filtrados = registros.filter(r => {
+      if (mesFiltro === 0) return true;
+      const mesRegistro = new Date(r.fecha + "T00:00").getMonth() + 1;
+      return mesRegistro === mesFiltro;
+    });
 
-    // Mostrar de más nuevo a más viejo
-    historial.reverse().forEach(reg => {
-      const card = document.createElement('div');
-      card.className = 'item-registro';
-      card.innerHTML = `
-        <div>
-          <strong>${reg.placa}</strong><br>
-          <small>${reg.fecha}</small>
-        </div>
-        <div>
-          <button class="btn-pdf" onclick='reimprimir(${reg.id})'>PDF</button>
-          <button class="btn-del" onclick="borrarRegistro(${reg.id})">X</button>
-        </div>
+    filtrados.forEach((r, index) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${r.fecha.split('-').reverse().join('/')}</td>
+        <td><b>${r.piloto}</b><br><small>${r.documento}</small></td>
+        <td>${r.tipo} - ${r.marca_color}<br><b>[${r.placa}]</b></td>
+        <td>${r.lugar}</td>
+        <td style="white-space:pre-wrap">${r.motivo}</td>
+        <td>${r.foto ? `<img src="${r.foto}" class="img-mini">` : 'Sin foto'}</td>
+        <td><button class="btn-del" onclick="eliminar(${index})">Eliminar</button></td>
       `;
-      contenedor.appendChild(card);
+      body.appendChild(tr);
     });
   }
 
-  function imprimirBoleta(obj) {
-    document.getElementById('p-fecha').innerText = obj.fecha;
-    document.getElementById('p-conductor').innerText = obj.conductor;
-    document.getElementById('p-placa').innerText = obj.placa;
-    document.getElementById('p-motivo').innerText = obj.motivo;
-    window.print();
-  }
+  document.getElementById("btnGuardar").onclick = () => {
+    const reg = {
+      fecha: document.getElementById("fecha").value,
+      piloto: document.getElementById("piloto").value,
+      documento: document.getElementById("documento").value,
+      placa: document.getElementById("placa").value.toUpperCase(),
+      tipo: document.getElementById("tipo").value,
+      marca_color: document.getElementById("marca_color").value,
+      lugar: document.getElementById("lugar").value,
+      motivo: document.getElementById("motivo").value,
+      foto: fotoData
+    };
 
-  function reimprimir(id) {
-    let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
-    let reg = historial.find(x => x.id === id);
-    if (reg) imprimirBoleta(reg);
-  }
+    if(!reg.fecha || !reg.piloto || !reg.placa) return alert("Por favor complete los datos principales (Fecha, Piloto y Placa)");
 
-  function borrarRegistro(id) {
-    if (confirm("¿Eliminar este registro permanentemente?")) {
-      let historial = JSON.parse(localStorage.getItem(DB_NAME) || "[]");
-      historial = historial.filter(x => x.id !== id);
-      localStorage.setItem(DB_NAME, JSON.stringify(historial));
-      mostrarHistorial();
+    registros.push(reg);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+    
+    // Limpiar
+    fotoData = ""; 
+    document.getElementById("foto").value = "";
+    document.getElementById("piloto").value = "";
+    document.getElementById("documento").value = "";
+    document.getElementById("placa").value = "";
+    document.getElementById("marca_color").value = "";
+    document.getElementById("motivo").value = "";
+    
+    render();
+    alert("Registro guardado con éxito.");
+  };
+
+  function eliminar(i) {
+    if(confirm("¿Seguro que desea eliminar esta consignación?")) {
+      registros.splice(i, 1);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(registros));
+      render();
     }
   }
+
+  function exportarExcel() {
+    if(registros.length === 0) return alert("No hay datos para exportar");
+    const ws = XLSX.utils.json_to_sheet(registros.map(r => ({
+      Fecha: r.fecha,
+      Piloto: r.piloto,
+      Documento: r.documento,
+      Placa: r.placa,
+      Tipo: r.tipo,
+      Marca_Color: r.marca_color,
+      Lugar: r.lugar,
+      Motivo: r.motivo
+    })));
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Consignaciones");
+    XLSX.writeFile(wb, "Consignaciones_PMT_2026.xlsx");
+  }
+
+  document.getElementById("filtroMes").onchange = render;
 </script>
 
 </body>
