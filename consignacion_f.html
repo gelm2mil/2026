@@ -4,295 +4,269 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CONSIGNACIONES 2026 — PMT Chimaltenango</title>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <style>
         :root {
             --gelm-cyan: #00eaff;
             --gelm-cyan-soft: #00ffc8;
-            --gelm-magenta: #b300ff;
             --gelm-bg-panel: rgba(3, 5, 20, 0.96);
             --gelm-text-main: #e9f9ff;
             --gelm-text-muted: #9cb3d8;
             --gelm-danger: #ff0044;
-            --gelm-radius-xl: 24px;
         }
 
         body {
             margin: 0; padding: 0;
-            background: #020510; /* Color base si falla el fondo de styles.css */
-            font-family: system-ui, sans-serif;
+            background: #020510;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--gelm-text-main);
             display: flex; justify-content: center;
         }
 
-        .shell { width: 100%; max-width: 1000px; padding: 20px; }
-
-        .panel {
+        .agenda-panel {
+            width: 100%; max-width: 1000px; margin: 20px;
             background: radial-gradient(circle at top left, rgba(0, 234, 255, 0.1), transparent), var(--gelm-bg-panel);
-            border-radius: 32px;
-            border: 1px solid rgba(0, 234, 255, 0.3);
-            box-shadow: 0 0 50px rgba(0, 234, 255, 0.2);
-            padding: 24px;
+            border-radius: 32px; border: 1px solid rgba(0, 234, 255, 0.3);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9); padding: 24px;
         }
 
-        h1 { color: var(--gelm-cyan-soft); text-transform: uppercase; text-align: center; letter-spacing: 2px; text-shadow: 0 0 15px var(--gelm-cyan); }
+        h1 { color: var(--gelm-cyan-soft); text-align: center; text-transform: uppercase; text-shadow: 0 0 15px var(--gelm-cyan); }
 
-        .section-card {
-            background: rgba(1, 4, 20, 0.8);
-            border-radius: var(--gelm-radius-xl);
-            border: 1px solid rgba(0, 234, 255, 0.2);
-            padding: 18px; margin-bottom: 20px;
+        .card {
+            background: rgba(1, 4, 20, 0.8); border-radius: 18px;
+            border: 1px solid rgba(0, 234, 255, 0.2); padding: 18px; margin-bottom: 20px;
         }
 
-        .section-title { color: var(--gelm-cyan); font-weight: bold; margin-bottom: 12px; text-transform: uppercase; font-size: 0.9rem; border-bottom: 1px solid rgba(0, 234, 255, 0.2); padding-bottom: 5px; }
+        .card-title { color: var(--gelm-cyan); font-weight: bold; margin-bottom: 12px; border-bottom: 1px solid rgba(0, 234, 255, 0.1); padding-bottom: 5px; text-transform: uppercase; font-size: 0.85rem; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
 
-        label { display: block; font-size: 0.75rem; color: var(--gelm-text-muted); margin-bottom: 5px; text-transform: uppercase; }
+        label { display: block; font-size: 0.75rem; color: var(--gelm-text-muted); margin-bottom: 4px; text-transform: uppercase; }
 
         input, select, textarea {
-            width: 100%; padding: 10px; border-radius: 12px;
+            width: 100%; padding: 10px; border-radius: 10px;
             background: #020616; border: 1px solid rgba(0, 234, 255, 0.3);
-            color: white; outline: none; transition: 0.3s;
+            color: white; outline: none; box-sizing: border-box;
         }
 
-        input:focus { border-color: var(--gelm-cyan); box-shadow: 0 0 10px var(--gelm-cyan); }
-
-        /* Fotos e Inventario */
-        .photo-preview { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-top: 10px; display: none; border: 1px solid var(--gelm-cyan); }
-        
-        .inventory-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .chip { background: rgba(0, 234, 255, 0.1); border: 1px solid var(--gelm-cyan); padding: 5px 12px; border-radius: 20px; font-size: 11px; cursor: pointer; }
-        .chip.active { background: var(--gelm-cyan); color: #000; }
+        input:focus { border-color: var(--gelm-cyan); box-shadow: 0 0 10px rgba(0, 234, 255, 0.5); }
 
         /* Firmas */
-        .sig-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px; }
-        canvas { background: #fff; border-radius: 8px; width: 100%; height: 120px; cursor: crosshair; }
-        .btn-clear { background: var(--gelm-danger); color: white; border: none; padding: 4px 10px; border-radius: 5px; font-size: 10px; cursor: pointer; margin-top: 5px; }
+        .sig-box { text-align: center; }
+        canvas { background: #fff; border-radius: 8px; width: 100%; height: 130px; cursor: crosshair; }
+        .btn-clear { background: var(--gelm-danger); color: white; border: none; padding: 5px 10px; border-radius: 5px; font-size: 10px; cursor: pointer; margin-top: 5px; }
 
-        .main-btn {
-            width: 100%; padding: 15px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; 
-            text-transform: uppercase; transition: 0.3s; margin-top: 10px;
-        }
+        .actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { flex: 1; padding: 15px; border-radius: 50px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
         .btn-save { background: linear-gradient(90deg, #00eaff, #00ffc8); color: #000; }
         .btn-pdf { background: linear-gradient(90deg, #b300ff, #ff0044); color: white; }
 
-        /* Tabla de Historial */
-        .history-card { margin-top: 30px; background: rgba(2, 6, 22, 0.9); border-radius: 20px; border: 1px solid rgba(0, 234, 255, 0.3); overflow: hidden; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        thead { background: var(--gelm-cyan); color: #000; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0, 234, 255, 0.1); }
-        tr:hover { background: rgba(0, 234, 255, 0.05); }
-
-        @media (max-width: 600px) { .sig-container { grid-template-columns: 1fr; } }
+        /* Historial */
+        .table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 15px; border: 1px solid rgba(0, 234, 255, 0.2); }
+        table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.3); font-size: 0.85rem; }
+        th { background: var(--gelm-cyan); color: #000; padding: 10px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid rgba(0, 234, 255, 0.1); }
     </style>
 </head>
 <body>
 
-<div class="shell">
-    <div class="panel">
-        <h1>Boleta de Consignación</h1>
+<div class="agenda-panel">
+    <h1>Boleta de Consignación Pro</h1>
 
-        <form id="formConsignacion">
-            <div class="section-card">
-                <div class="grid">
-                    <div><label>Fecha</label><input type="date" id="fecha"></div>
-                    <div><label>Hora</label><input type="time" id="hora"></div>
-                </div>
+    <form id="formConsignacion">
+        <div class="card">
+            <div class="grid">
+                <div><label>Fecha del Hecho</label><input type="date" id="fecha"></div>
+                <div><label>Hora del Hecho</label><input type="time" id="hora"></div>
             </div>
-
-            <div class="section-card">
-                <div class="section-title">Datos del Conductor</div>
-                <div class="grid">
-                    <div><label>Nombre</label><input type="text" id="c_nombre"></div>
-                    <div><label>No. Licencia</label><input type="text" id="c_licencia"></div>
-                    <div><label>DPI</label><input type="text" id="c_dpi"></div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div class="section-title">Datos del Vehículo</div>
-                <div class="grid">
-                    <div><label>Placa</label><input type="text" id="v_placa"></div>
-                    <div><label>Marca</label><input type="text" id="v_marca"></div>
-                    <div><label>Color</label><input type="text" id="v_color"></div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div class="section-title">Hecho y Evidencia</div>
-                <label>Foto del Vehículo (Opcional)</label>
-                <input type="file" id="fotoInput" accept="image/*" capture="camera" onchange="previewImagen(event)">
-                <img id="preview" class="photo-preview">
-                
-                <label style="margin-top:10px">Motivo de Consignación</label>
-                <textarea id="h_motivo" placeholder="Ej: No portar documentos..."></textarea>
-            </div>
-
-            <div class="section-card">
-                <div class="section-title">Inventario de Objetos que deja</div>
-                <div class="inventory-chips">
-                    <span class="chip" onclick="toggleItem(this)">Llanta Repuesto</span>
-                    <span class="chip" onclick="toggleItem(this)">Tricker/Gato</span>
-                    <span class="chip" onclick="toggleItem(this)">Herramientas</span>
-                    <span class="chip" onclick="toggleItem(this)">Radio/Carátula</span>
-                    <span class="chip" onclick="toggleItem(this)">Antena</span>
-                    <span class="chip" onclick="toggleItem(this)">Batería</span>
-                </div>
-                <textarea id="h_inventario" style="margin-top:10px" placeholder="Otros detalles del inventario..."></textarea>
-            </div>
-
-            <div class="section-card">
-                <div class="section-title">Autoridad</div>
-                <div class="grid">
-                    <div><label>Agente</label><input type="text" id="a_nombre"></div>
-                    <div><label>Chapa</label><input type="text" id="a_chapa"></div>
-                </div>
-            </div>
-
-            <div class="section-card">
-                <div class="section-title">Firmas Digitales</div>
-                <div class="sig-container">
-                    <div>
-                        <canvas id="canvasAgente"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasAgente')">Limpiar Firma Agente</button></center>
-                    </div>
-                    <div>
-                        <canvas id="canvasConductor"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasConductor')">Limpiar Firma Conductor</button></center>
-                    </div>
-                </div>
-            </div>
-
-            <button type="button" class="main-btn btn-save" onclick="guardarConsignacion()">Guardar en Historial</button>
-            <button type="button" class="main-btn btn-pdf" onclick="exportarPDF()">Generar PDF Oficial</button>
-        </form>
-
-        <div class="history-card">
-            <div class="section-title" style="padding: 15px;">Historial de Consignaciones</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Placa</th>
-                        <th>Conductor</th>
-                        <th>Motivo</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyHistorial"></tbody>
-            </table>
         </div>
+
+        <div class="card">
+            <div class="card-title">Datos del Conductor (Según Licencia)</div>
+            <div class="grid">
+                <div style="grid-column: span 2;"><label>Nombres y Apellidos Completos</label><input type="text" id="c_nombre"></div>
+                <div><label>No. de Licencia</label><input type="text" id="c_licencia"></div>
+                <div>
+                    <label>Tipo de Licencia</label>
+                    <select id="c_tipo">
+                        <option value="A">Tipo A</option>
+                        <option value="B">Tipo B</option>
+                        <option value="C">Tipo C</option>
+                        <option value="M">Tipo M</option>
+                    </select>
+                </div>
+                <div><label>No. de Documento (DPI/CUI)</label><input type="text" id="c_dpi"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Datos del Vehículo (Según Tarjeta de Circulación)</div>
+            <div class="grid">
+                <div><label>Placa</label><input type="text" id="v_placa"></div>
+                <div><label>Tipo de Vehículo</label><input type="text" id="v_tipo"></div>
+                <div><label>Marca</label><input type="text" id="v_marca"></div>
+                <div><label>Color</label><input type="text" id="v_color"></div>
+                <div><label>NIT del Propietario</label><input type="text" id="v_nit"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Detalles de la Consignación</div>
+            <label>Motivo de Consignación</label>
+            <textarea id="h_motivo" rows="2"></textarea>
+            <label style="margin-top:10px;">Dirección exacta del hecho</label>
+            <input type="text" id="h_lugar">
+            <label style="margin-top:10px;">Observaciones / Inventario</label>
+            <textarea id="h_obs" rows="2" placeholder="Ej: No llanta repuesto, no herramientas..."></textarea>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Autoridad Consignante</div>
+            <div class="grid">
+                <div><label>Nombre del Agente</label><input type="text" id="a_nombre"></div>
+                <div><label>Chapa / ID</label><input type="text" id="a_chapa"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Firmas</div>
+            <div class="grid">
+                <div class="sig-box">
+                    <canvas id="canvasAgente"></canvas>
+                    <button type="button" class="btn-clear" onclick="limpiar('canvasAgente')">Limpiar Firma Agente</button>
+                </div>
+                <div class="sig-box">
+                    <canvas id="canvasConductor"></canvas>
+                    <button type="button" class="btn-clear" onclick="limpiar('canvasConductor')">Limpiar Firma Conductor</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button type="button" class="btn btn-save" onclick="guardar()">Guardar Registro</button>
+            <button type="button" class="btn btn-pdf" onclick="generarPDF()">Exportar PDF</button>
+        </div>
+    </form>
+
+    <div class="table-wrapper">
+        <table id="tablaHistorial">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Placa</th>
+                    <th>Conductor</th>
+                    <th>Motivo</th>
+                </tr>
+            </thead>
+            <tbody id="tbodyHistorial"></tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = "historial_consignaciones_gelm";
+    const STORAGE_KEY = "gelm_consignaciones_v2";
     let historial = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
     // Inicializar Firmas
-    function initCanvas(id) {
+    function activarFirma(id) {
         const canvas = document.getElementById(id);
         const ctx = canvas.getContext("2d");
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
-        ctx.lineWidth = 2;
-        ctx.strokeStyle = "#000";
-        let drawing = false;
-
-        const getPos = e => {
+        ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
+        
+        let dibujando = false;
+        const pos = e => {
             const r = canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: clientX - r.left, y: clientY - r.top };
+            return {
+                x: (e.touches ? e.touches[0].clientX : e.clientX) - r.left,
+                y: (e.touches ? e.touches[0].clientY : e.clientY) - r.top
+            };
         };
 
-        canvas.addEventListener("mousedown", e => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
-        canvas.addEventListener("mousemove", e => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
-        canvas.addEventListener("mouseup", () => drawing = false);
-        canvas.addEventListener("touchstart", e => { e.preventDefault(); drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
-        canvas.addEventListener("touchmove", e => { e.preventDefault(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
-        canvas.addEventListener("touchend", () => drawing = false);
+        const start = e => { dibujando = true; ctx.beginPath(); const p = pos(e); ctx.moveTo(p.x, p.y); };
+        const move = e => { if(!dibujando) return; e.preventDefault(); const p = pos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+        
+        canvas.addEventListener("mousedown", start);
+        canvas.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", () => dibujando = false);
+        canvas.addEventListener("touchstart", start);
+        canvas.addEventListener("touchmove", move);
     }
 
-    initCanvas("canvasAgente");
-    initCanvas("canvasConductor");
+    activarFirma("canvasAgente");
+    activarFirma("canvasConductor");
 
     function limpiar(id) {
-        const canvas = document.getElementById(id);
-        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+        const c = document.getElementById(id);
+        c.getContext("2d").clearRect(0,0,c.width,c.height);
     }
 
-    // Foto Preview
-    function previewImagen(event) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const output = document.getElementById('preview');
-            output.src = reader.result;
-            output.style.display = 'block';
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-
-    // Inventario Rápido
-    function toggleItem(chip) {
-        chip.classList.toggle('active');
-        const items = Array.from(document.querySelectorAll('.chip.active')).map(c => c.innerText);
-        document.getElementById('h_inventario').value = items.join(", ");
-    }
-
-    // Guardar
-    function guardarConsignacion() {
-        const data = {
+    function guardar() {
+        const registro = {
             fecha: document.getElementById('fecha').value,
             placa: document.getElementById('v_placa').value,
             conductor: document.getElementById('c_nombre').value,
             motivo: document.getElementById('h_motivo').value
         };
-
-        if(!data.placa || !data.conductor) return alert("Complete los datos básicos");
-
-        historial.push(data);
+        historial.push(registro);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(historial));
-        renderHistorial();
-        alert("Consignación guardada con éxito.");
+        renderTabla();
+        alert("Datos guardados correctamente.");
     }
 
-    function renderHistorial() {
-        const tbody = document.getElementById('tbodyHistorial');
-        tbody.innerHTML = "";
-        historial.reverse().forEach(item => {
-            const tr = `<tr>
-                <td>${item.fecha}</td>
-                <td>${item.placa}</td>
-                <td>${item.conductor}</td>
-                <td>${item.motivo}</td>
-            </tr>`;
-            tbody.innerHTML += tr;
-        });
+    function renderTabla() {
+        const body = document.getElementById('tbodyHistorial');
+        body.innerHTML = historial.map(r => `
+            <tr>
+                <td>${r.fecha}</td>
+                <td>${r.placa}</td>
+                <td>${r.conductor}</td>
+                <td>${r.motivo}</td>
+            </tr>
+        `).reverse().join('');
     }
 
-    // PDF (Simplificado para este ejemplo)
-    function exportarPDF() {
+    function generarPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        doc.text("BOLETA DE CONSIGNACIÓN - PMT CHIMALTENANGO", 10, 10);
-        doc.text(`Placa: ${document.getElementById('v_placa').value}`, 10, 20);
-        doc.text(`Conductor: ${document.getElementById('c_nombre').value}`, 10, 30);
-        doc.text(`Motivo: ${document.getElementById('h_motivo').value}`, 10, 40);
-        doc.text(`Inventario: ${document.getElementById('h_inventario').value}`, 10, 50);
         
-        // Agregar Firmas
-        const sigA = document.getElementById('canvasAgente').toDataURL("image/png");
-        doc.addImage(sigA, 'PNG', 10, 70, 50, 25);
-        doc.text("Firma Agente", 10, 100);
+        doc.setFontSize(16); doc.text("BOLETA DE CONSIGNACIÓN VEHICULAR", 105, 20, {align: 'center'});
+        doc.setFontSize(10); doc.text(`Fecha: ${document.getElementById('fecha').value} | Hora: ${document.getElementById('hora').value}`, 20, 30);
+        
+        doc.setFillColor(230,230,230); doc.rect(20, 35, 170, 7, 'F');
+        doc.setFont(undefined, 'bold'); doc.text("DATOS DEL CONDUCTOR", 22, 40);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Nombre: ${document.getElementById('c_nombre').value}`, 25, 48);
+        doc.text(`Licencia: ${document.getElementById('c_licencia').value} (Tipo: ${document.getElementById('c_tipo').value})`, 25, 54);
+        doc.text(`DPI/Documento: ${document.getElementById('c_dpi').value}`, 25, 60);
 
-        doc.save(`Boleta_${document.getElementById('v_placa').value}.pdf`);
+        doc.setFillColor(230,230,230); doc.rect(20, 65, 170, 7, 'F');
+        doc.setFont(undefined, 'bold'); doc.text("DATOS DEL VEHÍCULO", 22, 70);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Placa: ${document.getElementById('v_placa').value} | Marca: ${document.getElementById('v_marca').value}`, 25, 78);
+        doc.text(`Tipo: ${document.getElementById('v_tipo').value} | Color: ${document.getElementById('v_color').value}`, 25, 84);
+        doc.text(`NIT: ${document.getElementById('v_nit').value}`, 25, 90);
+
+        doc.text("MOTIVO:", 20, 105);
+        doc.text(doc.splitTextToSize(document.getElementById('h_motivo').value, 160), 20, 110);
+        
+        doc.text("OBSERVACIONES:", 20, 125);
+        doc.text(doc.splitTextToSize(document.getElementById('h_obs').value, 160), 20, 130);
+
+        // Firmas
+        const fAgente = document.getElementById('canvasAgente').toDataURL("image/png");
+        const fCond = document.getElementById('canvasConductor').toDataURL("image/png");
+        doc.addImage(fAgente, 'PNG', 25, 150, 60, 30);
+        doc.addImage(fCond, 'PNG', 115, 150, 60, 30);
+        doc.line(25, 180, 85, 180); doc.line(115, 180, 175, 180);
+        doc.text("Firma Agente", 40, 185); doc.text("Firma Conductor", 130, 185);
+
+        doc.save(`Consignacion_${document.getElementById('v_placa').value}.pdf`);
     }
 
-    window.onload = renderHistorial;
+    renderTabla();
 </script>
-
 </body>
 </html>
