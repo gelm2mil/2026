@@ -39,7 +39,7 @@
             padding: 15px; margin-bottom: 15px; border: 1px solid rgba(0,234,255,0.1);
         }
 
-        .section-title { color: var(--gelm-cyan); font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; }
+        .section-title { color: var(--gelm-cyan); font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
 
@@ -51,7 +51,6 @@
         }
 
         /* Foto */
-        .photo-box { text-align: center; margin-top: 10px; }
         #preview { max-width: 150px; border-radius: 10px; border: 1px solid var(--gelm-cyan); display: none; margin: 10px auto; }
 
         /* Firmas */
@@ -60,16 +59,32 @@
 
         /* Botonera */
         .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn { padding: 12px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; }
+        .btn { padding: 12px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; transition: 0.2s; }
         .btn-save { background: linear-gradient(90deg, #00eaff, #00ffc8); color: #000; }
         .btn-pdf { background: #b300ff; color: #fff; }
         .btn-excel { background: #28a745; color: #fff; grid-column: span 2; }
+        .btn:active { transform: scale(0.98); }
 
         /* Historial */
         .history { margin-top: 20px; overflow-x: auto; font-size: 0.8rem; }
         table { width: 100%; border-collapse: collapse; }
         th { background: var(--gelm-cyan); color: #000; padding: 8px; text-align: left; }
         td { padding: 8px; border-bottom: 1px solid rgba(0,234,255,0.1); }
+
+        /* Botón de eliminar individual */
+        .btn-delete-row {
+            background: rgba(255, 0, 68, 0.2); color: var(--gelm-danger);
+            border: 1px solid var(--gelm-danger); border-radius: 5px;
+            padding: 2px 8px; cursor: pointer; font-weight: bold;
+        }
+        .btn-delete-row:hover { background: var(--gelm-danger); color: white; }
+
+        /* Botón borrar todo */
+        .btn-danger-soft {
+            background: transparent; color: var(--gelm-danger);
+            border: 1px solid var(--gelm-danger); font-size: 0.6rem;
+            padding: 2px 8px; border-radius: 5px; cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -105,26 +120,25 @@
 
             <div class="section">
                 <div class="section-title">Evidencia y Motivo</div>
-                <label>Tomar Foto del Vehículo</label>
                 <input type="file" id="fotoInput" accept="image/*" capture="camera" onchange="previewFoto(event)">
-                <div class="photo-box"><img id="preview"></div>
+                <center><img id="preview"></center>
                 
-                <label>Motivo de Consignación</label>
+                <label>Motivo</label>
                 <textarea id="h_motivo" rows="2"></textarea>
-                <label>Inventario / Observaciones</label>
+                <label>Observaciones</label>
                 <textarea id="h_obs" rows="2"></textarea>
             </div>
 
             <div class="section">
-                <div class="section-title">Firmas Digitales</div>
+                <div class="section-title">Firmas</div>
                 <div class="grid">
                     <div>
                         <canvas id="canvasAgente"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasAgente')">Borrar</button></center>
+                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasAgente')">Borrar Firma</button></center>
                     </div>
                     <div>
                         <canvas id="canvasConductor"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasConductor')">Borrar</button></center>
+                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasConductor')">Borrar Firma</button></center>
                     </div>
                 </div>
             </div>
@@ -132,14 +146,17 @@
             <div class="actions">
                 <button type="button" class="btn btn-save" onclick="guardar()">Guardar Datos</button>
                 <button type="button" class="btn btn-pdf" onclick="generarPDF()">Exportar PDF</button>
-                <button type="button" class="btn btn-excel" onclick="exportarExcel()">Descargar Reporte Excel (Mensual/Anual)</button>
+                <button type="button" class="btn btn-excel" onclick="exportarExcel()">Descargar Reporte Excel</button>
             </div>
         </form>
 
         <div class="history">
-            <div class="section-title">Historial Reciente</div>
+            <div class="section-title">
+                Historial de Registros
+                <button class="btn-danger-soft" onclick="borrarTodo()">BORRAR TODO EL AÑO</button>
+            </div>
             <table>
-                <thead><tr><th>Fecha</th><th>Placa</th><th>Conductor</th></tr></thead>
+                <thead><tr><th>Fecha</th><th>Placa</th><th>Conductor</th><th>Acción</th></tr></thead>
                 <tbody id="tbodyHistorial"></tbody>
             </table>
         </div>
@@ -151,13 +168,12 @@
     let historial = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
     let fotoBase64 = "";
 
-    // Firmas
     function initCanvas(id) {
         const canvas = document.getElementById(id);
         const ctx = canvas.getContext("2d");
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
-        ctx.lineWidth = 2; ctx.lineCap = "round";
+        ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
         let drawing = false;
 
         const getPos = e => {
@@ -167,11 +183,14 @@
             return { x: clientX - r.left, y: clientY - r.top };
         };
 
-        canvas.addEventListener("mousedown", e => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
-        canvas.addEventListener("mousemove", e => { if(!drawing) return; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+        const start = e => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
+        const move = e => { if(!drawing) return; e.preventDefault(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+
+        canvas.addEventListener("mousedown", start);
+        canvas.addEventListener("mousemove", move);
         window.addEventListener("mouseup", () => drawing = false);
-        canvas.addEventListener("touchstart", e => { e.preventDefault(); drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); });
-        canvas.addEventListener("touchmove", e => { e.preventDefault(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+        canvas.addEventListener("touchstart", start);
+        canvas.addEventListener("touchmove", move);
     }
 
     initCanvas("canvasAgente"); initCanvas("canvasConductor");
@@ -193,62 +212,86 @@
 
     function guardar() {
         const data = {
+            id: Date.now(), // ID único para poder borrar
             fecha: document.getElementById('fecha').value,
             hora: document.getElementById('hora').value,
             conductor: document.getElementById('c_nombre').value,
+            licencia: document.getElementById('c_licencia').value,
+            dpi: document.getElementById('c_dpi').value,
             placa: document.getElementById('v_placa').value,
+            marca: document.getElementById('v_marca').value,
+            color: document.getElementById('v_color').value,
+            nit: document.getElementById('v_nit').value,
             motivo: document.getElementById('h_motivo').value,
-            nit: document.getElementById('v_nit').value
+            obs: document.getElementById('h_obs').value
         };
-        if(!data.placa) return alert("Ingrese al menos la placa");
+
+        if(!data.placa || !data.fecha) return alert("Complete Fecha y Placa");
+        
         historial.push(data);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(historial));
         renderTabla();
-        alert("Guardado en historial.");
+        document.getElementById('formConsignacion').reset();
+        document.getElementById('preview').style.display = "none";
+        fotoBase64 = "";
+        limpiar('canvasAgente'); limpiar('canvasConductor');
+        alert("Registro guardado.");
     }
 
     function renderTabla() {
         const tbody = document.getElementById('tbodyHistorial');
-        tbody.innerHTML = historial.slice(-5).reverse().map(r => `
-            <tr><td>${r.fecha}</td><td>${r.placa}</td><td>${r.conductor}</td></tr>
+        tbody.innerHTML = historial.slice().reverse().map((r, index) => `
+            <tr>
+                <td>${r.fecha}</td>
+                <td>${r.placa}</td>
+                <td>${r.conductor}</td>
+                <td><button class="btn-delete-row" onclick="borrarFila(${r.id})">X</button></td>
+            </tr>
         `).join('');
+    }
+
+    // BORRAR SOLO UNA FILA
+    function borrarFila(id) {
+        if(!confirm("¿Deseas eliminar este registro de prueba?")) return;
+        historial = historial.filter(item => item.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(historial));
+        renderTabla();
+    }
+
+    // BORRAR TODO EL HISTORIAL
+    function borrarTodo() {
+        if(!confirm("⚠️ ¿ESTÁS SEGURO? Esto borrará TODA la base de datos del año 2026. Úsalo solo para limpiar las pruebas.")) return;
+        historial = [];
+        localStorage.removeItem(STORAGE_KEY);
+        renderTabla();
     }
 
     function generarPDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
         doc.setFontSize(14); doc.text("BOLETA DE CONSIGNACIÓN - PMT CHIMALTENANGO", 105, 15, {align:'center'});
         doc.setFontSize(10); doc.text(`Fecha: ${document.getElementById('fecha').value} | Hora: ${document.getElementById('hora').value}`, 20, 25);
-        
         doc.text(`CONDUCTOR: ${document.getElementById('c_nombre').value}`, 20, 35);
         doc.text(`PLACA: ${document.getElementById('v_placa').value} | MARCA: ${document.getElementById('v_marca').value}`, 20, 42);
-        
         doc.text("MOTIVO:", 20, 52);
         doc.text(doc.splitTextToSize(document.getElementById('h_motivo').value, 170), 20, 57);
-
-        // Foto en tamaño ordenado (visible pero no gigante)
         if(fotoBase64) {
             doc.text("EVIDENCIA FOTOGRÁFICA:", 20, 80);
             doc.addImage(fotoBase64, 'JPEG', 20, 85, 60, 45);
         }
-
-        // Firmas
         const sigA = document.getElementById('canvasAgente').toDataURL();
         const sigC = document.getElementById('canvasConductor').toDataURL();
         doc.addImage(sigA, 'PNG', 20, 140, 50, 20);
         doc.addImage(sigC, 'PNG', 120, 140, 50, 20);
-        doc.text("Firma Agente", 35, 165); doc.text("Firma Conductor", 135, 165);
-
         doc.save(`Boleta_${document.getElementById('v_placa').value}.pdf`);
     }
 
     function exportarExcel() {
-        if(historial.length === 0) return alert("No hay datos para exportar");
+        if(historial.length === 0) return alert("No hay datos");
         const ws = XLSX.utils.json_to_sheet(historial);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Consignaciones 2026");
-        XLSX.writeFile(wb, "REPORTE_CONSIGNACIONES_PMT.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "Consignas");
+        XLSX.writeFile(wb, "REPORTE_2026.xlsx");
     }
 
     renderTabla();
