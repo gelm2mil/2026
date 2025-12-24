@@ -1,289 +1,251 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Boleta de Consignación</title>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 10px;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 5px;
-}
-
-form {
-  background: #fff;
-  padding: 12px;
-  border-radius: 8px;
-  max-width: 900px;
-  margin: auto;
-}
-
-.section {
-  margin-bottom: 14px;
-}
-
-.section-title {
-  font-weight: bold;
-  margin-bottom: 6px;
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 3px;
-}
-
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.field {
-  flex: 1;
-  min-width: 140px;
-}
-
-label {
-  font-size: 12px;
-  display: block;
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 6px;
-  font-size: 13px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-textarea {
-  resize: vertical;
-}
-
-.small-textarea {
-  min-height: 60px;
-}
-
-.medium-textarea {
-  min-height: 90px;
-}
-
-/* FIRMAS */
-.signature-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.signature-box {
-  flex: 1;
-  text-align: center;
-}
-
-canvas {
-  width: 100%;
-  height: 120px;
-  border: 1px solid #000;
-  border-radius: 4px;
-  touch-action: none;
-}
-
-.signature-label {
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-button {
-  margin-top: 10px;
-  padding: 8px;
-  width: 100%;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boleta de Consignación Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 10px; }
+        h2 { text-align: center; color: #333; }
+        form { background: #fff; padding: 15px; border-radius: 8px; max-width: 900px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .section { margin-bottom: 15px; border: 1px solid #eee; padding: 10px; border-radius: 5px; }
+        .section-title { font-weight: bold; margin-bottom: 8px; border-bottom: 2px solid #007bff; color: #007bff; }
+        .row { display: flex; flex-wrap: wrap; gap: 10px; }
+        .field { flex: 1; min-width: 150px; }
+        label { font-size: 12px; font-weight: bold; display: block; margin-bottom: 2px; }
+        input, select, textarea { width: 100%; padding: 8px; font-size: 14px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
+        textarea { resize: vertical; min-height: 60px; }
+        
+        /* FIRMAS */
+        .signature-container { display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; }
+        .signature-box { flex: 1; min-width: 250px; text-align: center; }
+        canvas { width: 100%; height: 150px; border: 1px dashed #999; background: #fafafa; border-radius: 4px; cursor: crosshair; }
+        .btn-clear { background: #6c757d; font-size: 11px; padding: 4px 8px; margin-top: 5px; cursor: pointer; }
+        
+        .actions { display: flex; gap: 10px; margin-top: 20px; }
+        button { flex: 1; padding: 12px; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        .btn-save { background: #28a745; }
+        .btn-pdf { background: #dc3545; }
+        button:hover { opacity: 0.9; }
+    </style>
 </head>
-
 <body>
 
 <h2>BOLETA DE CONSIGNACIÓN</h2>
 
-<form>
-
-<!-- DATOS DEL CONDUCTOR -->
-<div class="section">
-  <div class="section-title">Datos del Conductor</div>
-  <div class="row">
-    <div class="field">
-      <label>Nombre</label>
-      <input type="text">
-    </div>
-    <div class="field">
-      <label>No. Licencia</label>
-      <input type="text">
-    </div>
-    <div class="field">
-      <label>Tipo de Licencia</label>
-      <select>
-        <option>A</option><option>B</option><option>C</option><option>M</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>No. Documento</label>
-      <input type="text">
-    </div>
-  </div>
-</div>
-
-<!-- DATOS DEL VEHÍCULO -->
-<div class="section">
-  <div class="section-title">Datos del Vehículo</div>
-  <div class="row">
-    <div class="field">
-      <label>Placa</label>
-      <input type="text">
-    </div>
-    <div class="field">
-      <label>Tipo de Vehículo</label>
-      <select>
-        <option>Automóvil</option>
-        <option>Camión</option>
-        <option>Bus</option>
-        <option>Microbús</option>
-        <option>Plataforma</option>
-        <option>Cabezal</option>
-        <option>Trimoto</option>
-        <option>Motocicleta</option>
-      </select>
-    </div>
-    <div class="field">
-      <label>Color</label>
-      <input type="text">
-    </div>
-    <div class="field">
-      <label>Marca</label>
-      <input type="text">
-    </div>
-    <div class="field">
-      <label>NIT</label>
-      <input type="text">
-    </div>
-  </div>
-</div>
-
-<!-- OBSERVACIONES -->
-<div class="section">
-  <div class="section-title">Observaciones</div>
-  <textarea class="medium-textarea"
-  placeholder="Estado del vehículo, objetos que deja en el vehículo, condiciones generales, etc."></textarea>
-</div>
-
-<!-- MOTIVO Y DIRECCIÓN -->
-<div class="section">
-  <div class="section-title">Hecho</div>
-
-  <label>Motivo de Consignación</label>
-  <textarea class="small-textarea"></textarea>
-
-  <label>Dirección del Hecho</label>
-  <textarea class="small-textarea"
-  placeholder="Calle, avenida, zona, municipio, referencia"></textarea>
-</div>
-
-<!-- DATOS DEL AGENTE -->
-<div class="section">
-  <div class="section-title">Datos del Agente Consignante</div>
-  <div class="row">
-    <div class="field">
-      <label>Nombre del Agente</label>
-      <input type="text">
-    </div>
-    <div class="field">
-      <label>Chapa</label>
-      <input type="text">
-    </div>
-  </div>
-</div>
-
-<!-- FIRMAS -->
-<div class="section">
-  <div class="section-title">Firmas</div>
-
-  <div class="signature-container">
-    <div class="signature-box">
-      <canvas id="firmaAgente"></canvas>
-      <div class="signature-label">Firma del Agente</div>
+<form id="formConsignacion">
+    <div class="section">
+        <div class="row">
+            <div class="field">
+                <label>Fecha del Hecho</label>
+                <input type="date" id="fecha">
+            </div>
+            <div class="field">
+                <label>Hora</label>
+                <input type="time" id="hora">
+            </div>
+        </div>
     </div>
 
-    <div class="signature-box">
-      <canvas id="firmaConductor"></canvas>
-      <div class="signature-label">Firma del Conductor</div>
+    <div class="section">
+        <div class="section-title">Datos del Conductor</div>
+        <div class="row">
+            <div class="field"><label>Nombre</label><input type="text" id="c_nombre"></div>
+            <div class="field"><label>No. Licencia</label><input type="text" id="c_licencia"></div>
+            <div class="field">
+                <label>Tipo</label>
+                <select id="c_tipo_lic">
+                    <option>A</option><option>B</option><option>C</option><option>M</option>
+                </select>
+            </div>
+            <div class="field"><label>DPI/Documento</label><input type="text" id="c_dpi"></div>
+        </div>
     </div>
-  </div>
-</div>
 
-<button type="button">Guardar Consignación</button>
+    <div class="section">
+        <div class="section-title">Datos del Vehículo</div>
+        <div class="row">
+            <div class="field"><label>Placa</label><input type="text" id="v_placa"></div>
+            <div class="field">
+                <label>Tipo</label>
+                <select id="v_tipo">
+                    <option>Automóvil</option><option>Camión</option><option>Bus</option>
+                    <option>Microbús</option><option>Motocicleta</option><option>Otros</option>
+                </select>
+            </div>
+            <div class="field"><label>Marca</label><input type="text" id="v_marca"></div>
+            <div class="field"><label>Color</label><input type="text" id="v_color"></div>
+        </div>
+    </div>
 
+    <div class="section">
+        <div class="section-title">Detalles de la Consignación</div>
+        <label>Motivo de Consignación</label>
+        <textarea id="h_motivo"></textarea>
+        
+        <label>Dirección del Hecho</label>
+        <textarea id="h_direccion"></textarea>
+
+        <label>Observaciones (Estado del vehículo)</label>
+        <textarea id="h_observaciones" placeholder="Golpes, objetos de valor, herramientas, etc."></textarea>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Autoridad Consignante</div>
+        <div class="row">
+            <div class="field"><label>Nombre del Agente</label><input type="text" id="a_nombre"></div>
+            <div class="field"><label>Chapa / ID</label><input type="text" id="a_chapa"></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Firmas</div>
+        <div class="signature-container">
+            <div class="signature-box">
+                <canvas id="canvasAgente"></canvas>
+                <div class="signature-label">Firma del Agente</div>
+                <button type="button" class="btn-clear" onclick="limpiar('canvasAgente')">Limpiar</button>
+            </div>
+            <div class="signature-box">
+                <canvas id="canvasConductor"></canvas>
+                <div class="signature-label">Firma del Conductor</div>
+                <button type="button" class="btn-clear" onclick="limpiar('canvasConductor')">Limpiar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn-save" onclick="guardarLocal()">Guardar Datos</button>
+        <button type="button" class="btn-pdf" onclick="generarPDF()">Exportar PDF</button>
+    </div>
 </form>
 
 <script>
-function activarFirma(canvas) {
-  const ctx = canvas.getContext("2d");
-  let dibujando = false;
+    // Inicialización de firmas
+    const setupCanvas = (id) => {
+        const canvas = document.getElementById(id);
+        const ctx = canvas.getContext("2d");
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "#000";
 
-  const pos = e => {
-    const r = canvas.getBoundingClientRect();
-    return {
-      x: (e.touches ? e.touches[0].clientX : e.clientX) - r.left,
-      y: (e.touches ? e.touches[0].clientY : e.clientY) - r.top
+        let drawing = false;
+        const getPos = (e) => {
+            const r = canvas.getBoundingClientRect();
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - r.left, y: clientY - r.top };
+        };
+
+        const start = (e) => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
+        const move = (e) => { if(!drawing) return; e.preventDefault(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+        const stop = () => { drawing = false; };
+
+        canvas.addEventListener("mousedown", start);
+        canvas.addEventListener("mousemove", move);
+        window.addEventListener("mouseup", stop);
+        canvas.addEventListener("touchstart", start, {passive: false});
+        canvas.addEventListener("touchmove", move, {passive: false});
+        canvas.addEventListener("touchend", stop);
     };
-  };
 
-  canvas.addEventListener("mousedown", e => {
-    dibujando = true;
-    const p = pos(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  });
+    setupCanvas("canvasAgente");
+    setupCanvas("canvasConductor");
 
-  canvas.addEventListener("mousemove", e => {
-    if (!dibujando) return;
-    const p = pos(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  });
+    function limpiar(id) {
+        const canvas = document.getElementById(id);
+        canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+    }
 
-  canvas.addEventListener("mouseup", () => dibujando = false);
-  canvas.addEventListener("mouseleave", () => dibujando = false);
+    // Persistencia LocalStorage (Como en agen2026)
+    function guardarLocal() {
+        const datos = {};
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            if(el.id) datos[el.id] = el.value;
+        });
+        localStorage.setItem('ultima_consignacion', JSON.stringify(datos));
+        alert("Datos guardados localmente con éxito.");
+    }
 
-  canvas.addEventListener("touchstart", e => {
-    e.preventDefault();
-    dibujando = true;
-    const p = pos(e);
-    ctx.beginPath();
-    ctx.moveTo(p.x, p.y);
-  });
+    // Cargar datos si existen
+    window.onload = () => {
+        const guardado = localStorage.getItem('ultima_consignacion');
+        if(guardado) {
+            const datos = JSON.parse(guardado);
+            for(let id in datos) {
+                if(document.getElementById(id)) document.getElementById(id).value = datos[id];
+            }
+        }
+    };
 
-  canvas.addEventListener("touchmove", e => {
-    e.preventDefault();
-    if (!dibujando) return;
-    const p = pos(e);
-    ctx.lineTo(p.x, p.y);
-    ctx.stroke();
-  });
+    // Generación de PDF Profesional
+    async function generarPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        doc.setFontSize(18);
+        doc.text("BOLETA DE CONSIGNACIÓN VEHICULAR", 105, 20, { align: "center" });
+        
+        doc.setFontSize(10);
+        doc.text(`Fecha: ${document.getElementById('fecha').value} | Hora: ${document.getElementById('hora').value}`, 20, 30);
+        
+        // Secciones
+        let y = 40;
+        const drawSection = (title, items) => {
+            doc.setFillColor(230, 230, 230);
+            doc.rect(20, y, 170, 7, 'F');
+            doc.setFont(undefined, 'bold');
+            doc.text(title, 22, y + 5);
+            doc.setFont(undefined, 'normal');
+            y += 12;
+            items.forEach(item => {
+                doc.text(item, 25, y);
+                y += 7;
+            });
+            y += 5;
+        };
 
-  canvas.addEventListener("touchend", () => dibujando = false);
-}
+        drawSection("DATOS DEL CONDUCTOR", [
+            `Nombre: ${document.getElementById('c_nombre').value}`,
+            `Licencia: ${document.getElementById('c_licencia').value} (Tipo: ${document.getElementById('c_tipo_lic').value})`,
+            `Documento: ${document.getElementById('c_dpi').value}`
+        ]);
 
-activarFirma(document.getElementById("firmaAgente"));
-activarFirma(document.getElementById("firmaConductor"));
+        drawSection("DATOS DEL VEHÍCULO", [
+            `Placa: ${document.getElementById('v_placa').value} | Tipo: ${document.getElementById('v_tipo').value}`,
+            `Marca: ${document.getElementById('v_marca').value} | Color: ${document.getElementById('v_color').value}`
+        ]);
+
+        drawSection("MOTIVO Y LUGAR", [
+            `Motivo: ${document.getElementById('h_motivo').value}`,
+            `Dirección: ${document.getElementById('h_direccion').value}`
+        ]);
+
+        doc.setFont(undefined, 'bold');
+        doc.text("OBSERVACIONES GENERALES:", 20, y);
+        doc.setFont(undefined, 'normal');
+        doc.text(doc.splitTextToSize(document.getElementById('h_observaciones').value, 160), 20, y + 7);
+        
+        // Firmas
+        y += 40;
+        const imgAgente = document.getElementById('canvasAgente').toDataURL("image/png");
+        const imgConductor = document.getElementById('canvasConductor').toDataURL("image/png");
+        
+        doc.addImage(imgAgente, 'PNG', 25, y, 60, 30);
+        doc.addImage(imgConductor, 'PNG', 115, y, 60, 30);
+        
+        doc.line(25, y + 32, 85, y + 32);
+        doc.line(115, y + 32, 175, y + 32);
+        
+        doc.text("Firma Agente: " + document.getElementById('a_nombre').value, 25, y + 38);
+        doc.text("Firma Conductor", 115, y + 38);
+
+        doc.save(`Consignacion_${document.getElementById('v_placa').value}.pdf`);
+    }
 </script>
 
 </body>
