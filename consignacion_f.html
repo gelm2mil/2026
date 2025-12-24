@@ -13,78 +13,74 @@
             --gelm-cyan: #00eaff;
             --gelm-cyan-soft: #00ffc8;
             --gelm-bg: #020510;
-            --gelm-card: rgba(3, 5, 25, 0.95);
+            --gelm-card: rgba(3, 5, 25, 0.96);
             --gelm-text: #e9f9ff;
             --gelm-danger: #ff0044;
         }
 
         body {
-            margin: 0; font-family: 'Segoe UI', sans-serif;
+            margin: 0; padding: 10px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             background: var(--gelm-bg); color: var(--gelm-text);
-            display: flex; justify-content: center; padding: 10px;
+            display: flex; justify-content: center;
         }
 
         .container { width: 100%; max-width: 900px; }
 
         .panel {
-            background: var(--gelm-card); border-radius: 25px;
-            border: 1px solid rgba(0, 234, 255, 0.3); padding: 20px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            background: radial-gradient(circle at top left, rgba(0, 234, 255, 0.1), transparent), var(--gelm-card);
+            border-radius: 25px; border: 1px solid rgba(0, 234, 255, 0.3);
+            padding: 20px; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
         }
 
-        h1 { color: var(--gelm-cyan-soft); text-align: center; text-transform: uppercase; font-size: 1.4rem; text-shadow: 0 0 10px var(--gelm-cyan); }
+        h1 { color: var(--gelm-cyan-soft); text-align: center; text-transform: uppercase; font-size: 1.3rem; text-shadow: 0 0 10px var(--gelm-cyan); margin-bottom: 20px; }
 
         .section {
-            background: rgba(255,255,255,0.03); border-radius: 15px;
-            padding: 15px; margin-bottom: 15px; border: 1px solid rgba(0,234,255,0.1);
+            background: rgba(255,255,255,0.02); border-radius: 15px;
+            padding: 15px; margin-bottom: 15px; border: 1px solid rgba(0,234,255,0.15);
         }
 
-        .section-title { color: var(--gelm-cyan); font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+        .section-title { color: var(--gelm-cyan); font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(0,234,255,0.1); padding-bottom: 5px; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
 
-        label { display: block; font-size: 0.7rem; color: #9cb3d8; margin-bottom: 3px; }
+        label { display: block; font-size: 0.75rem; color: #9cb3d8; margin-bottom: 4px; text-transform: uppercase; }
 
         input, select, textarea {
-            width: 100%; padding: 8px; border-radius: 8px; background: #000;
-            border: 1px solid rgba(0, 234, 255, 0.3); color: #fff; font-size: 0.9rem;
+            width: 100%; padding: 10px; border-radius: 10px; background: #000;
+            border: 1px solid rgba(0, 234, 255, 0.3); color: #fff; font-size: 0.95rem; box-sizing: border-box; outline: none;
         }
 
-        /* Foto */
-        #preview { max-width: 150px; border-radius: 10px; border: 1px solid var(--gelm-cyan); display: none; margin: 10px auto; }
+        input:focus { border-color: var(--gelm-cyan); box-shadow: 0 0 10px rgba(0, 234, 255, 0.4); }
+
+        /* Foto y Preview */
+        .photo-area { text-align: center; }
+        #preview { max-width: 180px; border-radius: 12px; border: 2px solid var(--gelm-cyan); display: none; margin: 10px auto; }
 
         /* Firmas */
-        canvas { background: #fff; border-radius: 8px; width: 100%; height: 120px; touch-action: none; }
-        .btn-clear { background: var(--gelm-danger); color: #fff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; margin-top: 5px; cursor: pointer; }
+        .signature-box { position: relative; }
+        canvas { background: #fff; border-radius: 8px; width: 100%; height: 140px; touch-action: none; cursor: crosshair; }
+        .btn-clear { background: var(--gelm-danger); color: #fff; border: none; padding: 5px 12px; border-radius: 5px; font-size: 11px; margin-top: 6px; cursor: pointer; }
 
-        /* Botonera */
-        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .btn { padding: 12px; border-radius: 30px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8rem; transition: 0.2s; }
+        /* Botonera Principal */
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .btn { padding: 14px; border-radius: 35px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; transition: 0.3s; }
         .btn-save { background: linear-gradient(90deg, #00eaff, #00ffc8); color: #000; }
-        .btn-pdf { background: #b300ff; color: #fff; }
+        .btn-pdf { background: linear-gradient(90deg, #b300ff, #ff0044); color: #fff; }
         .btn-excel { background: #28a745; color: #fff; grid-column: span 2; }
-        .btn:active { transform: scale(0.98); }
+        .btn:active { transform: scale(0.95); }
 
-        /* Historial */
-        .history { margin-top: 20px; overflow-x: auto; font-size: 0.8rem; }
-        table { width: 100%; border-collapse: collapse; }
-        th { background: var(--gelm-cyan); color: #000; padding: 8px; text-align: left; }
-        td { padding: 8px; border-bottom: 1px solid rgba(0,234,255,0.1); }
-
-        /* Botón de eliminar individual */
-        .btn-delete-row {
-            background: rgba(255, 0, 68, 0.2); color: var(--gelm-danger);
-            border: 1px solid var(--gelm-danger); border-radius: 5px;
-            padding: 2px 8px; cursor: pointer; font-weight: bold;
-        }
-        .btn-delete-row:hover { background: var(--gelm-danger); color: white; }
-
-        /* Botón borrar todo */
-        .btn-danger-soft {
-            background: transparent; color: var(--gelm-danger);
-            border: 1px solid var(--gelm-danger); font-size: 0.6rem;
-            padding: 2px 8px; border-radius: 5px; cursor: pointer;
-        }
+        /* Historial y Tabla */
+        .history { margin-top: 25px; }
+        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .table-scroll { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(0,234,255,0.2); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: rgba(0,0,0,0.2); }
+        th { background: var(--gelm-cyan); color: #000; padding: 10px; text-align: left; }
+        td { padding: 10px; border-bottom: 1px solid rgba(0,234,255,0.1); }
+        
+        .btn-del { background: none; border: 1px solid var(--gelm-danger); color: var(--gelm-danger); padding: 2px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-del:hover { background: var(--gelm-danger); color: white; }
+        .btn-reset { background: none; border: 1px solid #9cb3d8; color: #9cb3d8; font-size: 0.65rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -93,25 +89,32 @@
     <div class="panel">
         <h1>Boleta de Consignación 2026</h1>
 
-        <form id="formConsignacion">
+        <form id="mainForm">
             <div class="section grid">
-                <div><label>Fecha</label><input type="date" id="fecha"></div>
-                <div><label>Hora</label><input type="time" id="hora"></div>
+                <div><label>Fecha del Hecho</label><input type="date" id="fecha"></div>
+                <div><label>Hora del Hecho</label><input type="time" id="hora"></div>
             </div>
 
             <div class="section">
-                <div class="section-title">Datos del Conductor</div>
+                <div class="section-title">Datos del Conductor (Licencia)</div>
                 <div class="grid">
-                    <div style="grid-column: span 2;"><label>Nombres y Apellidos</label><input type="text" id="c_nombre"></div>
+                    <div style="grid-column: span 2;"><label>Nombres y Apellidos Completos</label><input type="text" id="c_nombre"></div>
                     <div><label>No. Licencia</label><input type="text" id="c_licencia"></div>
+                    <div>
+                        <label>Tipo</label>
+                        <select id="c_tipo">
+                            <option>Tipo A</option><option>Tipo B</option><option selected>Tipo C</option><option>Tipo M</option>
+                        </select>
+                    </div>
                     <div><label>No. Documento (DPI)</label><input type="text" id="c_dpi"></div>
                 </div>
             </div>
 
             <div class="section">
-                <div class="section-title">Datos del Vehículo</div>
+                <div class="section-title">Datos del Vehículo (Tarjeta Circulación)</div>
                 <div class="grid">
                     <div><label>Placa</label><input type="text" id="v_placa"></div>
+                    <div><label>Tipo Vehículo</label><input type="text" id="v_tipo" placeholder="Automóvil, Camión..."></div>
                     <div><label>Marca</label><input type="text" id="v_marca"></div>
                     <div><label>Color</label><input type="text" id="v_color"></div>
                     <div><label>NIT Propietario</label><input type="text" id="v_nit"></div>
@@ -119,100 +122,128 @@
             </div>
 
             <div class="section">
-                <div class="section-title">Evidencia y Motivo</div>
-                <input type="file" id="fotoInput" accept="image/*" capture="camera" onchange="previewFoto(event)">
-                <center><img id="preview"></center>
+                <div class="section-title">Evidencia y Hecho</div>
+                <label>Foto del Vehículo (Cámara)</label>
+                <input type="file" id="fotoInput" accept="image/*" capture="camera">
+                <div class="photo-area"><img id="preview"></div>
                 
-                <label>Motivo</label>
+                <label style="margin-top:10px;">Motivo de Consignación</label>
                 <textarea id="h_motivo" rows="2"></textarea>
-                <label>Observaciones</label>
-                <textarea id="h_obs" rows="2"></textarea>
+                <label style="margin-top:10px;">Inventario / Observaciones</label>
+                <textarea id="h_obs" rows="2" placeholder="Accesorios, daños, llanta repuesto..."></textarea>
+                <label style="margin-top:10px;">Dirección del Hecho</label>
+                <input type="text" id="h_direccion">
             </div>
 
             <div class="section">
-                <div class="section-title">Firmas</div>
+                <div class="section-title">Autoridad Consignante</div>
                 <div class="grid">
-                    <div>
+                    <div><label>Nombre del Agente</label><input type="text" id="a_nombre"></div>
+                    <div><label>Chapa / ID</label><input type="text" id="a_chapa"></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Firmas Digitales</div>
+                <div class="grid">
+                    <div class="signature-box">
                         <canvas id="canvasAgente"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasAgente')">Borrar Firma</button></center>
+                        <center><button type="button" class="btn-clear" onclick="clearSig('canvasAgente')">Limpiar Firma Agente</button></center>
                     </div>
-                    <div>
+                    <div class="signature-box">
                         <canvas id="canvasConductor"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="limpiar('canvasConductor')">Borrar Firma</button></center>
+                        <center><button type="button" class="btn-clear" onclick="clearSig('canvasConductor')">Limpiar Firma Conductor</button></center>
                     </div>
                 </div>
             </div>
 
             <div class="actions">
-                <button type="button" class="btn btn-save" onclick="guardar()">Guardar Datos</button>
-                <button type="button" class="btn btn-pdf" onclick="generarPDF()">Exportar PDF</button>
-                <button type="button" class="btn btn-excel" onclick="exportarExcel()">Descargar Reporte Excel</button>
+                <button type="button" class="btn btn-save" onclick="saveData()">Guardar Registro</button>
+                <button type="button" class="btn btn-pdf" onclick="makePDF()">Generar PDF</button>
+                <button type="button" class="btn btn-excel" onclick="exportXLS()">Reporte Excel Mensual/Anual</button>
             </div>
         </form>
 
         <div class="history">
-            <div class="section-title">
-                Historial de Registros
-                <button class="btn-danger-soft" onclick="borrarTodo()">BORRAR TODO EL AÑO</button>
+            <div class="history-header">
+                <div class="section-title">Historial Reciente</div>
+                <button class="btn-reset" onclick="nukeStorage()">Borrar Todo el Año</button>
             </div>
-            <table>
-                <thead><tr><th>Fecha</th><th>Placa</th><th>Conductor</th><th>Acción</th></tr></thead>
-                <tbody id="tbodyHistorial"></tbody>
-            </table>
+            <div class="table-scroll">
+                <table>
+                    <thead><tr><th>Fecha</th><th>Placa</th><th>Conductor</th><th>Acción</th></tr></thead>
+                    <tbody id="historialBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const STORAGE_KEY = "pmt_consignas_2026";
-    let historial = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    let fotoBase64 = "";
+    const KEY = "pmt_gelm_2026";
+    let db = JSON.parse(localStorage.getItem(KEY)) || [];
+    let currentPhoto = "";
 
-    function initCanvas(id) {
-        const canvas = document.getElementById(id);
-        const ctx = canvas.getContext("2d");
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-        ctx.lineWidth = 2; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
+    // Inicialización de Firmas
+    function setupCanvas(id) {
+        const c = document.getElementById(id);
+        const ctx = c.getContext("2d");
+        c.width = c.offsetWidth;
+        c.height = c.offsetHeight;
+        ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
+        
         let drawing = false;
-
-        const getPos = e => {
-            const r = canvas.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: clientX - r.left, y: clientY - r.top };
+        const getXY = e => {
+            const r = c.getBoundingClientRect();
+            const x = e.touches ? e.touches[0].clientX : e.clientX;
+            const y = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: x - r.left, y: y - r.top };
         };
 
-        const start = e => { drawing = true; ctx.beginPath(); const p = getPos(e); ctx.moveTo(p.x, p.y); };
-        const move = e => { if(!drawing) return; e.preventDefault(); const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+        const start = e => { drawing = true; ctx.beginPath(); const p = getXY(e); ctx.moveTo(p.x, p.y); };
+        const move = e => { if(!drawing) return; e.preventDefault(); const p = getXY(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
 
-        canvas.addEventListener("mousedown", start);
-        canvas.addEventListener("mousemove", move);
+        c.addEventListener("mousedown", start); c.addEventListener("mousemove", move);
         window.addEventListener("mouseup", () => drawing = false);
-        canvas.addEventListener("touchstart", start);
-        canvas.addEventListener("touchmove", move);
+        c.addEventListener("touchstart", start, {passive: false});
+        c.addEventListener("touchmove", move, {passive: false});
     }
 
-    initCanvas("canvasAgente"); initCanvas("canvasConductor");
+    setupCanvas("canvasAgente"); setupCanvas("canvasConductor");
 
-    function limpiar(id) {
+    function clearSig(id) {
         const c = document.getElementById(id);
         c.getContext("2d").clearRect(0,0,c.width,c.height);
     }
 
-    function previewFoto(e) {
+    // Compresión de Imagen para Móvil
+    document.getElementById('fotoInput').onchange = function(e) {
+        const file = e.target.files[0];
+        if(!file) return;
+        
         const reader = new FileReader();
-        reader.onload = () => {
-            fotoBase64 = reader.result;
-            const img = document.getElementById('preview');
-            img.src = fotoBase64; img.style.display = "block";
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_W = 800;
+                let w = img.width; let h = img.height;
+                if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
+                canvas.width = w; canvas.height = h;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, w, h);
+                currentPhoto = canvas.toDataURL("image/jpeg", 0.7); // Compresión 70%
+                document.getElementById('preview').src = currentPhoto;
+                document.getElementById('preview').style.display = "block";
+            };
+            img.src = event.target.result;
         };
-        reader.readAsDataURL(e.target.files[0]);
-    }
+        reader.readAsDataURL(file);
+    };
 
-    function guardar() {
-        const data = {
-            id: Date.now(), // ID único para poder borrar
+    function saveData() {
+        const item = {
+            id: Date.now(),
             fecha: document.getElementById('fecha').value,
             hora: document.getElementById('hora').value,
             conductor: document.getElementById('c_nombre').value,
@@ -220,81 +251,93 @@
             dpi: document.getElementById('c_dpi').value,
             placa: document.getElementById('v_placa').value,
             marca: document.getElementById('v_marca').value,
-            color: document.getElementById('v_color').value,
             nit: document.getElementById('v_nit').value,
-            motivo: document.getElementById('h_motivo').value,
-            obs: document.getElementById('h_obs').value
+            motivo: document.getElementById('h_motivo').value
         };
-
-        if(!data.placa || !data.fecha) return alert("Complete Fecha y Placa");
-        
-        historial.push(data);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(historial));
-        renderTabla();
-        document.getElementById('formConsignacion').reset();
-        document.getElementById('preview').style.display = "none";
-        fotoBase64 = "";
-        limpiar('canvasAgente'); limpiar('canvasConductor');
-        alert("Registro guardado.");
+        if(!item.placa || !item.fecha) return alert("Complete Fecha y Placa");
+        db.push(item);
+        localStorage.setItem(KEY, JSON.stringify(db));
+        render();
+        alert("Registro guardado en historial.");
     }
 
-    function renderTabla() {
-        const tbody = document.getElementById('tbodyHistorial');
-        tbody.innerHTML = historial.slice().reverse().map((r, index) => `
+    function render() {
+        const b = document.getElementById('historialBody');
+        b.innerHTML = db.slice().reverse().map(r => `
             <tr>
                 <td>${r.fecha}</td>
                 <td>${r.placa}</td>
                 <td>${r.conductor}</td>
-                <td><button class="btn-delete-row" onclick="borrarFila(${r.id})">X</button></td>
+                <td><button class="btn-del" onclick="delRow(${r.id})">X</button></td>
             </tr>
         `).join('');
     }
 
-    // BORRAR SOLO UNA FILA
-    function borrarFila(id) {
-        if(!confirm("¿Deseas eliminar este registro de prueba?")) return;
-        historial = historial.filter(item => item.id !== id);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(historial));
-        renderTabla();
+    function delRow(id) {
+        if(!confirm("¿Borrar este registro?")) return;
+        db = db.filter(x => x.id !== id);
+        localStorage.setItem(KEY, JSON.stringify(db));
+        render();
     }
 
-    // BORRAR TODO EL HISTORIAL
-    function borrarTodo() {
-        if(!confirm("⚠️ ¿ESTÁS SEGURO? Esto borrará TODA la base de datos del año 2026. Úsalo solo para limpiar las pruebas.")) return;
-        historial = [];
-        localStorage.removeItem(STORAGE_KEY);
-        renderTabla();
+    function nukeStorage() {
+        if(!confirm("⚠️ ¿BORRAR TODO EL AÑO? Esto no se puede deshacer.")) return;
+        db = []; localStorage.removeItem(KEY); render();
     }
 
-    function generarPDF() {
+    // PDF Optimizado para Móvil
+    async function makePDF() {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        doc.setFontSize(14); doc.text("BOLETA DE CONSIGNACIÓN - PMT CHIMALTENANGO", 105, 15, {align:'center'});
-        doc.setFontSize(10); doc.text(`Fecha: ${document.getElementById('fecha').value} | Hora: ${document.getElementById('hora').value}`, 20, 25);
-        doc.text(`CONDUCTOR: ${document.getElementById('c_nombre').value}`, 20, 35);
-        doc.text(`PLACA: ${document.getElementById('v_placa').value} | MARCA: ${document.getElementById('v_marca').value}`, 20, 42);
-        doc.text("MOTIVO:", 20, 52);
-        doc.text(doc.splitTextToSize(document.getElementById('h_motivo').value, 170), 20, 57);
-        if(fotoBase64) {
-            doc.text("EVIDENCIA FOTOGRÁFICA:", 20, 80);
-            doc.addImage(fotoBase64, 'JPEG', 20, 85, 60, 45);
+        
+        const f = id => document.getElementById(id).value || "---";
+
+        doc.setFontSize(16); doc.text("BOLETA DE CONSIGNACIÓN VEHICULAR", 105, 20, {align:'center'});
+        doc.setFontSize(10); doc.text(`Fecha: ${f('fecha')} | Hora: ${f('hora')}`, 20, 30);
+        
+        // Bloques
+        doc.setFillColor(240); doc.rect(20, 35, 170, 7, 'F');
+        doc.setFont(undefined, 'bold'); doc.text("DATOS DEL CONDUCTOR", 22, 40);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Nombre: ${f('c_nombre')}`, 25, 48);
+        doc.text(`Licencia: ${f('c_licencia')} (${f('c_tipo')}) | DPI: ${f('c_dpi')}`, 25, 54);
+
+        doc.setFillColor(240); doc.rect(20, 62, 170, 7, 'F');
+        doc.setFont(undefined, 'bold'); doc.text("DATOS DEL VEHÍCULO", 22, 67);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Placa: ${f('v_placa')} | Marca: ${f('v_marca')} | Color: ${f('v_color')}`, 25, 75);
+        doc.text(`Tipo: ${f('v_tipo')} | NIT: ${f('v_nit')}`, 25, 81);
+
+        doc.text("MOTIVO:", 20, 95);
+        doc.text(doc.splitTextToSize(f('h_motivo'), 160), 20, 100);
+        
+        doc.text("OBSERVACIONES / INVENTARIO:", 20, 115);
+        doc.text(doc.splitTextToSize(f('h_obs'), 160), 20, 120);
+
+        if(currentPhoto) {
+            doc.text("EVIDENCIA:", 20, 145);
+            doc.addImage(currentPhoto, 'JPEG', 20, 150, 60, 45);
         }
-        const sigA = document.getElementById('canvasAgente').toDataURL();
-        const sigC = document.getElementById('canvasConductor').toDataURL();
-        doc.addImage(sigA, 'PNG', 20, 140, 50, 20);
-        doc.addImage(sigC, 'PNG', 120, 140, 50, 20);
-        doc.save(`Boleta_${document.getElementById('v_placa').value}.pdf`);
+
+        const sigA = document.getElementById('canvasAgente').toDataURL("image/png");
+        const sigC = document.getElementById('canvasConductor').toDataURL("image/png");
+        doc.addImage(sigA, 'PNG', 20, 220, 55, 25);
+        doc.addImage(sigC, 'PNG', 120, 220, 55, 25);
+        doc.line(20, 245, 75, 245); doc.line(120, 245, 175, 245);
+        doc.text(`Agente: ${f('a_nombre')}`, 20, 250); doc.text("Firma Conductor", 120, 250);
+
+        doc.save(`Consignacion_${f('v_placa')}.pdf`);
     }
 
-    function exportarExcel() {
-        if(historial.length === 0) return alert("No hay datos");
-        const ws = XLSX.utils.json_to_sheet(historial);
+    function exportXLS() {
+        if(db.length === 0) return alert("Sin datos");
+        const ws = XLSX.utils.json_to_sheet(db);
         const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Consignas");
-        XLSX.writeFile(wb, "REPORTE_2026.xlsx");
+        XLSX.utils.book_append_sheet(wb, ws, "2026");
+        XLSX.writeFile(wb, "REPORTE_CONSIGNACIONES_PMT_2026.xlsx");
     }
 
-    renderTabla();
+    render();
 </script>
 
 </body>
