@@ -1,279 +1,896 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <!-- PWA -->
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#00eaff">
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js");
-    }
-  </script>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#00eaff">
   <title>AGENDA 2026 — PMT Chimaltenango</title>
-
-  <!-- ESTILO GLOBAL -->
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.webmanifest">
+  
+  <!-- Estilos globales del proyecto -->
   <link rel="stylesheet" href="styles.css">
+  
+  <!-- Librería para exportar a Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+  
+  <style>
+    /* ===============================
+       Agenda 2026 — Estilo PRO GOD MODE
+       =============================== */
+    :root {
+      --gelm-cyan: #00eaff;
+      --gelm-cyan-soft: #00ffc8;
+      --gelm-magenta: #b300ff;
+      --gelm-purple-deep: #18001e;
+      --gelm-bg-panel: rgba(3, 5, 20, 0.96);
+      --gelm-text-main: #e9f9ff;
+      --gelm-text-muted: #9cb3d8;
+      --gelm-danger: #ff0044;
+      --gelm-shadow-strong: 0 0 35px rgba(0, 234, 255, 0.45);
+      --gelm-radius-xl: 24px;
+      --gelm-radius-lg: 18px;
+    }
 
-  <!-- EXCEL -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--gelm-text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: 
+        radial-gradient(circle at 15% 25%, rgba(0, 234, 255, 0.12), transparent 25%),
+        radial-gradient(circle at 85% 75%, rgba(179, 0, 255, 0.14), transparent 30%),
+        linear-gradient(165deg, #0a0e2a 0%, #020510 100%);
+    }
+
+    .agenda-shell {
+      width: 100%;
+      max-width: 1280px;
+      margin: 32px auto;
+      padding: 20px 16px 40px;
+    }
+
+    .agenda-panel {
+      background: 
+        radial-gradient(circle at top left, rgba(0, 234, 255, 0.14), transparent 55%),
+        radial-gradient(circle at top right, rgba(179, 0, 255, 0.16), transparent 60%),
+        var(--gelm-bg-panel);
+      border-radius: 32px;
+      box-shadow:
+        0 0 0 1px rgba(0, 234, 255, 0.25),
+        0 0 60px rgba(0, 0, 0, 0.9),
+        0 0 55px rgba(0, 234, 255, 0.35);
+      padding: 24px 22px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .agenda-panel::before {
+      content: "";
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      border: 1px solid rgba(0, 234, 255, 0.22);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* HEADER SUPERIOR */
+    .agenda-header {
+      display: grid;
+      grid-template-columns: 120px 1fr 120px;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .agenda-logo-box {
+      height: 120px;
+      border-radius: 26px;
+      background: 
+        radial-gradient(circle at 30% 0%, rgba(0, 255, 200, 0.25), transparent 70%),
+        #020510;
+      box-shadow: var(--gelm-shadow-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(0, 234, 255, 0.45);
+    }
+
+    .agenda-logo-box img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0, 255, 220, 0.9));
+    }
+
+    .agenda-title-block {
+      text-align: center;
+    }
+
+    .agenda-title {
+      font-size: clamp(1.6rem, 2.3vw, 2.1rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--gelm-cyan-soft);
+      text-shadow:
+        0 0 10px rgba(0, 234, 255, 0.9),
+        0 0 22px rgba(0, 234, 255, 0.8);
+      margin: 0 0 4px;
+    }
+
+    .agenda-subtitle {
+      font-size: 0.9rem;
+      color: var(--gelm-text-muted);
+      margin: 0;
+    }
+
+    .agenda-by {
+      margin-top: 6px;
+      font-size: 0.8rem;
+      color: var(--gelm-cyan);
+      letter-spacing: 0.18em;
+    }
+
+    /* NAV SUPERIOR */
+    .agenda-nav {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .nav-pill {
+      border-radius: 999px;
+      padding: 10px 24px;
+      font-size: 0.9rem;
+      border: 1px solid rgba(0, 234, 255, 0.35);
+      background: 
+        radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.3), transparent 55%),
+        rgba(4, 8, 30, 0.9);
+      color: var(--gelm-text-main);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.55);
+      transition: all 0.18s ease-out;
+    }
+
+    .nav-pill span {
+      font-size: 1.05rem;
+    }
+
+    .nav-pill.active {
+      background: linear-gradient(135deg, #00eaff 0%, #00ffc8 40%, #b300ff 100%);
+      color: #020510;
+      box-shadow:
+        0 0 18px rgba(0, 234, 255, 0.9),
+        0 0 30px rgba(179, 0, 255, 0.7);
+      font-weight: 600;
+    }
+
+    .nav-pill[aria-disabled="true"] {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .nav-pill:not(.active):not([aria-disabled="true"]):hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 0 16px rgba(0, 234, 255, 0.7),
+        0 8px 30px rgba(0, 0, 0, 0.8);
+      border-color: rgba(0, 255, 200, 0.7);
+    }
+
+    /* RESUMEN SUPERIOR */
+    .agenda-summary {
+      margin: 24px 4px 8px;
+      font-size: 0.87rem;
+      color: var(--gelm-text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 18px;
+      justify-content: space-between;
+    }
+
+    .agenda-summary strong {
+      color: var(--gelm-cyan-soft);
+    }
+
+    /* FORMULARIO PRINCIPAL */
+    .agenda-main {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr);
+      gap: 18px;
+    }
+
+    .agenda-form-card {
+      border-radius: var(--gelm-radius-xl);
+      background: 
+        radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.08), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(179, 0, 255, 0.07), transparent 55%),
+        rgba(1, 4, 20, 0.96);
+      border: 1px solid rgba(0, 234, 255, 0.35);
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.9);
+      padding: 18px 18px 16px;
+    }
+
+    .agenda-form-title {
+      font-size: 1.1rem;
+      margin: 0 0 12px;
+      color: var(--gelm-cyan-soft);
+    }
+
+    .agenda-form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px 14px;
+    }
+
+    .field-full { grid-column: 1 / -1; }
+    .field-3 { grid-column: span 3; }
+    .field-2 { grid-column: span 2; }
+
+    label {
+      font-size: 0.8rem;
+      color: var(--gelm-text-muted);
+      margin-bottom: 4px;
+      display: block;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 8px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 234, 255, 0.4);
+      background: 
+        radial-gradient(circle at 100% 0%, rgba(0, 255, 200, 0.12), transparent 50%),
+        #020616;
+      color: var(--gelm-text-main);
+      font-size: 0.9rem;
+      outline: none;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+      transition: all 0.17s ease-out;
+    }
+
+    textarea {
+      min-height: 90px;
+      border-radius: 16px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--gelm-cyan-soft);
+      box-shadow:
+        0 0 15px rgba(0, 234, 255, 0.85),
+        0 0 30px rgba(0, 0, 0, 0.9);
+    }
+
+    /* BOTONES */
+    .agenda-actions-row {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn,
+    .select-inline {
+      font-size: 0.9rem;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 9px 22px;
+      border: 1px solid rgba(0, 234, 255, 0.4);
+      cursor: pointer;
+      background: linear-gradient(135deg, #00eaff 0%, #00ffc8 40%, #b300ff 100%);
+      color: #020510;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      box-shadow:
+        0 0 16px rgba(0, 234, 255, 0.75),
+        0 10px 28px rgba(0, 0, 0, 0.95);
+      transition: all 0.16s ease-out;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow:
+        0 0 22px rgba(0, 234, 255, 0.95),
+        0 14px 32px rgba(0, 0, 0, 1);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ff0044 0%, #ff7a3c 100%);
+      border-color: rgba(255, 0, 68, 0.7);
+      color: #fff;
+      box-shadow:
+        0 0 18px rgba(255, 0, 68, 0.8),
+        0 10px 30px rgba(0, 0, 0, 1);
+    }
+
+    .btn-soft {
+      background: 
+        radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.25), transparent 55%),
+        rgba(4, 8, 26, 0.95);
+      color: var(--gelm-text-main);
+      border-color: rgba(0, 234, 255, 0.4);
+      box-shadow: 0 0 16px rgba(0, 0, 0, 0.95);
+    }
+
+    .btn-soft:hover {
+      color: var(--gelm-cyan-soft);
+      border-color: var(--gelm-cyan-soft);
+      box-shadow:
+        0 0 20px rgba(0, 234, 255, 0.8),
+        0 12px 30px rgba(0, 0, 0, 1);
+    }
+
+    .select-inline {
+      min-width: 140px;
+    }
+
+    .select-inline select {
+      border-radius: 999px;
+      padding-inline: 12px;
+    }
+
+    /* TABLA DE ACTIVIDADES */
+    .agenda-table-card {
+      margin-top: 18px;
+      border-radius: var(--gelm-radius-xl);
+      padding: 16px 16px 10px;
+      background: 
+        radial-gradient(circle at 0% 0%, rgba(0, 255, 200, 0.07), transparent 55%),
+        rgba(2, 6, 22, 0.96);
+      border: 1px solid rgba(0, 234, 255, 0.35);
+      box-shadow: 0 0 24px rgba(0, 0, 0, 0.9);
+    }
+
+    .agenda-table-wrapper {
+      max-height: 310px;
+      overflow: auto;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 234, 255, 0.35);
+      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.85);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+    }
+
+    thead {
+      background: linear-gradient(90deg, #00ffc8, #00eaff);
+      color: #020510;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    th,
+    td {
+      padding: 8px 10px;
+    }
+
+    th {
+      font-weight: 700;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(0, 255, 200, 0.03);
+    }
+
+    tbody tr:hover {
+      background: rgba(0, 234, 255, 0.18);
+      transition: background 0.14s ease-out;
+    }
+
+    tbody td {
+      border-top: 1px solid rgba(0, 234, 255, 0.18);
+    }
+
+    .agenda-empty {
+      text-align: center;
+      padding: 16px 10px;
+      color: var(--gelm-cyan-soft);
+      font-size: 0.9rem;
+    }
+
+    /* FOOTER */
+    .agenda-footer {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--gelm-text-muted);
+    }
+
+    .agenda-footer strong {
+      color: var(--gelm-cyan-soft);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 960px) {
+      .agenda-header {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .agenda-logo-box {
+        margin: 0 auto;
+        width: 110px;
+        height: 110px;
+      }
+    }
+
+    @media (max-width: 840px) {
+      .agenda-form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .field-3 {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .agenda-panel {
+        padding: 18px 14px 22px;
+      }
+
+      .agenda-form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .field-2,
+      .field-3,
+      .field-full {
+        grid-column: 1 / -1;
+      }
+
+      .agenda-actions-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .agenda-actions-row .btn,
+      .agenda-actions-row .select-inline {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .agenda-summary {
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div class="agenda-shell">
-  <div class="agenda-panel">
-
-    <!-- HEADER -->
-    <header class="agenda-header">
-      <div class="agenda-logo-box">
-        <img src="icons/icon-192.png">
-      </div>
-
-      <div class="agenda-title-block">
-        <h1 class="agenda-title">AGENDA OPERATIVA 2026</h1>
-        <p class="agenda-subtitle">
-          Unidad de Transportes — PMT Chimaltenango
-        </p>
-        <div class="agenda-by">== BY GELM ==</div>
-      </div>
-
-      <div class="agenda-logo-box">
-        <img src="icons/icon-192.png">
-      </div>
-    </header>
-
-    <!-- RESUMEN -->
-    <section class="agenda-summary">
-      <div>
-        Mostrando <strong id="resumenVisible">0</strong> de
-        <strong id="resumenTotal">0</strong> registros —
-        <strong id="resumenMes">Todos</strong>
-      </div>
-      <div id="ultimaActualizacion"></div>
-    </section>
-
-    <!-- FORMULARIO -->
-    <section class="agenda-form-card">
-      <h2 class="agenda-form-title">Registrar actividad</h2>
-
-      <div class="agenda-form-grid">
-
-        <div class="field-2">
-          <label>Fecha</label>
-          <input type="date" id="fecha">
+  <div class="agenda-shell" role="main">
+    <div class="agenda-panel" role="region" aria-label="Panel principal de agenda">
+      
+      <!-- HEADER SUPERIOR -->
+      <header class="agenda-header">
+        <div class="agenda-logo-box" role="img" aria-label="Logo GELM">
+          <img src="icons/icon-192.png" alt="GELM logo">
         </div>
-
-        <div class="field-2">
-          <label>Categoría</label>
-          <select id="categoria">
-            <option value="Operativo">Operativo</option>
-            <option value="Supervisión">Supervisión</option>
-            <option value="Revisión">Revisión</option>
-            <option value="Capacitación">Capacitación</option>
-            <option value="Administrativo">Administrativo</option>
-            <option value="Reunión">Reunión</option>
-            <option value="Descanso">Descanso</option>
-            <option value="Sancionando">Sancionando</option>
-          </select>
+        
+        <div class="agenda-title-block">
+          <h1 class="agenda-title">TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
+          <p class="agenda-subtitle">
+            Unidad de Transportes — Subcomisario / Jefe de Transportes<br>
+            Sistema de agenda, operativos, denuncias y control de servicios
+          </p>
+          <div class="agenda-by">== BY GELM ==</div>
         </div>
+        
+        <div class="agenda-logo-box" role="img" aria-label="Logo GELM espejado">
+          <img src="icons/icon-192.png" alt="GELM logo espejado">
+        </div>
+      </header>
 
+      <!-- NAVEGACIÓN SUPERIOR -->
+      <nav class="agenda-nav" role="navigation" aria-label="Navegación principal">
+        <a href="agen2026.html" class="nav-pill active" aria-current="page">
+          <span>Agenda 2026</span>
+        </a>
+        <button class="nav-pill" type="button" aria-disabled="true">
+          <span>Operativos</span>
+        </button>
+        <button class="nav-pill" type="button" aria-disabled="true">
+          <span>Denuncias</span>
+        </button>
+        <a href="https://gelm2mil.github.io/gelm/" class="nav-pill">
+          <span>Buscar</span>
+        </a>
+        <button class="nav-pill" type="button" aria-disabled="true">
+          <span>Respaldos</span>
+        </button>
+      </nav>
+
+      <!-- RESUMEN MES -->
+      <section class="agenda-summary" aria-live="polite">
         <div>
-          <label>Servicio</label>
-          <select id="servicio">
-            <option value="">(Opcional)</option>
-            <option value="PMT">PMT</option>
-            <option value="Apoyo">Apoyo</option>
-            <option value="Extraordinario">Extraordinario</option>
-          </select>
+          Mostrando <strong id="resumenVisible">0</strong> de
+          <strong id="resumenTotal">0</strong> actividades para
+          <strong id="resumenMes">Enero</strong>.
         </div>
+        <div id="ultimaActualizacion"></div>
+      </section>
 
-        <div class="field-3">
-          <label>Lugar / ruta</label>
-          <input type="text" id="lugar" placeholder="Casco urbano, ruta, colonia…">
-        </div>
+      <!-- CONTENIDO PRINCIPAL -->
+      <main class="agenda-main">
+        
+        <!-- FORMULARIO -->
+        <section class="agenda-form-card" aria-labelledby="formTitle">
+          <h2 class="agenda-form-title" id="formTitle">Agenda mensual 2026</h2>
+          
+          <form id="agendaForm" class="agenda-form-grid">
+            <div class="field-2">
+              <label for="fecha">Fecha *</label>
+              <input type="date" id="fecha" required aria-describedby="fechaHelp">
+              <small id="fechaHelp" class="sr-only">Seleccione la fecha de la actividad</small>
+            </div>
+            
+            <div class="field-2">
+              <label for="categoria">Categoría *</label>
+              <select id="categoria" required aria-describedby="categoriaHelp">
+                <option value="Operativo">Operativo</option>
+                <option value="Supervisión">Supervisión</option>
+                <option value="Revisión">Revisión</option>
+                <option value="Capacitación">Capacitación</option>
+                <option value="Administrativo">Administrativo</option>
+                <option value="Reunión">Reunión</option>
+              </select>
+              <small id="categoriaHelp" class="sr-only">Seleccione la categoría de la actividad</small>
+            </div>
+            
+            <div>
+              <label for="servicio">Servicio (opcional)</label>
+              <select id="servicio" aria-describedby="servicioHelp">
+                <option value="">(Opcional)</option>
+                <option value="Turno ordinario">Turno ordinario</option>
+                <option value="Turno extraordinario">Turno extraordinario</option>
+                <option value="Apoyo operativo">Apoyo operativo</option>
+                <option value="Operativo conjunto">Operativo conjunto</option>
+              </select>
+              <small id="servicioHelp" class="sr-only">Seleccione el tipo de servicio (opcional)</small>
+            </div>
+            
+            <div class="field-3">
+              <label for="lugar">Lugar / ruta *</label>
+              <input type="text" id="lugar" placeholder="Casco urbano, Interamericana, colonias, etc." required aria-describedby="lugarHelp">
+              <small id="lugarHelp" class="sr-only">Ingrese el lugar o ruta de la actividad</small>
+            </div>
+            
+            <div class="field-full">
+              <label for="detalle">Detalle de la actividad *</label>
+              <textarea id="detalle" placeholder="Objetivo del operativo, revisión, seguimiento, etc." required aria-describedby="detalleHelp"></textarea>
+              <small id="detalleHelp" class="sr-only">Describa detalladamente la actividad</small>
+            </div>
+          </form>
+          
+          <div class="agenda-actions-row">
+            <button class="btn" type="submit" form="agendaForm" id="btnAgregar">
+              Agregar a la agenda
+            </button>
+            
+            <div class="select-inline">
+              <label for="filtroMes">Ver mes</label>
+              <select id="filtroMes" aria-describedby="filtroMesHelp">
+                <option value="0">Todos</option>
+                <option value="1">Enero</option>
+                <option value="2">Febrero</option>
+                <option value="3">Marzo</option>
+                <option value="4">Abril</option>
+                <option value="5">Mayo</option>
+                <option value="6">Junio</option>
+                <option value="7">Julio</option>
+                <option value="8">Agosto</option>
+                <option value="9">Septiembre</option>
+                <option value="10">Octubre</option>
+                <option value="11">Noviembre</option>
+                <option value="12">Diciembre</option>
+              </select>
+              <small id="filtroMesHelp" class="sr-only">Filtre las actividades por mes</small>
+            </div>
+            
+            <button class="btn btn-soft" type="button" id="btnExcel">
+              Descargar agenda en Excel
+            </button>
+            
+            <button class="btn btn-danger" type="button" id="btnBorrarTodo">
+              Borrar todo (año 2026)
+            </button>
+          </div>
+        </section>
 
-        <div class="field-full">
-          <label>Detalle</label>
-          <textarea id="detalle"></textarea>
-        </div>
+        <!-- TABLA -->
+        <section class="agenda-table-card" aria-labelledby="tablaTitle">
+          <h2 class="sr-only" id="tablaTitle">Lista de actividades</h2>
+          
+          <div class="agenda-table-wrapper">
+            <table aria-describedby="tablaTitle">
+              <thead>
+                <tr>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Categoría</th>
+                  <th scope="col">Servicio</th>
+                  <th scope="col">Lugar / ruta</th>
+                  <th scope="col">Detalle</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyAgenda">
+                <!-- Renglones dinámicos -->
+              </tbody>
+            </table>
+            
+            <div id="estadoVacio" class="agenda-empty">
+              No hay actividades para este mes.
+            </div>
+          </div>
+        </section>
+      </main>
 
-      </div>
-
-      <div class="agenda-actions-row">
-        <button class="btn" id="btnAgregar">Agregar a la agenda</button>
-
-        <div class="select-inline">
-          <label>Ver mes</label>
-          <select id="filtroMes">
-            <option value="0">Todos</option>
-            <option value="1">Enero</option>
-            <option value="2">Febrero</option>
-            <option value="3">Marzo</option>
-            <option value="4">Abril</option>
-            <option value="5">Mayo</option>
-            <option value="6">Junio</option>
-            <option value="7">Julio</option>
-            <option value="8">Agosto</option>
-            <option value="9">Septiembre</option>
-            <option value="10">Octubre</option>
-            <option value="11">Noviembre</option>
-            <option value="12">Diciembre</option>
-          </select>
-        </div>
-
-        <button class="btn btn-soft" id="btnExcel">Descargar Excel</button>
-        <button class="btn btn-danger" id="btnBorrar">Borrar todo</button>
-      </div>
-    </section>
-
-    <!-- TABLA -->
-    <section class="agenda-table-card">
-      <div class="agenda-table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Categoría</th>
-              <th>Servicio</th>
-              <th>Lugar</th>
-              <th>Detalle</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyAgenda"></tbody>
-        </table>
-
-        <div class="agenda-empty" id="estadoVacio">
-          No hay registros aún.
-        </div>
-      </div>
-    </section>
-
-    <!-- FOOTER -->
-    <footer class="agenda-footer">
-      2026 | <strong>BY GELM</strong><br>
-      <span id="fechaActual"></span>
-    </footer>
-
+      <!-- FOOTER -->
+      <footer class="agenda-footer">
+        2026 | <strong>BY GELM</strong> | Unidad de Transportes PMT — Chimaltenango<br>
+        <span id="fechaActual"></span>
+      </footer>
+    </div>
   </div>
-</div>
 
-<script>
-/* =========================
-   AGENDA 2026 — MOTOR DIOS
-   ========================= */
+  <script>
+    // ============================
+    // LÓGICA DE AGENDA 2026 (PRO)
+    // ============================
+    const STORAGE_KEY = "agenda_2026_gelm";
+    const fechaInput   = document.getElementById("fecha");
+    const categoriaSel = document.getElementById("categoria");
+    const servicioSel  = document.getElementById("servicio");
+    const lugarInput   = document.getElementById("lugar");
+    const detalleTxt   = document.getElementById("detalle");
+    const filtroMes    = document.getElementById("filtroMes");
+    const tbodyAgenda  = document.getElementById("tbodyAgenda");
+    const estadoVacio  = document.getElementById("estadoVacio");
+    const resumenVisible = document.getElementById("resumenVisible");
+    const resumenTotal   = document.getElementById("resumenTotal");
+    const resumenMes     = document.getElementById("resumenMes");
+    const ultimaActualizacion = document.getElementById("ultimaActualizacion");
+    const fechaActualLbl = document.getElementById("fechaActual");
+    const btnAgregar    = document.getElementById("btnAgregar");
+    const btnExcel      = document.getElementById("btnExcel");
+    const btnBorrarTodo = document.getElementById("btnBorrarTodo");
+    const agendaForm    = document.getElementById("agendaForm");
+    
+    let actividades = [];
 
-const KEY = "agenda_2026_gelm";
+    // Funciones auxiliares
+    function cargarDesdeStorage() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        actividades = data ? JSON.parse(data) : [];
+      } catch (e) {
+        console.error("Error cargando datos:", e);
+        actividades = [];
+      }
+    }
 
-const fecha = document.getElementById("fecha");
-const categoria = document.getElementById("categoria");
-const servicio = document.getElementById("servicio");
-const lugar = document.getElementById("lugar");
-const detalle = document.getElementById("detalle");
+    function guardarEnStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(actividades));
+        actualizarResumen();
+      } catch (e) {
+        console.error("Error guardando datos:", e);
+        alert("Error al guardar los datos. Verifique el espacio disponible.");
+      }
+    }
 
-const filtroMes = document.getElementById("filtroMes");
-const tbody = document.getElementById("tbodyAgenda");
-const vacio = document.getElementById("estadoVacio");
+    function formatearFechaISO(fechaStr) {
+      if (!fechaStr) return "";
+      const [year, month, day] = fechaStr.split("-");
+      return `${day}/${month}/${year}`;
+    }
 
-const rVis = document.getElementById("resumenVisible");
-const rTot = document.getElementById("resumenTotal");
-const rMes = document.getElementById("resumenMes");
-const ultima = document.getElementById("ultimaActualizacion");
-const fechaActual = document.getElementById("fechaActual");
+    function obtenerMesNumero(fechaStr) {
+      if (!fechaStr) return 0;
+      const [, month] = fechaStr.split("-");
+      return parseInt(month, 10) || 0;
+    }
 
-let datos = [];
+    function nombreMes(num) {
+      const nombres = [
+        "Todos",
+        "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+        "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+      ];
+      return nombres[num] || "Todos";
+    }
 
-/* UTIL */
-const hoy = () => new Date().toISOString().split("T")[0];
-const fmt = f => f.split("-").reverse().join("/");
+    // Renderizado y actualización
+    function renderTabla() {
+      tbodyAgenda.innerHTML = "";
+      const mesSeleccionado = parseInt(filtroMes.value, 10);
+      const filtradas = actividades.filter(act => {
+        if (!act.fecha) return false;
+        const mes = obtenerMesNumero(act.fecha);
+        return mesSeleccionado === 0 || mes === mesSeleccionado;
+      });
 
-/* STORAGE */
-function cargar() {
-  datos = JSON.parse(localStorage.getItem(KEY)) || [];
-}
-function guardar() {
-  localStorage.setItem(KEY, JSON.stringify(datos));
-  ultima.textContent = "Última actualización: " + new Date().toLocaleString("es-GT");
-}
+      resumenTotal.textContent   = actividades.length;
+      resumenVisible.textContent = filtradas.length;
+      resumenMes.textContent     = nombreMes(mesSeleccionado);
 
-/* RENDER */
-function render() {
-  tbody.innerHTML = "";
-  const mes = parseInt(filtroMes.value);
+      if (filtradas.length === 0) {
+        estadoVacio.style.display = "block";
+        return;
+      }
 
-  const lista = datos.filter(d =>
-    mes === 0 || parseInt(d.fecha.split("-")[1]) === mes
-  );
+      estadoVacio.style.display = "none";
+      filtradas
+        .sort((a, b) => a.fecha.localeCompare(b.fecha))
+        .forEach(act => {
+          const tr = document.createElement("tr");
+          
+          const tdFecha = document.createElement("td");
+          tdFecha.textContent = formatearFechaISO(act.fecha);
+          tdFecha.setAttribute("data-label", "Fecha");
+          
+          const tdCat = document.createElement("td");
+          tdCat.textContent = act.categoria || "-";
+          tdCat.setAttribute("data-label", "Categoría");
+          
+          const tdServ = document.createElement("td");
+          tdServ.textContent = act.servicio || "-";
+          tdServ.setAttribute("data-label", "Servicio");
+          
+          const tdLugar = document.createElement("td");
+          tdLugar.textContent = act.lugar || "-";
+          tdLugar.setAttribute("data-label", "Lugar");
+          
+          const tdDet = document.createElement("td");
+          tdDet.textContent = act.detalle || "-";
+          tdDet.setAttribute("data-label", "Detalle");
+          
+          tr.appendChild(tdFecha);
+          tr.appendChild(tdCat);
+          tr.appendChild(tdServ);
+          tr.appendChild(tdLugar);
+          tr.appendChild(tdDet);
+          
+          tbodyAgenda.appendChild(tr);
+        });
+    }
 
-  rTot.textContent = datos.length;
-  rVis.textContent = lista.length;
-  rMes.textContent = filtroMes.options[filtroMes.selectedIndex].text;
+    function actualizarResumen() {
+      const ahora = new Date();
+      const opciones = {
+        day: "2-digit", month: "long", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      };
+      ultimaActualizacion.textContent =
+        "Última actualización: " + ahora.toLocaleString("es-GT", opciones);
+    }
 
-  vacio.style.display = lista.length ? "none" : "block";
+    function setFechaActualFooter() {
+      const hoy = new Date();
+      const opciones = {
+        day: "2-digit", month: "long", year: "numeric"
+      };
+      fechaActualLbl.textContent =
+        "Fecha actual: " + hoy.toLocaleDateString("es-GT", opciones);
+    }
 
-  lista.forEach(d => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${fmt(d.fecha)}</td>
-      <td>${d.categoria}</td>
-      <td>${d.servicio || "-"}</td>
-      <td>${d.lugar || "-"}</td>
-      <td>${d.detalle}</td>`;
-    tbody.appendChild(tr);
-  });
-}
+    // Manejo de eventos
+    function agregarActividad(e) {
+      e.preventDefault();
+      
+      const fecha = fechaInput.value;
+      const categoria = categoriaSel.value;
+      const servicio = servicioSel.value;
+      const lugar = lugarInput.value.trim();
+      const detalle = detalleTxt.value.trim();
 
-/* ACCIONES */
-document.getElementById("btnAgregar").onclick = () => {
-  if (!detalle.value) return alert("Ingresa un detalle");
+      if (!fecha || !categoria || !detalle) {
+        alert("Por favor completa al menos la fecha, categoría y el detalle.");
+        return;
+      }
 
-  datos.push({
-    fecha: fecha.value,
-    categoria: categoria.value,
-    servicio: servicio.value,
-    lugar: lugar.value,
-    detalle: detalle.value
-  });
+      actividades.push({
+        fecha, categoria, servicio, lugar, detalle
+      });
 
-  detalle.value = "";
-  guardar();
-  render();
-};
+      guardarEnStorage();
+      renderTabla();
 
-document.getElementById("btnBorrar").onclick = () => {
-  if (confirm("¿Borrar toda la agenda 2026?")) {
-    datos = [];
-    guardar();
-    render();
-  }
-};
+      // Limpieza ligera pero manteniendo el mes seleccionado
+      detalleTxt.value = "";
+      // No borramos fecha / lugar por si quieres agregar varias parecidas
+    }
 
-document.getElementById("btnExcel").onclick = () => {
-  if (!datos.length) return alert("No hay datos");
-  const ws = XLSX.utils.json_to_sheet(datos.map(d => ({
-    Fecha: fmt(d.fecha),
-    Categoría: d.categoria,
-    Servicio: d.servicio,
-    Lugar: d.lugar,
-    Detalle: d.detalle
-  })));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Agenda 2026");
-  XLSX.writeFile(wb, "Agenda_2026_GELM.xlsx");
-};
+    function borrarTodo() {
+      if (!confirm("¿Seguro que deseas borrar TODA la agenda del año 2026?")) return;
+      actividades = [];
+      guardarEnStorage();
+      renderTabla();
+    }
 
-filtroMes.onchange = render;
+    function exportarExcel() {
+      if (actividades.length === 0) {
+        alert("No hay actividades para exportar.");
+        return;
+      }
 
-/* INIT */
-fecha.value = hoy();
-fechaActual.textContent =
-  "Fecha actual: " +
-  new Date().toLocaleDateString("es-GT",
-    { day:"2-digit", month:"long", year:"numeric" });
+      const cabeceras = [
+        ["Fecha", "Categoría", "Servicio", "Lugar / ruta", "Detalle"]
+      ];
 
-cargar();
-render();
-</script>
+      const datos = actividades
+        .sort((a, b) => a.fecha.localeCompare(b.fecha))
+        .map(act => [
+          formatearFechaISO(act.fecha),
+          act.categoria || "",
+          act.servicio  || "",
+          act.lugar     || "",
+          act.detalle   || ""
+        ]);
+
+      const hoja = XLSX.utils.aoa_to_sheet([...cabeceras, ...datos]);
+      const libro = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(libro, hoja, "Agenda 2026");
+      XLSX.writeFile(libro, "AGENDA_2026_PMT_CHIMALTENANGO.xlsx");
+    }
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarDesdeStorage();
+      setFechaActualFooter();
+      actualizarResumen();
+      renderTabla();
+      
+      // Event listeners
+      agendaForm.addEventListener("submit", agregarActividad);
+      btnBorrarTodo.addEventListener("click", borrarTodo);
+      btnExcel.addEventListener("click", exportarExcel);
+      filtroMes.addEventListener("change", renderTabla);
+    });
+
+    // Service Worker registration
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js")
+          .then(registration => console.log("SW registrado:", registration.scope))
+          .catch(error => console.log("Error registrando SW:", error));
+      });
+    }
+  </script>
 </body>
 </html>
