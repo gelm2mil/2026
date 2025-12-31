@@ -1,36 +1,49 @@
 // ================================
-// SCRIPT CONECTADO A GOOGLE SHEETS
 // AGENDA 2026 - PMT CHIMALTENANGO
+// SCRIPT CONECTADO A GOOGLE SHEETS
 // ================================
 
-// MISMO SCRIPT QUE DENUNCIAS (YA FUNCIONAL)
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwoBuC3yyjqRSQEC5DgLTvlbt2LZizWEsyLnnnXJSx6m3-g6dKlGe9QPuc_L4ml8K1-8A/exec";
+const AGEN_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbzyfSHwK9C72Ac3M_L2e06KKNMp_SVQcSIyvBY9_wMRlcHL-bCM6P3TR7qZJOT8Y87q/exec";
 
 // ================================
-// ENVIAR REGISTRO DE AGENDA
+// ENVIAR ACTIVIDAD A GOOGLE SHEETS
 // ================================
-function enviarAgendaAGoogle(registro) {
-
+async function enviarAgendaGoogle(registro) {
   const fd = new FormData();
 
-  // CAMPOS PARA GOOGLE SHEETS
-  fd.append("modulo", "AGENDA_2026");
   fd.append("fecha", registro.fecha);
+  fd.append("hora", registro.hora);
   fd.append("categoria", registro.categoria);
   fd.append("apoyo", registro.apoyo || "");
   fd.append("lugar", registro.lugar || "");
   fd.append("detalle", registro.detalle);
-  fd.append("hora", new Date().toLocaleTimeString("es-GT"));
 
-  fetch(SCRIPT_URL, {
-    method: "POST",
-    body: fd
-  })
-  .then(r => r.text())
-  .then(() => {
-    console.log("✅ Agenda respaldada en Google Sheets");
-  })
-  .catch(err => {
-    console.error("❌ Error respaldo Agenda:", err);
-  });
+  try {
+    await fetch(AGEN_SCRIPT_URL, {
+      method: "POST",
+      body: fd
+    });
+  } catch (err) {
+    console.warn("No se pudo enviar a Google Sheets:", err);
+  }
 }
+
+// ================================
+// RESPALDO AUTOMÁTICO NOCTURNO
+// (23:00 a 23:59 - 1 vez por día)
+// ================================
+(function respaldoNocturno() {
+  const ahora = new Date();
+  const hora = ahora.getHours();
+  const marca = ahora.toDateString();
+
+  if (hora >= 23 && localStorage.getItem("backup_agenda_" + marca) !== "ok") {
+    const data = JSON.parse(localStorage.getItem("agenda_2026_gelm") || "[]");
+
+    data.forEach(r => enviarAgendaGoogle(r));
+
+    localStorage.setItem("backup_agenda_" + marca, "ok");
+    console.log("✔ Respaldo nocturno Agenda enviado");
+  }
+})();
