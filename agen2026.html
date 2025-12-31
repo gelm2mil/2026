@@ -14,11 +14,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AGENDA 2026 — PMT Chimaltenango</title>
 
+  <!-- ESTILO GLOBAL -->
   <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-  <!-- ⚠️ TU CSS ORIGINAL SE MANTIENE INTACTO ⚠️ -->
-  <!-- (no lo repito aquí para no alargar, es el mismo que enviaste) -->
+  <!-- EXCEL -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
@@ -26,208 +26,254 @@
   <div class="agenda-panel">
 
     <!-- HEADER -->
-    <!-- (idéntico al tuyo, sin cambios) -->
+    <header class="agenda-header">
+      <div class="agenda-logo-box">
+        <img src="icons/icon-192.png">
+      </div>
+
+      <div class="agenda-title-block">
+        <h1 class="agenda-title">AGENDA OPERATIVA 2026</h1>
+        <p class="agenda-subtitle">
+          Unidad de Transportes — PMT Chimaltenango
+        </p>
+        <div class="agenda-by">== BY GELM ==</div>
+      </div>
+
+      <div class="agenda-logo-box">
+        <img src="icons/icon-192.png">
+      </div>
+    </header>
 
     <!-- RESUMEN -->
-    <!-- (idéntico) -->
+    <section class="agenda-summary">
+      <div>
+        Mostrando <strong id="resumenVisible">0</strong> de
+        <strong id="resumenTotal">0</strong> registros —
+        <strong id="resumenMes">Todos</strong>
+      </div>
+      <div id="ultimaActualizacion"></div>
+    </section>
 
     <!-- FORMULARIO -->
-    <!-- (idéntico) -->
+    <section class="agenda-form-card">
+      <h2 class="agenda-form-title">Registrar actividad</h2>
+
+      <div class="agenda-form-grid">
+
+        <div class="field-2">
+          <label>Fecha</label>
+          <input type="date" id="fecha">
+        </div>
+
+        <div class="field-2">
+          <label>Categoría</label>
+          <select id="categoria">
+            <option value="Operativo">Operativo</option>
+            <option value="Supervisión">Supervisión</option>
+            <option value="Revisión">Revisión</option>
+            <option value="Capacitación">Capacitación</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="Reunión">Reunión</option>
+            <option value="Descanso">Descanso</option>
+            <option value="Sancionando">Sancionando</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Servicio</label>
+          <select id="servicio">
+            <option value="">(Opcional)</option>
+            <option value="PMT">PMT</option>
+            <option value="Apoyo">Apoyo</option>
+            <option value="Extraordinario">Extraordinario</option>
+          </select>
+        </div>
+
+        <div class="field-3">
+          <label>Lugar / ruta</label>
+          <input type="text" id="lugar" placeholder="Casco urbano, ruta, colonia…">
+        </div>
+
+        <div class="field-full">
+          <label>Detalle</label>
+          <textarea id="detalle"></textarea>
+        </div>
+
+      </div>
+
+      <div class="agenda-actions-row">
+        <button class="btn" id="btnAgregar">Agregar a la agenda</button>
+
+        <div class="select-inline">
+          <label>Ver mes</label>
+          <select id="filtroMes">
+            <option value="0">Todos</option>
+            <option value="1">Enero</option>
+            <option value="2">Febrero</option>
+            <option value="3">Marzo</option>
+            <option value="4">Abril</option>
+            <option value="5">Mayo</option>
+            <option value="6">Junio</option>
+            <option value="7">Julio</option>
+            <option value="8">Agosto</option>
+            <option value="9">Septiembre</option>
+            <option value="10">Octubre</option>
+            <option value="11">Noviembre</option>
+            <option value="12">Diciembre</option>
+          </select>
+        </div>
+
+        <button class="btn btn-soft" id="btnExcel">Descargar Excel</button>
+        <button class="btn btn-danger" id="btnBorrar">Borrar todo</button>
+      </div>
+    </section>
 
     <!-- TABLA -->
-    <!-- (idéntico) -->
+    <section class="agenda-table-card">
+      <div class="agenda-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Categoría</th>
+              <th>Servicio</th>
+              <th>Lugar</th>
+              <th>Detalle</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyAgenda"></tbody>
+        </table>
 
+        <div class="agenda-empty" id="estadoVacio">
+          No hay registros aún.
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
     <footer class="agenda-footer">
-      2026 | <strong>BY GELM</strong> | Unidad de Transportes PMT — Chimaltenango<br>
+      2026 | <strong>BY GELM</strong><br>
       <span id="fechaActual"></span>
     </footer>
+
   </div>
 </div>
 
 <script>
-/* ============================
-   AGENDA 2026 — MOTOR ESTABLE
-   ============================ */
+/* =========================
+   AGENDA 2026 — MOTOR DIOS
+   ========================= */
 
-const STORAGE_KEY = "agenda_2026_gelm";
+const KEY = "agenda_2026_gelm";
 
-/* ELEMENTOS */
-const fechaInput = document.getElementById("fecha");
-const categoriaSel = document.getElementById("categoria");
-const servicioSel = document.getElementById("servicio");
-const lugarInput = document.getElementById("lugar");
-const detalleTxt = document.getElementById("detalle");
+const fecha = document.getElementById("fecha");
+const categoria = document.getElementById("categoria");
+const servicio = document.getElementById("servicio");
+const lugar = document.getElementById("lugar");
+const detalle = document.getElementById("detalle");
 
 const filtroMes = document.getElementById("filtroMes");
-const tbodyAgenda = document.getElementById("tbodyAgenda");
-const estadoVacio = document.getElementById("estadoVacio");
+const tbody = document.getElementById("tbodyAgenda");
+const vacio = document.getElementById("estadoVacio");
 
-const resumenVisible = document.getElementById("resumenVisible");
-const resumenTotal = document.getElementById("resumenTotal");
-const resumenMes = document.getElementById("resumenMes");
-const ultimaActualizacion = document.getElementById("ultimaActualizacion");
-const fechaActualLbl = document.getElementById("fechaActual");
+const rVis = document.getElementById("resumenVisible");
+const rTot = document.getElementById("resumenTotal");
+const rMes = document.getElementById("resumenMes");
+const ultima = document.getElementById("ultimaActualizacion");
+const fechaActual = document.getElementById("fechaActual");
 
-const btnAgregar = document.getElementById("btnAgregar");
-const btnExcel = document.getElementById("btnExcel");
-const btnBorrarTodo = document.getElementById("btnBorrarTodo");
+let datos = [];
 
-let actividades = [];
+/* UTIL */
+const hoy = () => new Date().toISOString().split("T")[0];
+const fmt = f => f.split("-").reverse().join("/");
 
-/* ============================
-   UTILIDADES
-   ============================ */
-
-function hoyISO() {
-  const d = new Date();
-  return d.toISOString().split("T")[0];
-}
-
-function formatearFecha(fecha) {
-  const [y, m, d] = fecha.split("-");
-  return `${d}/${m}/${y}`;
-}
-
-function mesNumero(fecha) {
-  return parseInt(fecha.split("-")[1], 10);
-}
-
-function nombreMes(num) {
-  return ["Todos","Enero","Febrero","Marzo","Abril","Mayo","Junio",
-          "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][num];
-}
-
-/* ============================
-   STORAGE
-   ============================ */
-
+/* STORAGE */
 function cargar() {
-  try {
-    actividades = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch {
-    actividades = [];
-  }
+  datos = JSON.parse(localStorage.getItem(KEY)) || [];
 }
-
 function guardar() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(actividades));
-  actualizarFechaModificacion();
+  localStorage.setItem(KEY, JSON.stringify(datos));
+  ultima.textContent = "Última actualización: " + new Date().toLocaleString("es-GT");
 }
 
-/* ============================
-   RENDER
-   ============================ */
-
+/* RENDER */
 function render() {
-  tbodyAgenda.innerHTML = "";
-  const mesSel = parseInt(filtroMes.value, 10);
+  tbody.innerHTML = "";
+  const mes = parseInt(filtroMes.value);
 
-  const visibles = actividades.filter(a =>
-    mesSel === 0 || mesNumero(a.fecha) === mesSel
+  const lista = datos.filter(d =>
+    mes === 0 || parseInt(d.fecha.split("-")[1]) === mes
   );
 
-  resumenTotal.textContent = actividades.length;
-  resumenVisible.textContent = visibles.length;
-  resumenMes.textContent = nombreMes(mesSel);
+  rTot.textContent = datos.length;
+  rVis.textContent = lista.length;
+  rMes.textContent = filtroMes.options[filtroMes.selectedIndex].text;
 
-  if (visibles.length === 0) {
-    estadoVacio.style.display = "block";
-    return;
-  }
+  vacio.style.display = lista.length ? "none" : "block";
 
-  estadoVacio.style.display = "none";
-
-  visibles.sort((a,b)=>a.fecha.localeCompare(b.fecha))
-    .forEach(a => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${formatearFecha(a.fecha)}</td>
-        <td>${a.categoria}</td>
-        <td>${a.servicio || "-"}</td>
-        <td>${a.lugar || "-"}</td>
-        <td>${a.detalle}</td>`;
-      tbodyAgenda.appendChild(tr);
-    });
+  lista.forEach(d => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${fmt(d.fecha)}</td>
+      <td>${d.categoria}</td>
+      <td>${d.servicio || "-"}</td>
+      <td>${d.lugar || "-"}</td>
+      <td>${d.detalle}</td>`;
+    tbody.appendChild(tr);
+  });
 }
 
-/* ============================
-   ACCIONES
-   ============================ */
+/* ACCIONES */
+document.getElementById("btnAgregar").onclick = () => {
+  if (!detalle.value) return alert("Ingresa un detalle");
 
-function agregar() {
-  if (!fechaInput.value || !detalleTxt.value) {
-    alert("Completa al menos fecha y detalle.");
-    return;
-  }
-
-  actividades.push({
-    fecha: fechaInput.value,
-    categoria: categoriaSel.value,
-    servicio: servicioSel.value,
-    lugar: lugarInput.value.trim(),
-    detalle: detalleTxt.value.trim()
+  datos.push({
+    fecha: fecha.value,
+    categoria: categoria.value,
+    servicio: servicio.value,
+    lugar: lugar.value,
+    detalle: detalle.value
   });
 
-  detalleTxt.value = "";
+  detalle.value = "";
   guardar();
   render();
-}
+};
 
-function borrarTodo() {
-  if (!confirm("¿Borrar toda la agenda 2026?")) return;
-  actividades = [];
-  guardar();
-  render();
-}
+document.getElementById("btnBorrar").onclick = () => {
+  if (confirm("¿Borrar toda la agenda 2026?")) {
+    datos = [];
+    guardar();
+    render();
+  }
+};
 
-function exportarExcel() {
-  if (actividades.length === 0) return alert("No hay datos.");
-
-  const data = actividades.map(a => ({
-    Fecha: formatearFecha(a.fecha),
-    Categoría: a.categoria,
-    Servicio: a.servicio,
-    Lugar: a.lugar,
-    Detalle: a.detalle
-  }));
-
+document.getElementById("btnExcel").onclick = () => {
+  if (!datos.length) return alert("No hay datos");
+  const ws = XLSX.utils.json_to_sheet(datos.map(d => ({
+    Fecha: fmt(d.fecha),
+    Categoría: d.categoria,
+    Servicio: d.servicio,
+    Lugar: d.lugar,
+    Detalle: d.detalle
+  })));
   const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.json_to_sheet(data);
   XLSX.utils.book_append_sheet(wb, ws, "Agenda 2026");
-  XLSX.writeFile(wb, "Agenda_2026_PMT.xlsx");
-}
+  XLSX.writeFile(wb, "Agenda_2026_GELM.xlsx");
+};
 
-/* ============================
-   FECHAS
-   ============================ */
-
-function actualizarFechaModificacion() {
-  ultimaActualizacion.textContent =
-    "Última actualización: " +
-    new Date().toLocaleString("es-GT");
-}
-
-function footerFecha() {
-  fechaActualLbl.textContent =
-    "Fecha actual: " +
-    new Date().toLocaleDateString("es-GT", {
-      day:"2-digit", month:"long", year:"numeric"
-    });
-}
-
-/* ============================
-   INIT
-   ============================ */
-
-btnAgregar.onclick = agregar;
-btnBorrarTodo.onclick = borrarTodo;
-btnExcel.onclick = exportarExcel;
 filtroMes.onchange = render;
 
-fechaInput.value = hoyISO();
+/* INIT */
+fecha.value = hoy();
+fechaActual.textContent =
+  "Fecha actual: " +
+  new Date().toLocaleDateString("es-GT",
+    { day:"2-digit", month:"long", year:"numeric" });
+
 cargar();
 render();
-footerFecha();
 </script>
 </body>
 </html>
