@@ -3,94 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agenda 2026 — PMT Chimaltenango</title>
+<title>Agenda Operativa 2026 — PMT Chimaltenango</title>
 
-<link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#00eaff">
-
-<link rel="stylesheet" href="styles.css">
+<!-- LIBRERÍAS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 
 <style>
-body{margin:0;font-family:system-ui;background:radial-gradient(circle at top,#24002b,#060012);color:#e9f9ff}
-.agenda-shell{max-width:1280px;margin:40px auto;padding:20px}
-.agenda-panel{background:rgba(3,5,20,.96);border-radius:28px;padding:26px;box-shadow:0 0 40px rgba(0,234,255,.35)}
-header{display:grid;grid-template-columns:100px 1fr 100px;align-items:center;gap:16px}
-header img{width:80px;filter:drop-shadow(0 0 12px #00eaff)}
+body{
+  margin:0;
+  font-family:system-ui;
+  background:radial-gradient(circle at top,#24002b,#060012);
+  color:#e9f9ff
+}
+.container{max-width:1280px;margin:40px auto;padding:20px}
+.panel{
+  background:rgba(3,5,25,.96);
+  border-radius:30px;
+  padding:30px;
+  box-shadow:0 0 40px rgba(0,234,255,.35)
+}
+header{
+  display:grid;
+  grid-template-columns:80px 1fr 80px;
+  align-items:center;
+  gap:16px;
+  margin-bottom:20px
+}
+header img{width:70px;filter:drop-shadow(0 0 12px #00eaff)}
 h1{text-align:center;margin:0;color:#00ffc8}
 .sub,.by{text-align:center;font-size:.85rem;color:#9cb3d8}
 .by{letter-spacing:.2em;color:#00eaff}
-.card{background:#020616;border-radius:22px;padding:18px;margin:20px 0}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.span2{grid-column:span 2}.full{grid-column:1/-1}
+
+.card{
+  background:#020616;
+  border-radius:22px;
+  padding:20px;
+  margin-top:20px
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px
+}
+.span2{grid-column:span 2}
+.full{grid-column:1/-1}
 label{font-size:.75rem;color:#9cb3d8;text-transform:uppercase}
-input,select,textarea{width:100%;padding:8px 12px;border-radius:999px;border:1px solid #00eaff;background:#020616;color:#e9f9ff}
+input,select,textarea{
+  width:100%;
+  padding:10px 14px;
+  border-radius:999px;
+  border:1px solid #00eaff;
+  background:#020616;
+  color:#e9f9ff
+}
 textarea{border-radius:14px;min-height:90px}
-.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;justify-content:space-between}
-button{border-radius:999px;padding:10px 22px;border:none;cursor:pointer;background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);color:#020510;font-weight:600}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:space-between;
+  margin-top:16px
+}
+button{
+  border-radius:999px;
+  padding:12px 24px;
+  border:none;
+  cursor:pointer;
+  background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);
+  color:#020510;
+  font-weight:700
+}
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
+
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
-th,td{padding:8px}
+th,td{padding:10px}
 tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
+
 footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
-@media(max-width:900px){header{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.span2{grid-column:1/-1}.actions{flex-direction:column}}
+
+@media(max-width:900px){
+ header{grid-template-columns:1fr}
+ .grid{grid-template-columns:1fr}
+ .span2{grid-column:1/-1}
+ .actions{flex-direction:column}
+}
 </style>
 </head>
 
 <body>
-<div class="agenda-shell">
-<div class="agenda-panel" id="pdfArea">
+<div class="container">
+<div class="panel" id="pdfArea">
 
 <header>
-<img src="icons/icon-192.png">
-<div>
-<h1>TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
-<div class="sub">Unidad de Transportes — Subcomisario / Jefe de Transportes</div>
-<div class="by">== BY GELM ==</div>
-</div>
-<img src="icons/icon-192.png">
+  <img src="icons/icon-192.png">
+  <div>
+    <h1>TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
+    <div class="sub">Unidad de Transportes — Subcomisario / Jefe de Transportes</div>
+    <div class="by">== BY GELM ==</div>
+  </div>
+  <img src="icons/icon-192.png">
 </header>
 
 <div class="card">
 <h3>Registrar actividad</h3>
 
 <div class="grid">
-<div class="span2"><label>Fecha</label><input type="date" id="fecha"></div>
-<div class="span2">
-<label>Categoría</label>
-<select id="categoria">
-<option>Operativo</option><option>Supervisión</option><option>Regulación</option>
-<option>Nocturno</option><option>Apoyo</option><option>Descanso</option>
-<option>Administrativo</option><option>Capacitación</option>
-<option>Reunión</option><option>Otros</option>
-</select>
-</div>
+  <div class="span2">
+    <label>Fecha</label>
+    <input type="date" id="fecha">
+  </div>
 
-<div class="span2"><label>Apoyo (opcional)</label><input id="servicio"></div>
-<div class="span2"><label>Lugar / ruta</label><input id="lugar"></div>
-<div class="full"><label>Detalle</label><textarea id="detalle"></textarea></div>
+  <div class="span2">
+    <label>Categoría</label>
+    <select id="categoria">
+      <option>Operativo</option>
+      <option>Supervisión</option>
+      <option>Regulación</option>
+      <option>Nocturno</option>
+      <option>Apoyo</option>
+      <option>Descanso</option>
+      <option>Administrativo</option>
+      <option>Capacitación</option>
+      <option>Reunión</option>
+      <option>Otros</option>
+    </select>
+  </div>
+
+  <div class="span2">
+    <label>Apoyo (opcional)</label>
+    <input id="apoyo" placeholder="PNC, colegio, iglesia, funeral…">
+  </div>
+
+  <div class="span2">
+    <label>Lugar / Ruta</label>
+    <input id="lugar">
+  </div>
+
+  <div class="full">
+    <label>Detalle</label>
+    <textarea id="detalle"></textarea>
+  </div>
 </div>
 
 <div class="actions">
-<button onclick="agregar()">Agregar</button>
-<select id="vista" onchange="render()">
-<option value="mensual">Vista mensual</option>
-<option value="semanal">Vista semanal</option>
-</select>
-<button onclick="exportarExcel()">Excel</button>
-<button onclick="exportarPDF()">PDF</button>
-<button class="danger" onclick="borrar()">Borrar todo</button>
+  <button onclick="agregar()">Agregar</button>
+
+  <select id="vista" onchange="render()">
+    <option value="mensual">Vista mensual</option>
+    <option value="semanal">Vista semanal</option>
+  </select>
+
+  <button onclick="exportarExcel()">Excel</button>
+  <button onclick="exportarPDF()">PDF</button>
+  <button class="danger" onclick="borrarTodo()">Borrar todo</button>
 </div>
 </div>
 
 <div class="card">
 <table>
-<thead><tr><th>Fecha</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th></tr></thead>
+<thead>
+<tr>
+<th>Fecha</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th>
+</tr>
+</thead>
 <tbody id="tabla"></tbody>
 </table>
-<div id="vacio">No hay actividades.</div>
+<div id="vacio">No hay actividades registradas.</div>
 </div>
 
 <footer>
@@ -101,43 +182,72 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 </div>
 
+<!-- SCRIPT AGENDA -->
 <script>
-const GOOGLE_ENDPOINT="https://docs.google.com/spreadsheets/d/1CQiXTlYoi5mwxzIGu6R9cQE6sFSYmkalQrwC2gjBJGM/edit?gid=0#gid=0";
 const KEY="agenda_2026_gelm";
 let data=JSON.parse(localStorage.getItem(KEY)||"[]");
-
 const f=id=>document.getElementById(id);
 
 function agregar(){
- if(!f("fecha").value||!f("detalle").value) return alert("Fecha y detalle requeridos");
- const reg={fecha:f("fecha").value,categoria:f("categoria").value,apoyo:f("servicio").value,lugar:f("lugar").value,detalle:f("detalle").value};
- data.push(reg);guardar();
- fetch(GOOGLE_ENDPOINT,{method:"POST",body:JSON.stringify(reg)}).catch(()=>{});
+ if(!f("fecha").value||!f("detalle").value){
+  alert("Fecha y detalle son obligatorios");
+  return;
+ }
+ const reg={
+  fecha:f("fecha").value,
+  categoria:f("categoria").value,
+  apoyo:f("apoyo").value,
+  lugar:f("lugar").value,
+  detalle:f("detalle").value
+ };
+ data.push(reg);
+ localStorage.setItem(KEY,JSON.stringify(data));
+ render();
+
+ // 🔵 RESPALDO GOOGLE
+ if(typeof enviarAgendaAGoogle==="function"){
+   enviarAgendaAGoogle(reg);
+ }
+
  f("detalle").value="";
 }
 
-function guardar(){localStorage.setItem(KEY,JSON.stringify(data));render();}
-
 function render(){
- const t=f("tabla");t.innerHTML="";
+ const t=f("tabla");
+ t.innerHTML="";
  const vista=f("vista").value;
- const hoy=new Date();
- let filtrados=data;
+ let lista=data;
 
  if(vista==="semanal"){
-  const d=new Date(f("fecha").value||hoy);
-  const lunes=new Date(d);lunes.setDate(d.getDate()-((d.getDay()+6)%7));
-  const domingo=new Date(lunes);domingo.setDate(lunes.getDate()+6);
-  filtrados=data.filter(x=>{const fx=new Date(x.fecha);return fx>=lunes&&fx<=domingo});
+  const h=new Date(f("fecha").value||new Date());
+  const l=new Date(h);l.setDate(h.getDate()-((h.getDay()+6)%7));
+  const d=new Date(l);d.setDate(l.getDate()+6);
+  lista=data.filter(x=>{
+    const fx=new Date(x.fecha);
+    return fx>=l && fx<=d;
+  });
  }
 
- f("vacio").style.display=filtrados.length?"none":"block";
- filtrados.forEach(r=>{
-  t.innerHTML+=`<tr><td>${r.fecha}</td><td>${r.categoria}</td><td>${r.apoyo||"-"}</td><td>${r.lugar||"-"}</td><td>${r.detalle}</td></tr>`;
+ f("vacio").style.display=lista.length?"none":"block";
+ lista.forEach(r=>{
+  t.innerHTML+=`
+   <tr>
+    <td>${r.fecha}</td>
+    <td>${r.categoria}</td>
+    <td>${r.apoyo||"-"}</td>
+    <td>${r.lugar||"-"}</td>
+    <td>${r.detalle}</td>
+   </tr>`;
  });
 }
 
-function borrar(){if(confirm("¿Borrar todo 2026?")){data=[];guardar();}}
+function borrarTodo(){
+ if(confirm("¿Borrar todo el año 2026?")){
+  data=[];
+  localStorage.removeItem(KEY);
+  render();
+ }
+}
 
 function exportarExcel(){
  const ws=XLSX.utils.json_to_sheet(data);
@@ -147,21 +257,16 @@ function exportarExcel(){
 }
 
 function exportarPDF(){
- html2pdf().from(document.getElementById("pdfArea")).set({filename:"AGENDA_2026.pdf"}).save();
+ html2pdf().from(document.getElementById("pdfArea"))
+ .set({filename:"AGENDA_2026.pdf"}).save();
 }
-
-// Respaldo nocturno automático
-(function(){
- const h=new Date().getHours();
- const hoy=new Date().toDateString();
- if(h>=23 && localStorage.getItem("backup_"+hoy)!=="ok"){
-  data.forEach(r=>fetch(GOOGLE_ENDPOINT,{method:"POST",body:JSON.stringify(r)}).catch(()=>{}));
-  localStorage.setItem("backup_"+hoy,"ok");
- }
-})();
 
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
 render();
 </script>
+
+<!-- SCRIPT GOOGLE -->
+<script src="agen.js"></script>
+
 </body>
 </html>
