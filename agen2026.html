@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Agenda Operativa 2026 — PMT Chimaltenango</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <!-- PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#00eaff">
@@ -14,254 +10,325 @@
     }
   </script>
 
-  <!-- Estilos -->
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGENDA 2026 — PMT Chimaltenango</title>
 
-  <!-- Excel -->
+  <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+  <style>
+    :root {
+      --cyan: #00eaff;
+      --cyan-soft: #00ffc8;
+      --purple: #b300ff;
+      --bg: rgba(3,5,20,.96);
+      --text: #e9f9ff;
+      --muted: #9cb3d8;
+      --danger: #ff0044;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: radial-gradient(circle at top, #24002b, #060012);
+      color: var(--text);
+    }
+
+    .agenda-shell {
+      max-width: 1280px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .agenda-panel {
+      background: var(--bg);
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: 0 0 40px rgba(0,234,255,.35);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 100px 1fr 100px;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    header img {
+      width: 80px;
+      filter: drop-shadow(0 0 12px var(--cyan));
+    }
+
+    h1 {
+      margin: 0;
+      text-align: center;
+      color: var(--cyan-soft);
+      letter-spacing: .08em;
+    }
+
+    .sub {
+      text-align: center;
+      font-size: .9rem;
+      color: var(--muted);
+    }
+
+    .by {
+      text-align: center;
+      margin-top: 6px;
+      color: var(--cyan);
+      letter-spacing: .2em;
+      font-size: .75rem;
+    }
+
+    .summary {
+      display: flex;
+      justify-content: space-between;
+      margin: 16px 0;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .card {
+      background: rgba(2,6,22,.96);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 20px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,.8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 14px;
+    }
+
+    .full { grid-column: 1/-1; }
+    .span2 { grid-column: span 2; }
+    .span3 { grid-column: span 3; }
+
+    label {
+      font-size: .75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--cyan);
+      background: #020616;
+      color: var(--text);
+    }
+
+    textarea {
+      border-radius: 14px;
+      min-height: 90px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      justify-content: space-between;
+    }
+
+    button {
+      border-radius: 999px;
+      padding: 10px 22px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);
+      color: #020510;
+      font-weight: 600;
+    }
+
+    .danger {
+      background: linear-gradient(135deg,#ff0044,#ff7a3c);
+      color: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .85rem;
+    }
+
+    thead {
+      background: linear-gradient(90deg,#00ffc8,#00eaff);
+      color: #020510;
+    }
+
+    th,td {
+      padding: 8px;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(0,255,200,.05);
+    }
+
+    footer {
+      text-align: center;
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: 20px;
+    }
+
+    @media(max-width:900px){
+      header { grid-template-columns:1fr; }
+      .grid { grid-template-columns:1fr; }
+      .span2,.span3 { grid-column:1/-1; }
+      .actions { flex-direction:column; }
+    }
+  </style>
 </head>
 
 <body>
-
 <div class="agenda-shell">
-  <div class="agenda-panel">
+<div class="agenda-panel">
 
-    <!-- HEADER -->
-    <header class="agenda-header">
-      <div class="agenda-logo-box">
-        <img src="icons/icon-192.png">
-      </div>
+<header>
+  <img src="icons/icon-192.png">
+  <div>
+    <h1>TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
+    <div class="sub">Unidad de Transportes — Subcomisario / Jefe de Transportes</div>
+    <div class="by">== BY GELM ==</div>
+  </div>
+  <img src="icons/icon-192.png">
+</header>
 
-      <div class="agenda-title-block">
-        <h1 class="agenda-title">TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
-        <p class="agenda-subtitle">
-          Unidad de Transportes — Subcomisario / Jefe de Transportes
-        </p>
-        <div class="agenda-by">== BY GELM ==</div>
-      </div>
+<div class="summary">
+  <div>Mostrando <strong id="resumenVisible">0</strong> de <strong id="resumenTotal">0</strong> — <strong id="resumenMes">Todos</strong></div>
+  <div id="ultimaActualizacion"></div>
+</div>
 
-      <div class="agenda-logo-box">
-        <img src="icons/icon-192.png">
-      </div>
-    </header>
+<div class="card">
+<h3>Registrar actividad</h3>
 
-    <!-- RESUMEN -->
-    <section class="agenda-summary">
-      <div>
-        Mostrando <strong id="resumenVisible">0</strong> de
-        <strong id="resumenTotal">0</strong> actividades —
-        <strong id="resumenMes">Todos</strong>
-      </div>
-      <div id="ultimaActualizacion"></div>
-    </section>
+<div class="grid">
+  <div class="span2">
+    <label>Fecha</label>
+    <input type="date" id="fecha">
+  </div>
 
-    <!-- FORMULARIO -->
-    <section class="agenda-form-card">
-      <h2 class="agenda-form-title">Registrar actividad</h2>
+  <div class="span2">
+    <label>Categoría</label>
+    <select id="categoria">
+      <option>Operativo</option>
+      <option>Supervisión</option>
+      <option>Regulación</option>
+      <option>Nocturno</option>
+      <option>Capacitación</option>
+      <option>Administrativo</option>
+      <option>Reunión</option>
+    </select>
+  </div>
 
-      <div class="agenda-form-grid">
+  <div class="span2">
+    <label>Apoyo (opcional)</label>
+    <input id="servicio" placeholder="PNC, colegio, iglesia, funeral…">
+  </div>
 
-        <div class="field-2">
-          <label>Fecha</label>
-          <input type="date" id="fecha">
-        </div>
+  <div class="span2">
+    <label>Lugar / ruta</label>
+    <input id="lugar">
+  </div>
 
-        <div class="field-2">
-          <label>Categoría</label>
-          <select id="categoria">
-            <option>Operativo</option>
-            <option>Supervisión</option>
-            <option>Revisión</option>
-            <option>Capacitación</option>
-            <option>Administrativo</option>
-            <option>Reunión</option>
-            <option>Regulación</option>
-            <option>Nocturno</option>
-            <option>Descanso</option>
-            <option>Sancionando</option>
-          </select>
-        </div>
-
-        <div class="field-2">
-          <label>Apoyo (opcional)</label>
-          <input type="text" id="apoyo" placeholder="PNC, colegio, iglesia, funeral, cierre vial…">
-        </div>
-
-        <div class="field-2">
-          <label>Lugar / ruta</label>
-          <input type="text" id="lugar">
-        </div>
-
-        <div class="field-full">
-          <label>Detalle</label>
-          <textarea id="detalle"></textarea>
-        </div>
-      </div>
-
-      <div class="agenda-actions-row">
-        <button class="btn" id="btnAgregar">Agregar a la agenda</button>
-
-        <div class="select-inline">
-          <label>Ver mes</label>
-          <select id="filtroMes">
-            <option value="0">Todos</option>
-            <option value="1">Enero</option>
-            <option value="2">Febrero</option>
-            <option value="3">Marzo</option>
-            <option value="4">Abril</option>
-            <option value="5">Mayo</option>
-            <option value="6">Junio</option>
-            <option value="7">Julio</option>
-            <option value="8">Agosto</option>
-            <option value="9">Septiembre</option>
-            <option value="10">Octubre</option>
-            <option value="11">Noviembre</option>
-            <option value="12">Diciembre</option>
-          </select>
-        </div>
-
-        <button class="btn btn-soft" id="btnExcel">Descargar Excel</button>
-        <button class="btn btn-danger" id="btnBorrar">Borrar todo (2026)</button>
-      </div>
-    </section>
-
-    <!-- TABLA -->
-    <section class="agenda-table-card">
-      <div class="agenda-table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Categoría</th>
-              <th>Apoyo</th>
-              <th>Lugar</th>
-              <th>Detalle</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyAgenda"></tbody>
-        </table>
-
-        <div class="agenda-empty" id="estadoVacio">
-          No hay actividades para este mes.
-        </div>
-      </div>
-    </section>
-
-    <footer class="agenda-footer">
-      2026 | <strong>BY GELM</strong><br>
-      <span id="fechaActual"></span>
-    </footer>
-
+  <div class="full">
+    <label>Detalle</label>
+    <textarea id="detalle"></textarea>
   </div>
 </div>
 
+<div class="actions">
+  <button onclick="agregar()">Agregar a la agenda</button>
+  <select id="filtroMes" onchange="render()">
+    <option value="0">Todos</option>
+    <option value="1">Enero</option><option value="2">Febrero</option>
+    <option value="3">Marzo</option><option value="4">Abril</option>
+    <option value="5">Mayo</option><option value="6">Junio</option>
+    <option value="7">Julio</option><option value="8">Agosto</option>
+    <option value="9">Septiembre</option><option value="10">Octubre</option>
+    <option value="11">Noviembre</option><option value="12">Diciembre</option>
+  </select>
+  <button onclick="exportar()">Excel</button>
+  <button class="danger" onclick="borrar()">Borrar todo</button>
+</div>
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr><th>Fecha</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th></tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+<div id="vacio">No hay actividades para este mes.</div>
+</div>
+
+<footer>
+2026 | <strong>BY GELM</strong> — PMT Chimaltenango<br>
+<span id="fechaActual"></span>
+</footer>
+
+</div>
+</div>
+
 <script>
-const KEY = "agenda_2026_gelm";
-const fecha = document.getElementById("fecha");
-const categoria = document.getElementById("categoria");
-const apoyo = document.getElementById("apoyo");
-const lugar = document.getElementById("lugar");
-const detalle = document.getElementById("detalle");
-const filtroMes = document.getElementById("filtroMes");
-const tbody = document.getElementById("tbodyAgenda");
-const vacio = document.getElementById("estadoVacio");
+const KEY="agenda_2026_gelm";
+let data=JSON.parse(localStorage.getItem(KEY)||"[]");
 
-const rVis = document.getElementById("resumenVisible");
-const rTot = document.getElementById("resumenTotal");
-const rMes = document.getElementById("resumenMes");
-const ultima = document.getElementById("ultimaActualizacion");
-const fechaActual = document.getElementById("fechaActual");
+const f=id=>document.getElementById(id);
 
-let data = [];
-
-const hoy = () => new Date().toISOString().split("T")[0];
-const fmt = f => f.split("-").reverse().join("/");
-
-function cargar() {
-  data = JSON.parse(localStorage.getItem(KEY)) || [];
+function agregar(){
+ if(!f("fecha").value||!f("detalle").value) return alert("Fecha y detalle requeridos");
+ data.push({
+  fecha:f("fecha").value,
+  categoria:f("categoria").value,
+  servicio:f("servicio").value,
+  lugar:f("lugar").value,
+  detalle:f("detalle").value
+ });
+ guardar();
+ f("detalle").value="";
 }
 
-function guardar() {
-  localStorage.setItem(KEY, JSON.stringify(data));
-  ultima.textContent = "Última actualización: " + new Date().toLocaleString("es-GT");
+function guardar(){
+ localStorage.setItem(KEY,JSON.stringify(data));
+ render();
 }
 
-function render() {
-  tbody.innerHTML = "";
-  const mes = parseInt(filtroMes.value);
-
-  const lista = data.filter(d =>
-    mes === 0 || parseInt(d.fecha.split("-")[1]) === mes
-  );
-
-  rTot.textContent = data.length;
-  rVis.textContent = lista.length;
-  rMes.textContent = filtroMes.options[filtroMes.selectedIndex].text;
-
-  vacio.style.display = lista.length ? "none" : "block";
-
-  lista.forEach(d => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${fmt(d.fecha)}</td>
-      <td>${d.categoria}</td>
-      <td>${d.apoyo || "-"}</td>
-      <td>${d.lugar || "-"}</td>
-      <td>${d.detalle}</td>`;
-    tbody.appendChild(tr);
-  });
+function render(){
+ const mes=+f("filtroMes").value;
+ const t=f("tabla"); t.innerHTML="";
+ const fil=data.filter(d=>!mes||+d.fecha.split("-")[1]===mes);
+ f("resumenTotal").textContent=data.length;
+ f("resumenVisible").textContent=fil.length;
+ f("resumenMes").textContent=f("filtroMes").selectedOptions[0].text;
+ f("vacio").style.display=fil.length?"none":"block";
+ fil.forEach(d=>{
+  t.innerHTML+=`<tr><td>${d.fecha}</td><td>${d.categoria}</td><td>${d.servicio||"-"}</td><td>${d.lugar||"-"}</td><td>${d.detalle}</td></tr>`;
+ });
+ f("ultimaActualizacion").textContent="Última actualización: "+new Date().toLocaleString("es-GT");
 }
 
-document.getElementById("btnAgregar").onclick = () => {
-  if (!detalle.value) return alert("Ingresa el detalle");
+function borrar(){
+ if(confirm("¿Borrar todo el año 2026?")){data=[];guardar();}
+}
 
-  data.push({
-    fecha: fecha.value,
-    categoria: categoria.value,
-    apoyo: apoyo.value,
-    lugar: lugar.value,
-    detalle: detalle.value
-  });
+function exportar(){
+ const ws=XLSX.utils.json_to_sheet(data);
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,ws,"Agenda");
+ XLSX.writeFile(wb,"AGENDA_2026.xlsx");
+}
 
-  apoyo.value = "";
-  detalle.value = "";
-  guardar();
-  render();
-};
-
-document.getElementById("btnBorrar").onclick = () => {
-  if (confirm("¿Borrar toda la agenda 2026?")) {
-    data = [];
-    guardar();
-    render();
-  }
-};
-
-document.getElementById("btnExcel").onclick = () => {
-  if (!data.length) return alert("No hay datos");
-  const ws = XLSX.utils.json_to_sheet(data.map(d => ({
-    Fecha: fmt(d.fecha),
-    Categoría: d.categoria,
-    Apoyo: d.apoyo,
-    Lugar: d.lugar,
-    Detalle: d.detalle
-  })));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Agenda 2026");
-  XLSX.writeFile(wb, "Agenda_2026_GELM.xlsx");
-};
-
-filtroMes.onchange = render;
-
-fecha.value = hoy();
-fechaActual.textContent =
-  "Fecha actual: " +
-  new Date().toLocaleDateString("es-GT",
-    { day:"2-digit", month:"long", year:"numeric" });
-
-cargar();
+f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
 render();
 </script>
-
 </body>
 </html>
