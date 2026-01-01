@@ -31,56 +31,51 @@ body{
   padding:25px;
   background:var(--card);
   border-radius:28px;
-  border:1px solid rgba(0,234,255,.35);
-  box-shadow:0 0 40px rgba(0,255,200,.25);
+  border:2px solid rgba(0,255,191,.35);
+  box-shadow:0 0 40px rgba(0,255,191,.35);
 }
 h1{
   text-align:center;
   color:var(--c2);
   letter-spacing:.2em;
-  margin-bottom:20px;
+}
+.section{
+  margin-top:18px;
+  padding:16px;
+  border-radius:20px;
+  border:1px solid rgba(0,255,191,.25);
+  background:rgba(0,0,0,.35);
 }
 label{
-  font-size:.75rem;
+  font-size:.7rem;
   color:#9cb3d8;
   text-transform:uppercase;
 }
 input,select,textarea{
   width:100%;
-  padding:12px;
-  border-radius:12px;
+  padding:10px;
+  border-radius:10px;
   border:1px solid var(--c1);
   background:#000;
   color:#fff;
 }
-textarea{min-height:90px}
+textarea{min-height:70px;}
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:12px;
-}
-.section{
-  margin-top:18px;
-  padding:15px;
-  border-radius:20px;
-  border:1px solid rgba(0,234,255,.2);
-}
-.section-title{
-  color:var(--c1);
-  font-size:.8rem;
-  margin-bottom:10px;
 }
 canvas{
   width:100%;
   height:140px;
   background:#fff;
-  border-radius:10px;
+  border-radius:12px;
 }
 .actions{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   gap:12px;
-  margin-top:20px;
+  margin-top:18px;
 }
 button{
   padding:14px;
@@ -89,31 +84,24 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
-.btn-save{background:linear-gradient(90deg,#00eaff,#00ffc8);color:#001;}
-.btn-pdf{background:linear-gradient(90deg,#7f00ff,#ff0044);color:#fff;}
+.btn-save{background:linear-gradient(135deg,#00ffc8,#00eaff);color:#001612;}
+.btn-pdf{background:linear-gradient(135deg,#9b00ff,#ff0044);color:#fff;}
 .btn-word{background:#0d6efd;color:#fff;}
 .btn-excel{background:#28a745;color:#fff;}
-.btn-danger{background:#ff0033;color:#fff;}
+.btn-danger{background:#ff0044;color:#fff;}
 table{
   width:100%;
-  border-collapse:collapse;
   margin-top:20px;
+  border-collapse:collapse;
   font-size:.85rem;
 }
-th{
-  background:var(--c1);
-  color:#001;
-  padding:8px;
-}
-td{
-  padding:8px;
-  border-bottom:1px solid rgba(0,234,255,.15);
-}
+th{background:var(--c1);color:#000;padding:8px;}
+td{padding:8px;border-bottom:1px solid rgba(0,255,191,.2);}
 footer{
   text-align:center;
-  font-size:11px;
-  margin-top:15px;
-  opacity:.6;
+  margin-top:18px;
+  font-size:.7rem;
+  opacity:.7;
 }
 </style>
 </head>
@@ -122,7 +110,8 @@ footer{
 <div class="panel">
 <h1>HECHOS DE TRÁNSITO — GELM 2026</h1>
 
-<div class="grid">
+<!-- DATOS GENERALES -->
+<div class="section grid">
   <div><label>Fecha</label><input type="date" id="fecha"></div>
   <div><label>Hora</label><input type="time" id="hora"></div>
   <div>
@@ -131,44 +120,70 @@ footer{
       <option>Colisión Simple</option>
       <option>Colisión Múltiple</option>
       <option>Atropello</option>
-      <option>Solo Daños Materiales</option>
+      <option>Salida de Vía</option>
+      <option>Otro</option>
     </select>
   </div>
 </div>
 
+<!-- DIRECCION -->
 <div class="section">
-  <div class="section-title">Vehículo A</div>
+  <label>Dirección / Lugar del Hecho</label>
+  <input id="direccion" placeholder="Calle, avenida, colonia, referencia...">
+</div>
+
+<!-- VEHICULO A -->
+<div class="section">
+  <b>Vehículo A</b>
   <div class="grid">
     <input id="a_placa" placeholder="Placa">
-    <input id="a_conductor" placeholder="Conductor">
-    <input id="a_licencia" placeholder="Licencia/DPI">
+    <input id="a_tipo" placeholder="Tipo">
+    <input id="a_marca" placeholder="Marca">
+    <input id="a_color" placeholder="Color">
+  </div>
+  <b>Conductor A</b>
+  <div class="grid">
+    <input id="a_nombre" placeholder="Nombre completo">
+    <input id="a_licencia" placeholder="No. Licencia">
+    <input id="a_doc" placeholder="No. Documento">
   </div>
 </div>
 
+<!-- VEHICULO B -->
 <div class="section">
-  <div class="section-title">Vehículo B</div>
+  <b>Vehículo B</b>
   <div class="grid">
     <input id="b_placa" placeholder="Placa">
-    <input id="b_conductor" placeholder="Conductor">
-    <input id="b_licencia" placeholder="Licencia/DPI">
+    <input id="b_tipo" placeholder="Tipo">
+    <input id="b_marca" placeholder="Marca">
+    <input id="b_color" placeholder="Color">
   </div>
-</div>
-
-<div class="section">
-  <div class="section-title">Nota / Acuerdo en el Lugar</div>
-  <textarea id="nota">
-Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables de sus propios daños, firmando la presente y quedando mi persona fuera de cualquier futuro inconveniente.
-  </textarea>
-</div>
-
-<div class="section">
-  <div class="section-title">Firmas</div>
+  <b>Conductor B</b>
   <div class="grid">
-    <canvas id="sigA"></canvas>
-    <canvas id="sigB"></canvas>
+    <input id="b_nombre" placeholder="Nombre completo">
+    <input id="b_licencia" placeholder="No. Licencia">
+    <input id="b_doc" placeholder="No. Documento">
   </div>
 </div>
 
+<!-- NOTA -->
+<div class="section">
+<label>Nota / Acuerdo en el Lugar</label>
+<textarea id="nota">
+Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables de sus propios daños, firmando la presente y quedando mi persona fuera de cualquier futuro inconveniente.
+</textarea>
+</div>
+
+<!-- FIRMAS -->
+<div class="section">
+<b>Firmas</b>
+<div class="grid">
+  <canvas id="sigA"></canvas>
+  <canvas id="sigB"></canvas>
+</div>
+</div>
+
+<!-- BOTONES -->
 <div class="actions">
   <button class="btn-save" onclick="guardar()">Guardar</button>
   <button class="btn-pdf" onclick="pdf()">PDF (con firmas)</button>
@@ -184,83 +199,76 @@ Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables
 <tbody id="tabla"></tbody>
 </table>
 
-<footer>© 2026 — BY GELM — PMT Chimaltenango</footer>
+<footer>2026 — BY GELM — PMT Chimaltenango</footer>
 </div>
 
 <script>
-const KEY="hechos_gelm_2026";
+const KEY="hechos_transito_gelm_2026";
 let db=JSON.parse(localStorage.getItem(KEY)||"[]");
 
-// firmas
-function firma(id){
-  const c=document.getElementById(id);
-  const ctx=c.getContext("2d");
+function setup(c){
+  const x=c.getContext("2d");
+  let d=false;
   c.width=c.offsetWidth;
   c.height=c.offsetHeight;
-  ctx.lineWidth=2;
-  ctx.lineCap="round";
-  let d=false;
-  const p=e=>{
-    const r=c.getBoundingClientRect();
-    const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-    const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-    return{x,y};
-  }
-  c.onmousedown=e=>{d=true;const q=p(e);ctx.beginPath();ctx.moveTo(q.x,q.y);}
-  c.onmousemove=e=>{if(!d)return;const q=p(e);ctx.lineTo(q.x,q.y);ctx.stroke();}
+  c.onmousedown=e=>{d=true;x.beginPath();x.moveTo(e.offsetX,e.offsetY);}
+  c.onmousemove=e=>{if(d){x.lineTo(e.offsetX,e.offsetY);x.stroke();}}
   window.onmouseup=()=>d=false;
-  c.ontouchstart=e=>{d=true;const q=p(e);ctx.beginPath();ctx.moveTo(q.x,q.y);}
-  c.ontouchmove=e=>{e.preventDefault();if(!d)return;const q=p(e);ctx.lineTo(q.x,q.y);ctx.stroke();}
 }
-firma("sigA");firma("sigB");
+setup(sigA);setup(sigB);
 
 function guardar(){
   const r={
-    fecha:fecha.value,
-    hora:hora.value,
-    tipo:tipo.value,
-    vehiculos:`${a_placa.value} / ${b_placa.value}`,
+    fecha:fecha.value,hora:hora.value,tipo:tipo.value,direccion:direccion.value,
+    a:{placa:a_placa.value,tipo:a_tipo.value,marca:a_marca.value,color:a_color.value,
+       nombre:a_nombre.value,lic:a_licencia.value,doc:a_doc.value},
+    b:{placa:b_placa.value,tipo:b_tipo.value,marca:b_marca.value,color:b_color.value,
+       nombre:b_nombre.value,lic:b_licencia.value,doc:b_doc.value},
     nota:nota.value,
-    sigA:sigA.toDataURL(),
-    sigB:sigB.toDataURL()
+    sigA:sigA.toDataURL(),sigB:sigB.toDataURL()
   };
-  if(!r.fecha)return alert("Fecha obligatoria");
   db.push(r);
   localStorage.setItem(KEY,JSON.stringify(db));
   render();
 }
+
 function render(){
   tabla.innerHTML=db.map(x=>`
-    <tr><td>${x.fecha}</td><td>${x.tipo}</td><td>${x.vehiculos}</td></tr>
-  `).join("");
+    <tr>
+      <td>${x.fecha}</td>
+      <td>${x.tipo}</td>
+      <td>${x.a.placa} / ${x.b.placa}</td>
+    </tr>`).join("");
 }
 render();
 
 function pdf(){
   const {jsPDF}=window.jspdf;
+  const r=db.at(-1); if(!r)return;
   const d=new jsPDF();
-  const r=db.at(-1);
-  if(!r)return;
-  d.text("HECHOS DE TRANSITO — GELM 2026",105,15,{align:"center"});
+  d.text("HECHOS DE TRÁNSITO — GELM 2026",105,15,{align:"center"});
   d.text(`Fecha: ${r.fecha}  Hora: ${r.hora}`,20,30);
-  d.text(`Tipo: ${r.tipo}`,20,38);
-  d.text("Acuerdo:",20,50);
-  d.text(d.splitTextToSize(r.nota,170),20,56);
-  d.addImage(r.sigA,"PNG",20,120,70,30);
-  d.addImage(r.sigB,"PNG",120,120,70,30);
-  d.save("HECHOS_TRANSITO_GELM_2026.pdf");
+  d.text(`Dirección: ${r.direccion}`,20,38);
+  d.text(`Vehículo A: ${r.a.placa} ${r.a.marca} ${r.a.color}`,20,50);
+  d.text(`Conductor A: ${r.a.nombre}`,20,56);
+  d.text(`Vehículo B: ${r.b.placa} ${r.b.marca} ${r.b.color}`,20,66);
+  d.text(`Conductor B: ${r.b.nombre}`,20,72);
+  d.text(d.splitTextToSize(r.nota,170),20,85);
+  d.addImage(r.sigA,'PNG',20,120,70,30);
+  d.addImage(r.sigB,'PNG',120,120,70,30);
+  d.save("HECHO_TRANSITO_GELM_2026.pdf");
 }
 
 function word(){
   const r=db.at(-1); if(!r)return;
-  const html=`<h2>HECHOS DE TRANSITO — GELM 2026</h2>
-  <p><b>Fecha:</b> ${r.fecha} ${r.hora}</p>
-  <p><b>Tipo:</b> ${r.tipo}</p>
+  let h=`<h2>HECHOS DE TRANSITO — GELM 2026</h2>
+  <p><b>Fecha:</b>${r.fecha} ${r.hora}</p>
+  <p><b>Dirección:</b>${r.direccion}</p>
   <p>${r.nota}</p>`;
-  const b=new Blob([html],{type:"application/msword"});
+  const b=new Blob([h],{type:"application/msword"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(b);
-  a.download="HECHOS_TRANSITO_GELM_2026.doc";
+  a.download="HECHO_TRANSITO_GELM_2026.doc";
   a.click();
 }
 
@@ -270,6 +278,7 @@ function excel(){
   XLSX.utils.book_append_sheet(wb,ws,"Hechos");
   XLSX.writeFile(wb,"HECHOS_TRANSITO_GELM_2026.xlsx");
 }
+
 function borrar(){
   if(confirm("¿Borrar todo?")){
     db=[];localStorage.removeItem(KEY);render();
