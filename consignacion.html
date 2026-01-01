@@ -1,345 +1,155 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CONSIGNACIONES 2026 — PMT Chimaltenango</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    
-    <style>
-        :root {
-            --gelm-cyan: #00eaff;
-            --gelm-cyan-soft: #00ffc8;
-            --gelm-bg: #020510;
-            --gelm-card: rgba(3, 5, 25, 0.96);
-            --gelm-text: #e9f9ff;
-            --gelm-danger: #ff0044;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONSIGNACIONES 2026 — PMT Chimaltenango</title>
 
-        body {
-            margin: 0; padding: 10px;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--gelm-bg); color: var(--gelm-text);
-            display: flex; justify-content: center;
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-        .container { width: 100%; max-width: 900px; }
-
-        .panel {
-            background: radial-gradient(circle at top left, rgba(0, 234, 255, 0.1), transparent), var(--gelm-card);
-            border-radius: 25px; border: 1px solid rgba(0, 234, 255, 0.3);
-            padding: 20px; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-        }
-
-        h1 { color: var(--gelm-cyan-soft); text-align: center; text-transform: uppercase; font-size: 1.3rem; text-shadow: 0 0 10px var(--gelm-cyan); margin-bottom: 20px; }
-
-        .section {
-            background: rgba(255,255,255,0.02); border-radius: 15px;
-            padding: 15px; margin-bottom: 15px; border: 1px solid rgba(0,234,255,0.15);
-        }
-
-        .section-title { color: var(--gelm-cyan); font-size: 0.85rem; font-weight: bold; margin-bottom: 12px; text-transform: uppercase; border-bottom: 1px solid rgba(0,234,255,0.1); padding-bottom: 5px; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-
-        label { display: block; font-size: 0.75rem; color: #9cb3d8; margin-bottom: 4px; text-transform: uppercase; }
-
-        input, select, textarea {
-            width: 100%; padding: 10px; border-radius: 10px; background: #000;
-            border: 1px solid rgba(0, 234, 255, 0.3); color: #fff; font-size: 0.95rem; box-sizing: border-box; outline: none;
-        }
-
-        input:focus { border-color: var(--gelm-cyan); box-shadow: 0 0 10px rgba(0, 234, 255, 0.4); }
-
-        /* Foto y Preview */
-        .photo-area { text-align: center; }
-        #preview { max-width: 180px; border-radius: 12px; border: 2px solid var(--gelm-cyan); display: none; margin: 10px auto; }
-
-        /* Firmas */
-        .signature-box { position: relative; }
-        canvas { background: #fff; border-radius: 8px; width: 100%; height: 140px; touch-action: none; cursor: crosshair; }
-        .btn-clear { background: var(--gelm-danger); color: #fff; border: none; padding: 5px 12px; border-radius: 5px; font-size: 11px; margin-top: 6px; cursor: pointer; }
-
-        /* Botonera Principal */
-        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .btn { padding: 14px; border-radius: 35px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.85rem; transition: 0.3s; }
-        .btn-save { background: linear-gradient(90deg, #00eaff, #00ffc8); color: #000; }
-        .btn-pdf { background: linear-gradient(90deg, #b300ff, #ff0044); color: #fff; }
-        .btn-excel { background: #28a745; color: #fff; grid-column: span 2; }
-        .btn:active { transform: scale(0.95); }
-
-        /* Historial y Tabla */
-        .history { margin-top: 25px; }
-        .history-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .table-scroll { overflow-x: auto; border-radius: 12px; border: 1px solid rgba(0,234,255,0.2); }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: rgba(0,0,0,0.2); }
-        th { background: var(--gelm-cyan); color: #000; padding: 10px; text-align: left; }
-        td { padding: 10px; border-bottom: 1px solid rgba(0,234,255,0.1); }
-        
-        .btn-del { background: none; border: 1px solid var(--gelm-danger); color: var(--gelm-danger); padding: 2px 8px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-del:hover { background: var(--gelm-danger); color: white; }
-        .btn-reset { background: none; border: 1px solid #9cb3d8; color: #9cb3d8; font-size: 0.65rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
-    </style>
+<style>
+:root{
+--gelm-cyan:#00eaff;--gelm-cyan-soft:#00ffc8;--gelm-bg:#020510;
+--gelm-card:rgba(3,5,25,.96);--gelm-text:#e9f9ff;--gelm-danger:#ff0044
+}
+body{margin:0;padding:10px;font-family:Segoe UI,system-ui;background:var(--gelm-bg);color:var(--gelm-text);display:flex;justify-content:center}
+.container{width:100%;max-width:900px}
+.panel{background:var(--gelm-card);border-radius:25px;border:1px solid rgba(0,234,255,.3);padding:20px}
+h1{text-align:center;color:var(--gelm-cyan-soft);margin-bottom:20px}
+.section{background:rgba(255,255,255,.02);border-radius:15px;padding:15px;margin-bottom:15px}
+.section-title{color:var(--gelm-cyan);font-size:.85rem;font-weight:bold;margin-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{font-size:.75rem;color:#9cb3d8;text-transform:uppercase}
+input,select,textarea{width:100%;padding:10px;border-radius:10px;background:#000;border:1px solid rgba(0,234,255,.3);color:#fff}
+textarea{min-height:70px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.btn{padding:14px;border-radius:35px;border:none;font-weight:bold;cursor:pointer}
+.btn-save{background:linear-gradient(90deg,#00eaff,#00ffc8);color:#000}
+.btn-pdf{background:linear-gradient(90deg,#b300ff,#ff0044);color:#fff}
+.btn-excel{background:#28a745;color:#fff}
+.btn-word{background:#1b5fd6;color:#fff}
+.history{margin-top:25px}
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+th{background:var(--gelm-cyan);color:#000;padding:10px}
+td{padding:10px;border-bottom:1px solid rgba(0,234,255,.1)}
+</style>
 </head>
+
 <body>
-
 <div class="container">
-    <div class="panel">
-        <h1>Boleta de Consignación 2026</h1>
+<div class="panel">
+<h1>Boleta de Consignación 2026</h1>
 
-        <form id="mainForm">
-            <div class="section grid">
-                <div><label>Fecha del Hecho</label><input type="date" id="fecha"></div>
-                <div><label>Hora del Hecho</label><input type="time" id="hora"></div>
-            </div>
+<div class="section grid">
+<div><label>Fecha</label><input type="date" id="fecha"></div>
+<div><label>Hora</label><input type="time" id="hora"></div>
+</div>
 
-            <div class="section">
-                <div class="section-title">Datos del Conductor (Licencia)</div>
-                <div class="grid">
-                    <div style="grid-column: span 2;"><label>Nombres y Apellidos Completos</label><input type="text" id="c_nombre"></div>
-                    <div><label>No. Licencia</label><input type="text" id="c_licencia"></div>
-                    <div>
-                        <label>Tipo</label>
-                        <select id="c_tipo">
-                            <option>Tipo A</option><option>Tipo B</option><option selected>Tipo C</option><option>Tipo M</option>
-                        </select>
-                    </div>
-                    <div><label>No. Documento (DPI)</label><input type="text" id="c_dpi"></div>
-                </div>
-            </div>
+<div class="section">
+<div class="section-title">Conductor</div>
+<div class="grid">
+<input id="c_nombre" placeholder="Nombre completo">
+<input id="c_licencia" placeholder="Licencia">
+<input id="c_dpi" placeholder="DPI">
+</div>
+</div>
 
-            <div class="section">
-                <div class="section-title">Datos del Vehículo (Tarjeta Circulación)</div>
-                <div class="grid">
-                    <div><label>Placa</label><input type="text" id="v_placa"></div>
-                    <div><label>Tipo Vehículo</label><input type="text" id="v_tipo" placeholder="Automóvil, Camión..."></div>
-                    <div><label>Marca</label><input type="text" id="v_marca"></div>
-                    <div><label>Color</label><input type="text" id="v_color"></div>
-                    <div><label>NIT Propietario</label><input type="text" id="v_nit"></div>
-                </div>
-            </div>
+<div class="section">
+<div class="section-title">Vehículo</div>
+<div class="grid">
+<input id="v_placa" placeholder="Placa">
+<input id="v_marca" placeholder="Marca">
+<input id="v_color" placeholder="Color">
+<input id="v_nit" placeholder="NIT">
+</div>
+</div>
 
-            <div class="section">
-                <div class="section-title">Evidencia y Hecho</div>
-                <label>Foto del Vehículo (Cámara)</label>
-                <input type="file" id="fotoInput" accept="image/*" capture="camera">
-                <div class="photo-area"><img id="preview"></div>
-                
-                <label style="margin-top:10px;">Motivo de Consignación</label>
-                <textarea id="h_motivo" rows="2"></textarea>
-                <label style="margin-top:10px;">Inventario / Observaciones</label>
-                <textarea id="h_obs" rows="2" placeholder="Accesorios, daños, llanta repuesto..."></textarea>
-                <label style="margin-top:10px;">Dirección del Hecho</label>
-                <input type="text" id="h_direccion">
-            </div>
+<div class="section">
+<div class="section-title">Hecho</div>
+<textarea id="h_motivo" placeholder="Motivo"></textarea>
+<textarea id="h_obs" placeholder="Observaciones"></textarea>
+<input id="h_direccion" placeholder="Dirección">
+</div>
 
-            <div class="section">
-                <div class="section-title">Autoridad Consignante</div>
-                <div class="grid">
-                    <div><label>Nombre del Agente</label><input type="text" id="a_nombre"></div>
-                    <div><label>Chapa / ID</label><input type="text" id="a_chapa"></div>
-                </div>
-            </div>
+<div class="section">
+<div class="section-title">Autoridad</div>
+<div class="grid">
+<input id="a_nombre" placeholder="Agente">
+<input id="a_chapa" placeholder="Chapa">
+</div>
+</div>
 
-            <div class="section">
-                <div class="section-title">Firmas Digitales</div>
-                <div class="grid">
-                    <div class="signature-box">
-                        <canvas id="canvasAgente"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="clearSig('canvasAgente')">Limpiar Firma Agente</button></center>
-                    </div>
-                    <div class="signature-box">
-                        <canvas id="canvasConductor"></canvas>
-                        <center><button type="button" class="btn-clear" onclick="clearSig('canvasConductor')">Limpiar Firma Conductor</button></center>
-                    </div>
-                </div>
-            </div>
+<div class="actions">
+<button class="btn btn-save" onclick="saveData()">Guardar</button>
+<button class="btn btn-pdf" onclick="makePDF()">PDF</button>
+<button class="btn btn-excel" onclick="exportXLS()">Excel</button>
+<button class="btn btn-word" onclick="exportWord()">Word</button>
+</div>
 
-            <div class="actions">
-                <button type="button" class="btn btn-save" onclick="saveData()">Guardar Registro</button>
-                <button type="button" class="btn btn-pdf" onclick="makePDF()">Generar PDF</button>
-                <button type="button" class="btn btn-excel" onclick="exportXLS()">Reporte Excel Mensual/Anual</button>
-            </div>
-        </form>
+<div class="history">
+<table>
+<thead><tr><th>Fecha</th><th>Placa</th><th>Conductor</th></tr></thead>
+<tbody id="historial"></tbody>
+</table>
+</div>
 
-        <div class="history">
-            <div class="history-header">
-                <div class="section-title">Historial Reciente</div>
-                <button class="btn-reset" onclick="nukeStorage()">Borrar Todo el Año</button>
-            </div>
-            <div class="table-scroll">
-                <table>
-                    <thead><tr><th>Fecha</th><th>Placa</th><th>Conductor</th><th>Acción</th></tr></thead>
-                    <tbody id="historialBody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+</div>
 </div>
 
 <script>
-    const KEY = "pmt_gelm_2026";
-    let db = JSON.parse(localStorage.getItem(KEY)) || [];
-    let currentPhoto = "";
+const KEY="pmt_consigna_2026";
+let db=JSON.parse(localStorage.getItem(KEY)||"[]");
 
-    // Inicialización de Firmas
-    function setupCanvas(id) {
-        const c = document.getElementById(id);
-        const ctx = c.getContext("2d");
-        c.width = c.offsetWidth;
-        c.height = c.offsetHeight;
-        ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.strokeStyle = "#000";
-        
-        let drawing = false;
-        const getXY = e => {
-            const r = c.getBoundingClientRect();
-            const x = e.touches ? e.touches[0].clientX : e.clientX;
-            const y = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: x - r.left, y: y - r.top };
-        };
+function saveData(){
+const r={
+fecha:fecha.value,hora:hora.value,placa:v_placa.value,
+conductor:c_nombre.value,licencia:c_licencia.value,dpi:c_dpi.value,
+marca:v_marca.value,color:v_color.value,nit:v_nit.value,
+motivo:h_motivo.value,obs:h_obs.value,dir:h_direccion.value,
+agente:a_nombre.value,chapa:a_chapa.value
+};
+if(!r.fecha||!r.placa)return alert("Fecha y placa requeridas");
+db.push(r);localStorage.setItem(KEY,JSON.stringify(db));render();
+}
 
-        const start = e => { drawing = true; ctx.beginPath(); const p = getXY(e); ctx.moveTo(p.x, p.y); };
-        const move = e => { if(!drawing) return; e.preventDefault(); const p = getXY(e); ctx.lineTo(p.x, p.y); ctx.stroke(); };
+function render(){
+historial.innerHTML=db.map(x=>`<tr><td>${x.fecha}</td><td>${x.placa}</td><td>${x.conductor}</td></tr>`).join("");
+}
 
-        c.addEventListener("mousedown", start); c.addEventListener("mousemove", move);
-        window.addEventListener("mouseup", () => drawing = false);
-        c.addEventListener("touchstart", start, {passive: false});
-        c.addEventListener("touchmove", move, {passive: false});
-    }
+function makePDF(){
+const{jsPDF}=window.jspdf;const d=new jsPDF();
+let y=20;
+db.forEach((r,i)=>{
+d.text(`CONS ${i+1} | ${r.fecha} ${r.hora}`,20,y);y+=6;
+d.text(`Placa: ${r.placa} | Conductor: ${r.conductor}`,20,y);y+=10;
+if(y>260){d.addPage();y=20;}
+});
+d.save("CONSIGNACIONES_2026.pdf");
+}
 
-    setupCanvas("canvasAgente"); setupCanvas("canvasConductor");
+function exportXLS(){
+const ws=XLSX.utils.json_to_sheet(db);
+const wb=XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,"2026");
+XLSX.writeFile(wb,"CONSIGNACIONES_2026.xlsx");
+}
 
-    function clearSig(id) {
-        const c = document.getElementById(id);
-        c.getContext("2d").clearRect(0,0,c.width,c.height);
-    }
-
-    // Compresión de Imagen para Móvil
-    document.getElementById('fotoInput').onchange = function(e) {
-        const file = e.target.files[0];
-        if(!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const canvas = document.createElement('canvas');
-                const MAX_W = 800;
-                let w = img.width; let h = img.height;
-                if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
-                canvas.width = w; canvas.height = h;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, w, h);
-                currentPhoto = canvas.toDataURL("image/jpeg", 0.7); // Compresión 70%
-                document.getElementById('preview').src = currentPhoto;
-                document.getElementById('preview').style.display = "block";
-            };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-    };
-
-    function saveData() {
-        const item = {
-            id: Date.now(),
-            fecha: document.getElementById('fecha').value,
-            hora: document.getElementById('hora').value,
-            conductor: document.getElementById('c_nombre').value,
-            licencia: document.getElementById('c_licencia').value,
-            dpi: document.getElementById('c_dpi').value,
-            placa: document.getElementById('v_placa').value,
-            marca: document.getElementById('v_marca').value,
-            nit: document.getElementById('v_nit').value,
-            motivo: document.getElementById('h_motivo').value
-        };
-        if(!item.placa || !item.fecha) return alert("Complete Fecha y Placa");
-        db.push(item);
-        localStorage.setItem(KEY, JSON.stringify(db));
-        render();
-        alert("Registro guardado en historial.");
-    }
-
-    function render() {
-        const b = document.getElementById('historialBody');
-        b.innerHTML = db.slice().reverse().map(r => `
-            <tr>
-                <td>${r.fecha}</td>
-                <td>${r.placa}</td>
-                <td>${r.conductor}</td>
-                <td><button class="btn-del" onclick="delRow(${r.id})">X</button></td>
-            </tr>
-        `).join('');
-    }
-
-    function delRow(id) {
-        if(!confirm("¿Borrar este registro?")) return;
-        db = db.filter(x => x.id !== id);
-        localStorage.setItem(KEY, JSON.stringify(db));
-        render();
-    }
-
-    function nukeStorage() {
-        if(!confirm("⚠️ ¿BORRAR TODO EL AÑO? Esto no se puede deshacer.")) return;
-        db = []; localStorage.removeItem(KEY); render();
-    }
-
-    // PDF Optimizado para Móvil
-    async function makePDF() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        const f = id => document.getElementById(id).value || "---";
-
-        doc.setFontSize(16); doc.text("BOLETA DE CONSIGNACIÓN VEHICULAR", 105, 20, {align:'center'});
-        doc.setFontSize(10); doc.text(`Fecha: ${f('fecha')} | Hora: ${f('hora')}`, 20, 30);
-        
-        // Bloques
-        doc.setFillColor(240); doc.rect(20, 35, 170, 7, 'F');
-        doc.setFont(undefined, 'bold'); doc.text("DATOS DEL CONDUCTOR", 22, 40);
-        doc.setFont(undefined, 'normal');
-        doc.text(`Nombre: ${f('c_nombre')}`, 25, 48);
-        doc.text(`Licencia: ${f('c_licencia')} (${f('c_tipo')}) | DPI: ${f('c_dpi')}`, 25, 54);
-
-        doc.setFillColor(240); doc.rect(20, 62, 170, 7, 'F');
-        doc.setFont(undefined, 'bold'); doc.text("DATOS DEL VEHÍCULO", 22, 67);
-        doc.setFont(undefined, 'normal');
-        doc.text(`Placa: ${f('v_placa')} | Marca: ${f('v_marca')} | Color: ${f('v_color')}`, 25, 75);
-        doc.text(`Tipo: ${f('v_tipo')} | NIT: ${f('v_nit')}`, 25, 81);
-
-        doc.text("MOTIVO:", 20, 95);
-        doc.text(doc.splitTextToSize(f('h_motivo'), 160), 20, 100);
-        
-        doc.text("OBSERVACIONES / INVENTARIO:", 20, 115);
-        doc.text(doc.splitTextToSize(f('h_obs'), 160), 20, 120);
-
-        if(currentPhoto) {
-            doc.text("EVIDENCIA:", 20, 145);
-            doc.addImage(currentPhoto, 'JPEG', 20, 150, 60, 45);
-        }
-
-        const sigA = document.getElementById('canvasAgente').toDataURL("image/png");
-        const sigC = document.getElementById('canvasConductor').toDataURL("image/png");
-        doc.addImage(sigA, 'PNG', 20, 220, 55, 25);
-        doc.addImage(sigC, 'PNG', 120, 220, 55, 25);
-        doc.line(20, 245, 75, 245); doc.line(120, 245, 175, 245);
-        doc.text(`Agente: ${f('a_nombre')}`, 20, 250); doc.text("Firma Conductor", 120, 250);
-
-        doc.save(`Consignacion_${f('v_placa')}.pdf`);
-    }
-
-    function exportXLS() {
-        if(db.length === 0) return alert("Sin datos");
-        const ws = XLSX.utils.json_to_sheet(db);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "2026");
-        XLSX.writeFile(wb, "REPORTE_CONSIGNACIONES_PMT_2026.xlsx");
-    }
-
-    render();
+function exportWord(){
+let html=`<h2>CONSIGNACIONES 2026 – PMT CHIMALTENANGO</h2>`;
+db.forEach(r=>{
+html+=`<p><b>Fecha:</b> ${r.fecha} ${r.hora}<br>
+<b>Placa:</b> ${r.placa}<br>
+<b>Conductor:</b> ${r.conductor}<br>
+<b>Motivo:</b> ${r.motivo}</p><hr>`;
+});
+const blob=new Blob(['\ufeff'+html],{type:'application/msword'});
+const a=document.createElement('a');
+a.href=URL.createObjectURL(blob);
+a.download="CONSIGNACIONES_2026.doc";
+a.click();
+}
+render();
 </script>
-
 </body>
 </html>
