@@ -9,23 +9,25 @@
 
 <style>
 :root{
-  --c1:#00ffc3;
-  --c2:#00b3ff;
-  --bg:#050812;
+  --c1:#00eaff;
+  --c2:#00ffc8;
+  --bg:#020510;
+  --card:rgba(3,5,25,.96);
+  --txt:#e9f9ff;
 }
 body{
   margin:0;
   font-family:Segoe UI,system-ui;
   background:radial-gradient(circle at 0 0,#28d7ff 0,#150027 45%,#050109 100%);
-  color:#e9f9ff;
+  color:var(--txt);
   display:flex;
   justify-content:center;
 }
 .panel{
   width:100%;
-  max-width:1000px;
-  margin:15px;
-  padding:20px;
+  max-width:1100px;
+  margin:20px;
+  padding:22px;
   background:radial-gradient(circle at 10% 0,#072833 0,#050812 45%,#05010f 100%);
   border-radius:28px;
   border:2px solid rgba(0,255,191,.35);
@@ -33,87 +35,75 @@ body{
 }
 h1{
   text-align:center;
-  color:var(--c1);
-  letter-spacing:.12em;
-  margin-bottom:20px;
+  color:var(--c2);
+  letter-spacing:.15em;
 }
 label{
-  font-size:.7rem;
+  font-size:.75rem;
   color:#9cb3d8;
   text-transform:uppercase;
 }
 input,select,textarea{
   width:100%;
   padding:10px;
-  border-radius:10px;
+  border-radius:12px;
   border:1px solid var(--c1);
   background:#000;
   color:#fff;
 }
-textarea{resize:vertical}
+textarea{min-height:80px}
 .grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
   gap:12px;
+  margin-bottom:12px;
 }
 .section{
-  margin-top:15px;
-  padding:15px;
+  margin-top:14px;
+  padding:14px;
   border-radius:18px;
   border:1px solid rgba(0,255,191,.25);
   background:rgba(0,0,0,.35);
 }
 .section-title{
-  font-size:.8rem;
   color:var(--c1);
-  margin-bottom:10px;
+  font-size:.8rem;
+  margin-bottom:8px;
   letter-spacing:.1em;
+}
+canvas{
+  width:100%;
+  height:140px;
+  background:#fff;
+  border-radius:12px;
 }
 .actions{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:10px;
-  margin-top:20px;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:12px;
+  margin-top:18px;
 }
 button{
-  border:none;
-  padding:12px;
+  padding:14px;
   border-radius:999px;
+  border:none;
   font-weight:700;
   cursor:pointer;
-  font-size:.75rem;
+  text-transform:uppercase;
 }
 .btn-save{background:linear-gradient(135deg,var(--c1),var(--c2));color:#001612}
-.btn-word{background:#0d6efd;color:#fff}
-.btn-audit{background:#6610f2;color:#fff}
-.btn-excel{background:#28a745;color:#fff}
-.btn-del{background:#dc3545;color:#fff}
-
-canvas{
-  background:#fff;
-  border-radius:10px;
-  width:100%;
-  height:130px;
-  touch-action:none;
-}
-.small-btn{
-  margin-top:6px;
-  font-size:.65rem;
-  background:#ff0044;
-  color:#fff;
-  padding:4px 10px;
-  border-radius:6px;
-}
-
+.btn-word{background:linear-gradient(135deg,#0d6efd,#00eaff);color:#001612}
+.btn-excel{background:linear-gradient(135deg,#7bffb9,#28a745);color:#001612}
+.btn-danger{background:linear-gradient(135deg,#ff4b4b,#ff0044);color:#fff}
 table{
   width:100%;
-  border-collapse:collapse;
   margin-top:20px;
-  font-size:.75rem;
+  border-collapse:collapse;
+  font-size:.8rem;
 }
 th{
   background:var(--c1);
-  color:#001612;
+  color:#000;
   padding:8px;
 }
 td{
@@ -123,7 +113,7 @@ td{
 footer{
   margin-top:20px;
   text-align:center;
-  font-size:.65rem;
+  font-size:11px;
   opacity:.6;
 }
 </style>
@@ -131,83 +121,71 @@ footer{
 
 <body>
 <div class="panel">
+  <h1>HECHOS DE TRÁNSITO — GELM 2026</h1>
 
-<h1>HECHOS DE TRÁNSITO — GELM 2026</h1>
-
-<div class="section grid">
-  <div><label>Fecha</label><input type="date" id="fecha"></div>
-  <div><label>Hora</label><input type="time" id="hora"></div>
-  <div>
-    <label>Tipo de Hecho</label>
-    <select id="tipo">
-      <option>Colisión Simple</option>
-      <option>Colisión Múltiple</option>
-      <option>Daños Materiales</option>
-      <option>Acuerdo en el Lugar</option>
-      <option>Otro</option>
-    </select>
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">Vehículo A</div>
   <div class="grid">
-    <input placeholder="Placa" id="placaA">
-    <input placeholder="Conductor" id="condA">
-    <input placeholder="Licencia" id="licA">
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">Vehículo B</div>
-  <div class="grid">
-    <input placeholder="Placa" id="placaB">
-    <input placeholder="Conductor" id="condB">
-    <input placeholder="Licencia" id="licB">
-  </div>
-</div>
-
-<div class="section">
-  <div class="section-title">Nota / Acuerdo en el Lugar</div>
-  <textarea id="nota" rows="4"
-  placeholder="Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables de sus propios daños..."></textarea>
-</div>
-
-<div class="section">
-  <div class="section-title">Firmas</div>
-  <div class="grid">
+    <div><label>Fecha</label><input type="date" id="fecha"></div>
+    <div><label>Hora</label><input type="time" id="hora"></div>
     <div>
-      <canvas id="sigA"></canvas>
-      <button class="small-btn" onclick="clearSig('sigA')">Limpiar Firma A</button>
-    </div>
-    <div>
-      <canvas id="sigB"></canvas>
-      <button class="small-btn" onclick="clearSig('sigB')">Limpiar Firma B</button>
+      <label>Tipo de Hecho</label>
+      <select id="tipo">
+        <option>Colisión Simple</option>
+        <option>Colisión Doble</option>
+        <option>Colisión Triple</option>
+        <option>Atropello</option>
+        <option>Daños Materiales</option>
+      </select>
     </div>
   </div>
-</div>
 
-<div class="actions">
-  <button class="btn-save" onclick="guardar()">Guardar Hecho</button>
-  <button class="btn-word" onclick="wordIndividual()">Word</button>
-  <button class="btn-audit" onclick="wordAuditoria()">Auditoría</button>
-  <button class="btn-excel" onclick="excel()">Excel</button>
-  <button class="btn-del" onclick="borrarTodo()">Borrar Año</button>
-</div>
+  <div class="section">
+    <div class="section-title">Vehículo A</div>
+    <div class="grid">
+      <input placeholder="Placa" id="a_placa">
+      <input placeholder="Conductor" id="a_conductor">
+      <input placeholder="Licencia" id="a_licencia">
+    </div>
+  </div>
 
-<table>
-<thead>
-<tr>
-<th>Fecha</th><th>Tipo</th><th>Placas</th>
-</tr>
-</thead>
-<tbody id="tabla"></tbody>
-</table>
+  <div class="section">
+    <div class="section-title">Vehículo B</div>
+    <div class="grid">
+      <input placeholder="Placa" id="b_placa">
+      <input placeholder="Conductor" id="b_conductor">
+      <input placeholder="Licencia" id="b_licencia">
+    </div>
+  </div>
 
-<footer>
-2026 | BY GELM | Uso personal – Unidad de Transportes
-</footer>
+  <div class="section">
+    <div class="section-title">Nota / Acuerdo en el Lugar</div>
+    <textarea id="nota">
+Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables de sus propios daños, firmando la presente y quedando mi persona fuera de cualquier futuro inconveniente.
+    </textarea>
+  </div>
 
+  <div class="section">
+    <div class="section-title">Firmas</div>
+    <div class="grid">
+      <canvas id="firmaA"></canvas>
+      <canvas id="firmaB"></canvas>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-save" onclick="guardar()">Guardar</button>
+    <button class="btn-word" onclick="word()">Word</button>
+    <button class="btn-excel" onclick="excel()">Excel</button>
+    <button class="btn-danger" onclick="borrarTodo()">Borrar Todo</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Fecha</th><th>Tipo</th><th>Vehículos</th></tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+  </table>
+
+  <footer>2026 | BY GELM | Chimaltenango</footer>
 </div>
 
 <script>
@@ -215,39 +193,42 @@ const KEY="hechos_transito_gelm_2026";
 let db=JSON.parse(localStorage.getItem(KEY)||"[]");
 
 function setupCanvas(id){
-  const c=document.getElementById(id),ctx=c.getContext("2d");
-  c.width=c.offsetWidth;c.height=c.offsetHeight;
-  ctx.lineWidth=2;ctx.lineCap="round";
-  let d=false;
-  const p=e=>{
-    const r=c.getBoundingClientRect();
-    const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
-    const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
-    return{x,y};
-  };
-  c.onmousedown=e=>{d=true;ctx.beginPath();let q=p(e);ctx.moveTo(q.x,q.y);}
-  c.onmousemove=e=>{if(!d)return;let q=p(e);ctx.lineTo(q.x,q.y);ctx.stroke();}
-  window.onmouseup=()=>d=false;
-  c.ontouchstart=e=>{d=true;ctx.beginPath();let q=p(e);ctx.moveTo(q.x,q.y);}
-  c.ontouchmove=e=>{if(!d)return;e.preventDefault();let q=p(e);ctx.lineTo(q.x,q.y);ctx.stroke();}
-}
-setupCanvas("sigA");setupCanvas("sigB");
-
-function clearSig(id){
   const c=document.getElementById(id);
-  c.getContext("2d").clearRect(0,0,c.width,c.height);
+  const ctx=c.getContext("2d");
+  c.width=c.offsetWidth;
+  c.height=c.offsetHeight;
+  ctx.lineWidth=2.5;
+  ctx.lineCap="round";
+  let draw=false;
+  const pos=e=>{
+    const r=c.getBoundingClientRect();
+    const x=e.touches?e.touches[0].clientX:e.clientX;
+    const y=e.touches?e.touches[0].clientY:e.clientY;
+    return {x:x-r.left,y:y-r.top};
+  };
+  const start=e=>{draw=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);}
+  const move=e=>{if(!draw)return;e.preventDefault();const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();}
+  const end=()=>draw=false;
+  c.addEventListener("mousedown",start);
+  c.addEventListener("mousemove",move);
+  window.addEventListener("mouseup",end);
+  c.addEventListener("touchstart",start,{passive:false});
+  c.addEventListener("touchmove",move,{passive:false});
+  c.addEventListener("touchend",end);
 }
+setupCanvas("firmaA");
+setupCanvas("firmaB");
 
 function guardar(){
   const r={
     fecha:fecha.value,
     hora:hora.value,
     tipo:tipo.value,
-    placaA:placaA.value,
-    placaB:placaB.value,
+    a:a_placa.value,
+    b:b_placa.value,
     nota:nota.value
   };
-  if(!r.fecha||!r.placaA)return alert("Fecha y Placa A obligatorias");
+  if(!r.fecha||!r.a)return alert("Fecha y placa A obligatorias");
   db.push(r);
   localStorage.setItem(KEY,JSON.stringify(db));
   render();
@@ -255,47 +236,44 @@ function guardar(){
 
 function render(){
   tabla.innerHTML=db.map(x=>`
-  <tr>
-    <td>${x.fecha}</td>
-    <td>${x.tipo}</td>
-    <td>${x.placaA} / ${x.placaB||"-"}</td>
-  </tr>`).join("");
+    <tr>
+      <td>${x.fecha}</td>
+      <td>${x.tipo}</td>
+      <td>${x.a} / ${x.b||"-"}</td>
+    </tr>
+  `).join("");
 }
 render();
 
-function generarWord(data,nombre){
-  let html=`<h2>HECHOS DE TRÁNSITO — GELM 2026</h2>`;
-  data.forEach(r=>{
+function word(){
+  if(!db.length)return;
+  let html="<h2>HECHOS DE TRÁNSITO — GELM 2026</h2>";
+  db.forEach(r=>{
     html+=`
     <p><b>Fecha:</b> ${r.fecha} ${r.hora}</p>
     <p><b>Tipo:</b> ${r.tipo}</p>
-    <p><b>Vehículos:</b> ${r.placaA} / ${r.placaB||"-"}</p>
-    <p><b>Nota:</b> ${r.nota}</p><hr>`;
+    <p><b>Vehículos:</b> ${r.a} / ${r.b||"-"}</p>
+    <p><b>Acuerdo:</b> ${r.nota}</p><hr>`;
   });
   const blob=new Blob([html],{type:"application/msword"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
-  a.download=nombre+"_GELM_2026.doc";
+  a.download="HECHOS_TRANSITO_GELM_2026.doc";
   a.click();
 }
 
-function wordIndividual(){
-  if(!db.length)return;
-  generarWord([db.at(-1)],"HECHO_TRANSITO");
-}
-function wordAuditoria(){
-  if(!db.length)return;
-  generarWord(db,"AUDITORIA_HECHOS");
-}
 function excel(){
   const ws=XLSX.utils.json_to_sheet(db);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"Hechos");
   XLSX.writeFile(wb,"HECHOS_TRANSITO_GELM_2026.xlsx");
 }
+
 function borrarTodo(){
-  if(confirm("¿BORRAR TODO EL AÑO?")){
-    db=[];localStorage.removeItem(KEY);render();
+  if(confirm("¿Borrar todo el año?")){
+    db=[];
+    localStorage.removeItem(KEY);
+    render();
   }
 }
 </script>
