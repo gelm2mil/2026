@@ -1,160 +1,303 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <link rel="manifest" href="manifest.webmanifest">
-  <meta name="theme-color" content="#00eaff">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Respaldos — Sistema PMT 2026</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    body{margin:0;font-family:system-ui,sans-serif;background:radial-gradient(circle at 0 0,#28d7ff 0,#150027 45%,#050109 100%);color:#e8f9ff;}
-    .app-shell{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 10px 40px;}
-    .panel{width:100%;max-width:1100px;background:radial-gradient(circle at 10% 0,#072833 0,#050812 45%,#05010f 100%);border-radius:28px;box-shadow:0 0 40px rgba(0,255,191,.35);border:2px solid rgba(0,255,191,.3);padding:22px;}
-    .panel-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px;}
-    .logo-box{width:80px;height:80px;border-radius:20px;background:black;display:flex;align-items:center;justify-content:center;border:1px solid #00ffc3;}
-    .logo-box img{width:70%;filter:drop-shadow(0 0 5px #00ffc3);}
-    .title-block h1{margin:0;font-size:20px;letter-spacing:.1em;color:#9bffe9;}
-    .tabs{display:flex;justify-content:center;gap:8px;margin-top:14px;flex-wrap:wrap;}
-    .tab-btn{border:none;border-radius:20px;padding:8px 15px;font-size:12px;cursor:pointer;color:white;background:#193f3a;border:1px solid rgba(0,255,191,0.4);}
-    .tab-btn.active{background:linear-gradient(135deg,#00ffc3,#00b0ff);color:#001612;font-weight:600;}
-    .section-box{margin-top:14px;background:rgba(0,0,0,0.3);border-radius:22px;border:1px solid rgba(0,255,191,0.2);padding:16px;}
-    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin-top:10px;}
-    .stat-box{background:rgba(0,0,0,.4);border-radius:16px;padding:15px;border:1px solid rgba(0,255,191,.3);text-align:center;}
-    .stat-value{font-size:24px;font-weight:700;color:#00ffc3;}
-    .btn{border:none;border-radius:999px;padding:12px 25px;font-size:12px;cursor:pointer;font-weight:600;text-transform:uppercase;}
-    .btn-primary{background:linear-gradient(135deg,#00ffc3,#00b3ff);color:#001612;}
-    .btn-secondary{background:linear-gradient(135deg,#fff07b,#7bffb9);color:#15300b;}
-    .btn-danger{background:linear-gradient(135deg,#ff4b4b,#ff0044);color:#fff;}
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hechos de Tránsito — GELM 2026</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+:root{
+  --c1:#00ffc3;
+  --c2:#00b3ff;
+  --bg:#050812;
+}
+body{
+  margin:0;
+  font-family:Segoe UI,system-ui;
+  background:radial-gradient(circle at 0 0,#28d7ff 0,#150027 45%,#050109 100%);
+  color:#e9f9ff;
+  display:flex;
+  justify-content:center;
+}
+.panel{
+  width:100%;
+  max-width:1000px;
+  margin:15px;
+  padding:20px;
+  background:radial-gradient(circle at 10% 0,#072833 0,#050812 45%,#05010f 100%);
+  border-radius:28px;
+  border:2px solid rgba(0,255,191,.35);
+  box-shadow:0 0 40px rgba(0,255,191,.35);
+}
+h1{
+  text-align:center;
+  color:var(--c1);
+  letter-spacing:.12em;
+  margin-bottom:20px;
+}
+label{
+  font-size:.7rem;
+  color:#9cb3d8;
+  text-transform:uppercase;
+}
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--c1);
+  background:#000;
+  color:#fff;
+}
+textarea{resize:vertical}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px;
+}
+.section{
+  margin-top:15px;
+  padding:15px;
+  border-radius:18px;
+  border:1px solid rgba(0,255,191,.25);
+  background:rgba(0,0,0,.35);
+}
+.section-title{
+  font-size:.8rem;
+  color:var(--c1);
+  margin-bottom:10px;
+  letter-spacing:.1em;
+}
+.actions{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:10px;
+  margin-top:20px;
+}
+button{
+  border:none;
+  padding:12px;
+  border-radius:999px;
+  font-weight:700;
+  cursor:pointer;
+  font-size:.75rem;
+}
+.btn-save{background:linear-gradient(135deg,var(--c1),var(--c2));color:#001612}
+.btn-word{background:#0d6efd;color:#fff}
+.btn-audit{background:#6610f2;color:#fff}
+.btn-excel{background:#28a745;color:#fff}
+.btn-del{background:#dc3545;color:#fff}
+
+canvas{
+  background:#fff;
+  border-radius:10px;
+  width:100%;
+  height:130px;
+  touch-action:none;
+}
+.small-btn{
+  margin-top:6px;
+  font-size:.65rem;
+  background:#ff0044;
+  color:#fff;
+  padding:4px 10px;
+  border-radius:6px;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+  font-size:.75rem;
+}
+th{
+  background:var(--c1);
+  color:#001612;
+  padding:8px;
+}
+td{
+  padding:8px;
+  border-bottom:1px solid rgba(0,255,191,.2);
+}
+footer{
+  margin-top:20px;
+  text-align:center;
+  font-size:.65rem;
+  opacity:.6;
+}
+</style>
 </head>
+
 <body>
-<div class="app-shell">
-  <div class="panel">
-    <header class="panel-header">
-      <div class="logo-box"><img src="icons/icon-192.png"></div>
-      <div class="title-block">
-        <h1>RESPALDOS — SISTEMA GELM 2026</h1>
-        <div class="by">== UNIDAD DE TRANSPORTES ==</div>
-        <div class="tabs">
-          <button class="tab-btn" onclick="location.href='agen2026.html'">Agenda</button>
-          <button class="tab-btn" onclick="location.href='operativos.html'">Operativos</button>
-          <button class="tab-btn" onclick="location.href='denuncias.html'">Denuncias</button>
-          <button class="tab-btn" onclick="location.href='consignacion.html'">Consignaciones</button>
-          <button class="tab-btn active">Respaldos</button>
-        </div>
-      </div>
-      <div class="logo-box"><img src="icons/icon-192.png"></div>
-    </header>
+<div class="panel">
 
-    <section class="section-box">
-      <h2 style="font-size:16px; color:#00ffc3;">Estado de la Memoria Local</h2>
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div style="font-size:11px;">AGENDA</div>
-          <div class="stat-value" id="count-agenda">0</div>
-        </div>
-        <div class="stat-box">
-          <div style="font-size:11px;">OPERATIVOS</div>
-          <div class="stat-value" id="count-operativos">0</div>
-        </div>
-        <div class="stat-box">
-          <div style="font-size:11px;">DENUNCIAS</div>
-          <div class="stat-value" id="count-denuncias">0</div>
-        </div>
-        <div class="stat-box" style="border-color: #ff00ff;">
-          <div style="font-size:11px;">CONSIGNACIONES</div>
-          <div class="stat-value" id="count-consignaciones" style="color:#ff00ff;">0</div>
-        </div>
-      </div>
-    </section>
+<h1>HECHOS DE TRÁNSITO — GELM 2026</h1>
 
-    <section class="section-box">
-      <h2 style="font-size:16px; color:#00ffc3;">Exportación Global</h2>
-      <p style="font-size:12px;">Descarga todos los datos de la PMT en un solo archivo Excel organizado.</p>
-      <button class="btn btn-primary" id="btn-excel-global">Descargar Reporte Excel Completo</button>
-    </section>
-
-    <section class="section-box">
-      <h2 style="font-size:16px; color:#00ffc3;">Copia de Seguridad (JSON)</h2>
-      <button class="btn btn-secondary" id="btn-descargar-json">Generar Archivo de Respaldo .JSON</button>
-      <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">
-        <label style="font-size:12px; display:block; margin-bottom:10px;">Restaurar Datos desde un archivo:</label>
-        <input id="file-json" type="file" accept="application/json" style="font-size:12px;">
-        <button class="btn btn-danger" id="btn-restaurar-json" style="margin-top:10px;">Restaurar Sistema</button>
-      </div>
-    </section>
-
-    <footer style="margin-top:20px; text-align:center; font-size:10px; opacity:0.6;">
-      2026 | BY GELM | Chimaltenango
-    </footer>
+<div class="section grid">
+  <div><label>Fecha</label><input type="date" id="fecha"></div>
+  <div><label>Hora</label><input type="time" id="hora"></div>
+  <div>
+    <label>Tipo de Hecho</label>
+    <select id="tipo">
+      <option>Colisión Simple</option>
+      <option>Colisión Múltiple</option>
+      <option>Daños Materiales</option>
+      <option>Acuerdo en el Lugar</option>
+      <option>Otro</option>
+    </select>
   </div>
 </div>
 
+<div class="section">
+  <div class="section-title">Vehículo A</div>
+  <div class="grid">
+    <input placeholder="Placa" id="placaA">
+    <input placeholder="Conductor" id="condA">
+    <input placeholder="Licencia" id="licA">
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Vehículo B</div>
+  <div class="grid">
+    <input placeholder="Placa" id="placaB">
+    <input placeholder="Conductor" id="condB">
+    <input placeholder="Licencia" id="licB">
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Nota / Acuerdo en el Lugar</div>
+  <textarea id="nota" rows="4"
+  placeholder="Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables de sus propios daños..."></textarea>
+</div>
+
+<div class="section">
+  <div class="section-title">Firmas</div>
+  <div class="grid">
+    <div>
+      <canvas id="sigA"></canvas>
+      <button class="small-btn" onclick="clearSig('sigA')">Limpiar Firma A</button>
+    </div>
+    <div>
+      <canvas id="sigB"></canvas>
+      <button class="small-btn" onclick="clearSig('sigB')">Limpiar Firma B</button>
+    </div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn-save" onclick="guardar()">Guardar Hecho</button>
+  <button class="btn-word" onclick="wordIndividual()">Word</button>
+  <button class="btn-audit" onclick="wordAuditoria()">Auditoría</button>
+  <button class="btn-excel" onclick="excel()">Excel</button>
+  <button class="btn-del" onclick="borrarTodo()">Borrar Año</button>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>Fecha</th><th>Tipo</th><th>Placas</th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+
+<footer>
+2026 | BY GELM | Uso personal – Unidad de Transportes
+</footer>
+
+</div>
+
 <script>
-  // UNIFICACIÓN DE LLAVES (KEYS)
-  const KEY_AGENDA = 'bitacora_transportes_2026'; // Coincide con tu agen2026.html
-  const KEY_OPERATIVOS = 'operativos2026';
-  const KEY_DENUNCIAS = 'denuncias2026';
-  const KEY_CONSIGNACIONES = 'respaldo_total_gelm'; // Coincide con consignacion.html
+const KEY="hechos_transito_gelm_2026";
+let db=JSON.parse(localStorage.getItem(KEY)||"[]");
 
-  function getData() {
-    return {
-      agenda: JSON.parse(localStorage.getItem(KEY_AGENDA) || '[]'),
-      operativos: JSON.parse(localStorage.getItem(KEY_OPERATIVOS) || '[]'),
-      denuncias: JSON.parse(localStorage.getItem(KEY_DENUNCIAS) || '[]'),
-      consignaciones: JSON.parse(localStorage.getItem(KEY_CONSIGNACIONES) || '[]')
-    };
+function setupCanvas(id){
+  const c=document.getElementById(id),ctx=c.getContext("2d");
+  c.width=c.offsetWidth;c.height=c.offsetHeight;
+  ctx.lineWidth=2;ctx.lineCap="round";
+  let d=false;
+  const p=e=>{
+    const r=c.getBoundingClientRect();
+    const x=(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+    const y=(e.touches?e.touches[0].clientY:e.clientY)-r.top;
+    return{x,y};
+  };
+  c.onmousedown=e=>{d=true;ctx.beginPath();let q=p(e);ctx.moveTo(q.x,q.y);}
+  c.onmousemove=e=>{if(!d)return;let q=p(e);ctx.lineTo(q.x,q.y);ctx.stroke();}
+  window.onmouseup=()=>d=false;
+  c.ontouchstart=e=>{d=true;ctx.beginPath();let q=p(e);ctx.moveTo(q.x,q.y);}
+  c.ontouchmove=e=>{if(!d)return;e.preventDefault();let q=p(e);ctx.lineTo(q.x,q.y);ctx.stroke();}
+}
+setupCanvas("sigA");setupCanvas("sigB");
+
+function clearSig(id){
+  const c=document.getElementById(id);
+  c.getContext("2d").clearRect(0,0,c.width,c.height);
+}
+
+function guardar(){
+  const r={
+    fecha:fecha.value,
+    hora:hora.value,
+    tipo:tipo.value,
+    placaA:placaA.value,
+    placaB:placaB.value,
+    nota:nota.value
+  };
+  if(!r.fecha||!r.placaA)return alert("Fecha y Placa A obligatorias");
+  db.push(r);
+  localStorage.setItem(KEY,JSON.stringify(db));
+  render();
+}
+
+function render(){
+  tabla.innerHTML=db.map(x=>`
+  <tr>
+    <td>${x.fecha}</td>
+    <td>${x.tipo}</td>
+    <td>${x.placaA} / ${x.placaB||"-"}</td>
+  </tr>`).join("");
+}
+render();
+
+function generarWord(data,nombre){
+  let html=`<h2>HECHOS DE TRÁNSITO — GELM 2026</h2>`;
+  data.forEach(r=>{
+    html+=`
+    <p><b>Fecha:</b> ${r.fecha} ${r.hora}</p>
+    <p><b>Tipo:</b> ${r.tipo}</p>
+    <p><b>Vehículos:</b> ${r.placaA} / ${r.placaB||"-"}</p>
+    <p><b>Nota:</b> ${r.nota}</p><hr>`;
+  });
+  const blob=new Blob([html],{type:"application/msword"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=nombre+"_GELM_2026.doc";
+  a.click();
+}
+
+function wordIndividual(){
+  if(!db.length)return;
+  generarWord([db.at(-1)],"HECHO_TRANSITO");
+}
+function wordAuditoria(){
+  if(!db.length)return;
+  generarWord(db,"AUDITORIA_HECHOS");
+}
+function excel(){
+  const ws=XLSX.utils.json_to_sheet(db);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Hechos");
+  XLSX.writeFile(wb,"HECHOS_TRANSITO_GELM_2026.xlsx");
+}
+function borrarTodo(){
+  if(confirm("¿BORRAR TODO EL AÑO?")){
+    db=[];localStorage.removeItem(KEY);render();
   }
-
-  function actualizarStats() {
-    const data = getData();
-    document.getElementById('count-agenda').textContent = data.agenda.length;
-    document.getElementById('count-operativos').textContent = data.operativos.length;
-    document.getElementById('count-denuncias').textContent = data.denuncias.length;
-    document.getElementById('count-consignaciones').textContent = data.consignaciones.length;
-  }
-
-  document.getElementById('btn-excel-global').addEventListener('click', () => {
-    const data = getData();
-    const wb = XLSX.utils.book_new();
-
-    if (data.agenda.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.agenda), 'Agenda');
-    if (data.operativos.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.operativos), 'Operativos');
-    if (data.denuncias.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.denuncias), 'Denuncias');
-    if (data.consignaciones.length) XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data.consignaciones), 'Consignaciones');
-
-    XLSX.writeFile(wb, `REPORTE_GLOBAL_PMT_2026.xlsx`);
-  });
-
-  document.getElementById('btn-descargar-json').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(getData(), null, 2)], {type: 'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `RESPALDO_SISTEMA_GELM_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-  });
-
-  document.getElementById('btn-restaurar-json').addEventListener('click', () => {
-    const file = document.getElementById('file-json').files[0];
-    if (!file) return alert('Selecciona un archivo');
-    if (!confirm('Se borrarán los datos actuales para poner los del respaldo. ¿Continuar?')) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const obj = JSON.parse(e.target.result);
-      localStorage.setItem(KEY_AGENDA, JSON.stringify(obj.agenda || []));
-      localStorage.setItem(KEY_OPERATIVOS, JSON.stringify(obj.operativos || []));
-      localStorage.setItem(KEY_DENUNCIAS, JSON.stringify(obj.denuncias || []));
-      localStorage.setItem(KEY_CONSIGNACIONES, JSON.stringify(obj.consignaciones || []));
-      alert('Sistema Restaurado');
-      actualizarStats();
-    };
-    reader.readAsText(file);
-  });
-
-  actualizarStats();
+}
 </script>
 </body>
 </html>
