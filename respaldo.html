@@ -46,12 +46,15 @@ input,select,textarea{
 
 textarea{min-height:80px}
 
+/* === CANVAS FIRMA (CLAVE PARA MÓVIL) === */
 canvas{
   width:100%;
   height:180px;
   background:#fff;
   border-radius:12px;
   border:2px dashed #00ffc8;
+  touch-action:none;
+  -ms-touch-action:none;
 }
 
 .actions{
@@ -187,26 +190,46 @@ footer{text-align:center;font-size:10px;opacity:.6;margin-top:15px;}
 const KEY="hechos_gelm_2026";
 let db=JSON.parse(localStorage.getItem(KEY)||"[]");
 
-/* FIRMAS */
+/* === FIRMA MOUSE + TOUCH (SOLUCIÓN DEFINITIVA) === */
 function firma(id){
-  const c=document.getElementById(id);
-  const x=c.getContext("2d");
+  const canvas=document.getElementById(id);
+  const ctx=canvas.getContext("2d");
+
   function resize(){
-    c.width=c.offsetWidth;
-    c.height=c.offsetHeight;
-    x.lineWidth=2;
-    x.lineCap="round";
+    const r=canvas.getBoundingClientRect();
+    canvas.width=r.width;
+    canvas.height=r.height;
+    ctx.lineWidth=2;
+    ctx.lineCap="round";
+    ctx.strokeStyle="#000";
   }
   resize();
   window.addEventListener("resize",resize);
-  let d=false;
-  c.onmousedown=e=>{d=true;x.beginPath();x.moveTo(e.offsetX,e.offsetY);}
-  c.onmousemove=e=>{if(d){x.lineTo(e.offsetX,e.offsetY);x.stroke();}}
-  window.onmouseup=()=>d=false;
-}
-firma("sigA");firma("sigB");
 
-/* GUARDAR */
+  let draw=false;
+
+  canvas.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    draw=true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX,e.offsetY);
+  });
+  canvas.addEventListener("pointermove",e=>{
+    if(!draw)return;
+    e.preventDefault();
+    ctx.lineTo(e.offsetX,e.offsetY);
+    ctx.stroke();
+  });
+  canvas.addEventListener("pointerup",e=>{
+    e.preventDefault();
+    draw=false;
+  });
+  canvas.addEventListener("pointerleave",()=>draw=false);
+}
+firma("sigA");
+firma("sigB");
+
+/* === GUARDAR === */
 function guardar(){
   const r={
     fecha:fecha.value,
@@ -225,7 +248,7 @@ function guardar(){
     },
     nota:nota.value
   };
-  if(!r.fecha||!r.a.placa) return alert("Faltan datos");
+  if(!r.fecha||!r.a.placa)return alert("Faltan datos obligatorios");
   db.push(r);
   localStorage.setItem(KEY,JSON.stringify(db));
   render();
@@ -243,10 +266,10 @@ function render(){
 }
 render();
 
-/* PDF CARTA */
+/* === PDF CARTA === */
 function pdf(){
   const {jsPDF}=window.jspdf;
-  const r=db.at(-1); if(!r) return;
+  const r=db.at(-1); if(!r)return;
 
   const d=new jsPDF({format:"letter"});
   let y=20;
@@ -269,19 +292,15 @@ function pdf(){
   d.text("Nota:",20,y); y+=6;
   d.text(r.nota||"",20,y,{maxWidth:170});
 
-  const imgA=sigA.toDataURL("image/png");
-  const imgB=sigB.toDataURL("image/png");
-
-  d.addImage(imgA,"PNG",20,200,70,30);
-  d.addImage(imgB,"PNG",120,200,70,30);
-
+  d.addImage(sigA.toDataURL("image/png"),"PNG",20,200,70,30);
+  d.addImage(sigB.toDataURL("image/png"),"PNG",120,200,70,30);
   d.text("Firma Conductor A",20,235);
   d.text("Firma Conductor B",120,235);
 
   d.save("HECHOS_GELM_2026.pdf");
 }
 
-/* WORD / EXCEL */
+/* === WORD / EXCEL === */
 function word(){
   const r=db.at(-1); if(!r)return;
   const texto=`HECHOS DE TRÁNSITO — GELM 2026
