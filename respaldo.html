@@ -88,6 +88,7 @@ button{
 .btn-word{background:#0d6efd;color:#fff;}
 .btn-excel{background:#28a745;color:#fff;}
 .btn-del{background:#ff0033;color:#fff;}
+
 table{
   width:100%;
   margin-top:20px;
@@ -102,6 +103,9 @@ th{
 td{
   padding:8px;
   border-bottom:1px solid rgba(0,255,191,.2);
+}
+tr.sel{
+  background:#00ffc844;
 }
 footer{
   margin-top:20px;
@@ -132,7 +136,7 @@ footer{
 
 <div class="section">
 <label>Dirección / Lugar del Hecho</label>
-<input id="direccion" placeholder="Calle, avenida, colonia, referencia...">
+<input id="direccion">
 </div>
 
 <div class="section">
@@ -184,10 +188,8 @@ footer{
 </div>
 
 <div class="section">
-<label>Nota / Acuerdo en el Lugar</label>
-<textarea id="nota" rows="3">
-Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables de sus propios daños, firmando la presente y quedando mi persona fuera de cualquier futuro inconveniente.
-</textarea>
+<label>Nota / Acuerdo</label>
+<textarea id="nota" rows="3"></textarea>
 </div>
 
 <div class="section">
@@ -200,10 +202,10 @@ Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables
 
 <div class="actions">
 <button class="btn-save" onclick="guardar()">Guardar</button>
-<button class="btn-pdf" onclick="pdf()">PDF (con firmas)</button>
+<button class="btn-pdf" onclick="pdf()">PDF</button>
 <button class="btn-word" onclick="word()">Word</button>
 <button class="btn-excel" onclick="excel()">Excel</button>
-<button class="btn-del" onclick="borrar()">Borrar Todo</button>
+<button class="btn-del" onclick="borrar()">Borrar</button>
 </div>
 
 <table>
@@ -211,90 +213,107 @@ Las partes manifiestan llegar a un acuerdo en el lugar, haciéndose responsables
 <tbody id="tabla"></tbody>
 </table>
 
-<footer>2026 — BY GELM — PMT Chimaltenango</footer>
+<footer>2026 — Sistema GELM — PMT Chimaltenango</footer>
 </div>
 
 <script>
 const KEY="hechos_gelm_2026";
 let db=JSON.parse(localStorage.getItem(KEY)||"[]");
+let seleccionado=null;
 
-function firma(id){
+/* firmas */
+["sigA","sigB"].forEach(id=>{
   const c=document.getElementById(id),x=c.getContext("2d");
   c.width=c.offsetWidth;c.height=c.offsetHeight;
-  x.lineWidth=2;x.lineCap="round";
   let d=false;
   const p=e=>{
     const r=c.getBoundingClientRect();
-    return{
-      x:(e.touches?e.touches[0].clientX:e.clientX)-r.left,
-      y:(e.touches?e.touches[0].clientY:e.clientY)-r.top
-    };
+    return{ x:(e.touches?e.touches[0].clientX:e.clientX)-r.left,
+            y:(e.touches?e.touches[0].clientY:e.clientY)-r.top };
   };
   c.onmousedown=e=>{d=true;x.beginPath();const q=p(e);x.moveTo(q.x,q.y);}
   c.onmousemove=e=>{if(!d)return;const q=p(e);x.lineTo(q.x,q.y);x.stroke();}
   window.onmouseup=()=>d=false;
   c.ontouchstart=e=>{d=true;x.beginPath();const q=p(e);x.moveTo(q.x,q.y);}
   c.ontouchmove=e=>{e.preventDefault();if(!d)return;const q=p(e);x.lineTo(q.x,q.y);x.stroke();}
-}
-firma("sigA");firma("sigB");
+});
 
 function guardar(){
   const r={
     fecha:fecha.value,hora:hora.value,tipo:tipo.value,direccion:direccion.value,
-    a:{placa:a_placa.value,tipo:a_tipo.value,marca:a_marca.value,color:a_color.value,nombre:a_nombre.value,tipoLic:a_tipo_lic.value,lic:a_lic.value,doc:a_doc.value},
-    b:{placa:b_placa.value,tipo:b_tipo.value,marca:b_marca.value,color:b_color.value,nombre:b_nombre.value,tipoLic:b_tipo_lic.value,lic:b_lic.value,doc:b_doc.value},
+    a:{placa:a_placa.value,marca:a_marca.value,color:a_color.value,nombre:a_nombre.value,tipoLic:a_tipo_lic.value,lic:a_lic.value},
+    b:{placa:b_placa.value,marca:b_marca.value,color:b_color.value,nombre:b_nombre.value,tipoLic:b_tipo_lic.value,lic:b_lic.value},
     nota:nota.value,
     sigA:sigA.toDataURL(),sigB:sigB.toDataURL()
   };
-  if(!r.fecha||!r.a.placa)return alert("Fecha y placa A obligatorias");
-  db.push(r);localStorage.setItem(KEY,JSON.stringify(db));render();
+  if(!r.fecha||!r.a.placa) return alert("Fecha y placa A obligatorias");
+  db.push(r);localStorage.setItem(KEY,JSON.stringify(db));
+  seleccionado=db.length-1;render();
 }
+
 function render(){
-  tabla.innerHTML=db.map(x=>`
-    <tr><td>${x.fecha}</td><td>${x.tipo}</td>
-    <td>${x.a.placa} / ${x.b.placa}</td></tr>`).join("");
+  tabla.innerHTML=db.map((x,i)=>`
+    <tr onclick="sel(${i})" class="${i===seleccionado?'sel':''}">
+      <td>${x.fecha}</td><td>${x.tipo}</td>
+      <td>${x.a.placa} / ${x.b.placa}</td>
+    </tr>`).join("");
 }
+function sel(i){seleccionado=i;render();}
 render();
 
+function actual(){return seleccionado!==null?db[seleccionado]:db.at(-1);}
+
 function pdf(){
-  const {jsPDF}=window.jspdf;const d=new jsPDF();
-  const r=db.at(-1);if(!r)return;
+  const r=actual(); if(!r) return;
+  const {jsPDF}=window.jspdf; const d=new jsPDF();
   d.text("HECHOS DE TRÁNSITO — GELM 2026",105,15,{align:"center"});
-  d.text(`Fecha: ${r.fecha}  Hora: ${r.hora}`,20,30);
+  d.text(`Fecha: ${r.fecha} ${r.hora}`,20,30);
   d.text(`Lugar: ${r.direccion}`,20,36);
-  d.text(`Vehículo A: ${r.a.placa} - ${r.a.marca} ${r.a.color}`,20,46);
-  d.text(`Conductor A: ${r.a.nombre} | ${r.a.tipoLic} ${r.a.lic}`,20,52);
-  d.text(`Vehículo B: ${r.b.placa} - ${r.b.marca} ${r.b.color}`,20,62);
-  d.text(`Conductor B: ${r.b.nombre} | ${r.b.tipoLic} ${r.b.lic}`,20,68);
+  d.text(`Vehículo A: ${r.a.placa}`,20,46);
+  d.text(`Conductor A: ${r.a.nombre}`,20,52);
+  d.text(`Vehículo B: ${r.b.placa}`,20,62);
+  d.text(`Conductor B: ${r.b.nombre}`,20,68);
   d.text(d.splitTextToSize(r.nota,170),20,82);
   d.addImage(r.sigA,"PNG",20,120,70,30);
   d.addImage(r.sigB,"PNG",120,120,70,30);
-  d.save("HECHOS_TRANSITO_GELM_2026.pdf");
+  d.save("HECHOS_GELM_2026.pdf");
 }
 
 function word(){
-  const r=db.at(-1);if(!r)return;
-  const html=`<h2>Hechos de Tránsito — GELM 2026</h2>
-  <p><b>Fecha:</b>${r.fecha} ${r.hora}</p>
-  <p><b>Lugar:</b>${r.direccion}</p>
-  <p><b>Vehículo A:</b>${r.a.placa} ${r.a.marca}</p>
-  <p><b>Conductor A:</b>${r.a.nombre} (${r.a.tipoLic})</p>
-  <p><b>Vehículo B:</b>${r.b.placa} ${r.b.marca}</p>
-  <p><b>Conductor B:</b>${r.b.nombre} (${r.b.tipoLic})</p>
-  <p>${r.nota}</p>`;
-  const b=new Blob([html],{type:"application/msword"});
+  const r=actual(); if(!r) return;
+  const t=`HECHOS DE TRÁNSITO — GELM 2026
+
+Fecha: ${r.fecha} ${r.hora}
+Lugar: ${r.direccion}
+
+Vehículo A: ${r.a.placa}
+Conductor A: ${r.a.nombre}
+
+Vehículo B: ${r.b.placa}
+Conductor B: ${r.b.nombre}
+
+Nota:
+${r.nota}
+
+Sistema GELM 2026 — PMT Chimaltenango`;
+  const b=new Blob([t],{type:"application/msword;charset=utf-8"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(b);a.download="HECHOS_GELM_2026.doc";a.click();
 }
 
 function excel(){
-  const ws=XLSX.utils.json_to_sheet(db);
+  const data=seleccionado!==null?[db[seleccionado]]:db;
+  const ws=XLSX.utils.json_to_sheet(data);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"Hechos");
-  XLSX.writeFile(wb,"HECHOS_TRANSITO_GELM_2026.xlsx");
+  XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
 }
+
 function borrar(){
-  if(confirm("¿BORRAR TODO?")){db=[];localStorage.removeItem(KEY);render();}
+  if(confirm("¿BORRAR TODO?")){
+    db=[];seleccionado=null;
+    localStorage.removeItem(KEY);render();
+  }
 }
 </script>
 </body>
