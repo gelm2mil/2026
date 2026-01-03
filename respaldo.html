@@ -12,41 +12,105 @@
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
 <style>
-body{background:#020510;color:#e9f9ff;font-family:system-ui;margin:0}
-.panel{max-width:1000px;margin:20px auto;padding:25px;background:#05091f;border-radius:24px}
-button{padding:10px 18px;border-radius:999px;border:none;font-weight:600;cursor:pointer}
-.btn-save{background:#00ffc8}
-.btn-pdf{background:#b300ff;color:#fff}
-.btn-word{background:#0d6efd;color:#fff}
-.btn-excel{background:#28a745;color:#fff}
-.btn-del{background:#ff0033;color:#fff}
-
-table{width:100%;border-collapse:collapse;margin-top:20px}
-th{background:#00ffc8;color:#020510;padding:8px}
-td{padding:8px;border-bottom:1px solid #333}
-tr.sel{background:rgba(0,255,200,.25)}
+body{
+  margin:0;
+  font-family:system-ui;
+  background:radial-gradient(circle at top,#1b0030,#05010a);
+  color:#e9f9ff;
+}
+.panel{
+  max-width:1100px;
+  margin:20px auto;
+  padding:22px;
+  background:rgba(3,5,25,.95);
+  border-radius:24px;
+  box-shadow:0 0 40px rgba(0,255,200,.35);
+}
+h1{text-align:center;color:#00ffc8}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:10px;
+}
+label{
+  font-size:.7rem;
+  color:#9cb3d8;
+  text-transform:uppercase;
+}
+input,textarea{
+  width:100%;
+  padding:10px;
+  border-radius:12px;
+  border:1px solid #00ffc8;
+  background:#000;
+  color:#fff;
+}
+textarea{min-height:80px}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:16px 0;
+}
+button{
+  border:none;
+  border-radius:999px;
+  padding:10px 20px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.save{background:#00ffc8}
+.pdf{background:#b300ff;color:#fff}
+.word{background:#0d6efd;color:#fff}
+.excel{background:#28a745;color:#fff}
+.del{background:#ff0033;color:#fff}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:16px;
+  font-size:.85rem;
+}
+th{
+  background:#00ffc8;
+  color:#000;
+  padding:8px;
+}
+td{
+  padding:8px;
+  border-bottom:1px solid rgba(0,255,200,.2);
+}
+footer{
+  text-align:center;
+  margin-top:16px;
+  font-size:.75rem;
+  color:#9cb3d8;
+}
 </style>
 </head>
 
 <body>
-<div class="panel">
+<div class="panel" id="pdfArea">
+<h1>HECHOS DE TRÁNSITO — GELM 2026</h1>
 
-<h2 style="text-align:center;color:#00ffc8">HECHOS DE TRÁNSITO — GELM 2026</h2>
+<div class="grid">
+  <div><label>Fecha</label><input type="date" id="fecha"></div>
+  <div><label>Hora</label><input type="time" id="hora"></div>
+  <div><label>Lugar</label><input id="lugar"></div>
+  <div><label>Placa A</label><input id="placaA"></div>
+  <div><label>Placa B</label><input id="placaB"></div>
+</div>
 
-<input id="fecha" type="date">
-<input id="hora" type="time">
-<input id="direccion" placeholder="Lugar">
-<input id="a_placa" placeholder="Placa A">
-<input id="b_placa" placeholder="Placa B">
+<label>Nota / Acuerdo</label>
+<textarea id="nota">
+Las partes manifiestan llegar a un acuerdo en el lugar...
+</textarea>
 
-<textarea id="nota" placeholder="Nota / acuerdo"></textarea>
-
-<div>
-<button class="btn-save" onclick="guardar()">Guardar</button>
-<button class="btn-pdf" onclick="pdf()">PDF</button>
-<button class="btn-word" onclick="word()">Word</button>
-<button class="btn-excel" onclick="excel()">Excel</button>
-<button class="btn-del" onclick="borrar()">Borrar Todo</button>
+<div class="actions">
+  <button class="save" onclick="guardar()">Guardar</button>
+  <button class="pdf" onclick="pdf()">PDF</button>
+  <button class="word" onclick="word()">Word</button>
+  <button class="excel" onclick="excel()">Excel</button>
+  <button class="del" onclick="borrar()">Borrar Todo</button>
 </div>
 
 <table>
@@ -56,99 +120,88 @@ tr.sel{background:rgba(0,255,200,.25)}
 <tbody id="tabla"></tbody>
 </table>
 
+<footer>© 2026 — BY GELM — PMT Chimaltenango</footer>
 </div>
 
 <script>
-const KEY="hechos_gelm_2026";
-let db=JSON.parse(localStorage.getItem(KEY)||"[]");
-let selectedIndex=null;
+const KEY="hechos_transito_2026";
+let data=JSON.parse(localStorage.getItem(KEY)||"[]");
 
 function guardar(){
   const r={
     fecha:fecha.value,
     hora:hora.value,
-    direccion:direccion.value,
-    placaA:a_placa.value,
-    placaB:b_placa.value,
+    lugar:lugar.value,
+    placaA:placaA.value,
+    placaB:placaB.value,
     nota:nota.value
   };
-  db.push(r);
-  localStorage.setItem(KEY,JSON.stringify(db));
+  if(!r.fecha||!r.placaA){
+    alert("Fecha y Placa A obligatorias");
+    return;
+  }
+  data.push(r);
+  localStorage.setItem(KEY,JSON.stringify(data));
   render();
 }
 
 function render(){
   tabla.innerHTML="";
-  db.forEach((r,i)=>{
-    const tr=document.createElement("tr");
-    if(i===selectedIndex) tr.classList.add("sel");
-    tr.onclick=()=>{selectedIndex=i;render()};
-    tr.innerHTML=`
-      <td>${r.fecha}</td>
-      <td>${r.hora}</td>
-      <td>${r.direccion}</td>
-      <td>${r.placaA} / ${r.placaB}</td>`;
-    tabla.appendChild(tr);
+  data.forEach(r=>{
+    tabla.innerHTML+=`
+      <tr>
+        <td>${r.fecha}</td>
+        <td>${r.hora||""}</td>
+        <td>${r.lugar||"-"}</td>
+        <td>${r.placaA} / ${r.placaB||"-"}</td>
+      </tr>`;
   });
 }
 render();
 
-function seleccionado(){
-  if(selectedIndex===null){
-    alert("Selecciona un registro abajo");
-    return null;
-  }
-  return db[selectedIndex];
-}
-
-/* PDF */
 function pdf(){
-  const r=seleccionado(); if(!r) return;
   const {jsPDF}=window.jspdf;
   const d=new jsPDF();
+  const r=data.at(-1); if(!r) return;
   d.text("HECHOS DE TRÁNSITO — GELM 2026",105,15,{align:"center"});
-  d.text(`Fecha: ${r.fecha} ${r.hora}`,20,30);
-  d.text(`Lugar: ${r.direccion}`,20,40);
-  d.text(`Vehículos: ${r.placaA} / ${r.placaB}`,20,50);
-  d.text(d.splitTextToSize(r.nota,170),20,65);
-  d.save("HECHOS_TRANSITO.pdf");
+  d.text(`Fecha: ${r.fecha} ${r.hora||""}`,20,30);
+  d.text(`Lugar: ${r.lugar}`,20,36);
+  d.text(`Vehículos: ${r.placaA} / ${r.placaB}`,20,46);
+  d.text(d.splitTextToSize(r.nota,170),20,60);
+  d.save("HECHOS_TRANSITO_GELM_2026.pdf");
 }
 
-/* WORD REAL */
 function word(){
-  const r=seleccionado(); if(!r) return;
   const {Document,Packer,Paragraph,TextRun}=window.docx;
+  const r=data.at(-1); if(!r) return;
   const doc=new Document({
     sections:[{
       children:[
         new Paragraph({children:[new TextRun({text:"HECHOS DE TRÁNSITO — GELM 2026",bold:true})]}),
-        new Paragraph(`Fecha: ${r.fecha} ${r.hora}`),
-        new Paragraph(`Lugar: ${r.direccion}`),
+        new Paragraph(`Fecha: ${r.fecha} ${r.hora||""}`),
+        new Paragraph(`Lugar: ${r.lugar}`),
         new Paragraph(`Vehículos: ${r.placaA} / ${r.placaB}`),
         new Paragraph(r.nota)
       ]
     }]
   });
-  Packer.toBlob(doc).then(b=>saveAs(b,"HECHOS_TRANSITO.docx"));
+  Packer.toBlob(doc).then(b=>saveAs(b,"HECHOS_TRANSITO_GELM_2026.docx"));
 }
 
-/* EXCEL */
 function excel(){
-  const r=seleccionado(); if(!r) return;
-  const ws=XLSX.utils.json_to_sheet([r]);
+  const ws=XLSX.utils.json_to_sheet(data);
   const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Hecho");
-  XLSX.writeFile(wb,"HECHOS_TRANSITO.xlsx");
+  XLSX.utils.book_append_sheet(wb,ws,"Hechos");
+  XLSX.writeFile(wb,"HECHOS_TRANSITO_2026.xlsx");
 }
 
 function borrar(){
   if(confirm("¿Borrar todo?")){
-    db=[];selectedIndex=null;
+    data=[];
     localStorage.removeItem(KEY);
     render();
   }
 }
 </script>
-
 </body>
 </html>
