@@ -44,7 +44,7 @@ input,select,textarea{
   color:#fff;
 }
 
-textarea{min-height:80px}
+textarea{min-height:90px}
 
 /* FIRMA */
 canvas{
@@ -110,6 +110,7 @@ footer{text-align:center;font-size:10px;opacity:.6;margin-top:15px;}
 <label>Dirección</label>
 <input id="direccion">
 
+<!-- VEHICULO A -->
 <h3>Vehículo A</h3>
 <div class="grid">
   <input id="a_placa" placeholder="Placa">
@@ -129,6 +130,7 @@ footer{text-align:center;font-size:10px;opacity:.6;margin-top:15px;}
   <input id="a_documento" placeholder="No. Documento">
 </div>
 
+<!-- VEHICULO B -->
 <h3>Vehículo B</h3>
 <div class="grid">
   <input id="b_placa" placeholder="Placa">
@@ -177,38 +179,64 @@ footer{text-align:center;font-size:10px;opacity:.6;margin-top:15px;}
 
 <script>
 const KEY="hechos_gelm_2026";
-let db=JSON.parse(localStorage.getItem(KEY)||"[]");
+let db = JSON.parse(localStorage.getItem(KEY) || "[]");
 
-/* FIRMAS */
+/* ===== FIRMA MOUSE + TOUCH ===== */
 function firma(id){
   const c=document.getElementById(id);
   const ctx=c.getContext("2d");
+
   function resize(){
     const r=c.getBoundingClientRect();
-    c.width=r.width; c.height=r.height;
-    ctx.lineWidth=2; ctx.lineCap="round";
+    c.width=r.width;
+    c.height=r.height;
+    ctx.lineWidth=2;
+    ctx.lineCap="round";
   }
-  resize(); window.addEventListener("resize",resize);
+  resize();
+  window.addEventListener("resize",resize);
+
   let d=false;
-  c.addEventListener("pointerdown",e=>{e.preventDefault();d=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY);});
-  c.addEventListener("pointermove",e=>{if(!d)return;e.preventDefault();ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke();});
+  c.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    d=true;
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX,e.offsetY);
+  });
+  c.addEventListener("pointermove",e=>{
+    if(!d)return;
+    e.preventDefault();
+    ctx.lineTo(e.offsetX,e.offsetY);
+    ctx.stroke();
+  });
   c.addEventListener("pointerup",()=>d=false);
   c.addEventListener("pointerleave",()=>d=false);
 }
 firma("sigA"); firma("sigB");
 
-/* GUARDAR */
+/* ===== GUARDAR ===== */
 function guardar(){
   const r={
     fecha:fecha.value,
     hora:hora.value,
     tipo:tipo.value,
     direccion:direccion.value,
-    a:{placa:a_placa.value},
-    b:{placa:b_placa.value},
+    a:{
+      placa:a_placa.value,tipo:a_tipo.value,marca:a_marca.value,color:a_color.value,
+      nombre:a_nombre.value,lic_tipo:a_lic_tipo.value,
+      licencia:a_licencia.value,documento:a_documento.value
+    },
+    b:{
+      placa:b_placa.value,tipo:b_tipo.value,marca:b_marca.value,color:b_color.value,
+      nombre:b_nombre.value,lic_tipo:b_lic_tipo.value,
+      licencia:b_licencia.value,documento:b_documento.value
+    },
     nota:nota.value
   };
-  if(!r.fecha||!r.a.placa)return alert("Faltan datos");
+  if(!r.fecha || !r.a.placa){
+    alert("Faltan datos obligatorios");
+    return;
+  }
   db.push(r);
   localStorage.setItem(KEY,JSON.stringify(db));
   render();
@@ -226,27 +254,77 @@ function render(){
 }
 render();
 
-/* EXPORTAR */
+/* ===== PDF COMPLETO ===== */
 function exportarPDF(){
   const {jsPDF}=window.jspdf;
   const r=db.at(-1); if(!r)return;
+
   const d=new jsPDF({format:"letter"});
-  d.text("HECHOS DE TRÁNSITO — GELM 2026",105,20,{align:"center"});
+  let y=20;
+
+  d.setFontSize(14);
+  d.text("HECHOS DE TRÁNSITO — GELM 2026",105,y,{align:"center"});
+  y+=12;
+
+  d.setFontSize(10);
+  d.text(`Fecha: ${r.fecha}   Hora: ${r.hora}`,20,y); y+=6;
+  d.text(`Tipo: ${r.tipo}`,20,y); y+=6;
+  d.text(`Dirección: ${r.direccion}`,20,y); y+=10;
+
+  d.text("VEHÍCULO A",20,y); y+=6;
+  d.text(`Placa: ${r.a.placa} | Tipo: ${r.a.tipo} | Marca: ${r.a.marca} | Color: ${r.a.color}`,20,y); y+=6;
+  d.text(`Conductor: ${r.a.nombre}`,20,y); y+=6;
+  d.text(`Licencia: ${r.a.lic_tipo} ${r.a.licencia} | Documento: ${r.a.documento}`,20,y); y+=10;
+
+  d.text("VEHÍCULO B",20,y); y+=6;
+  d.text(`Placa: ${r.b.placa} | Tipo: ${r.b.tipo} | Marca: ${r.b.marca} | Color: ${r.b.color}`,20,y); y+=6;
+  d.text(`Conductor: ${r.b.nombre}`,20,y); y+=6;
+  d.text(`Licencia: ${r.b.lic_tipo} ${r.b.licencia} | Documento: ${r.b.documento}`,20,y); y+=10;
+
+  d.text("NOTA / ACUERDO:",20,y); y+=6;
+  d.text(r.nota||"",20,y,{maxWidth:170});
+
+  d.addImage(sigA.toDataURL(),"PNG",20,200,70,30);
+  d.addImage(sigB.toDataURL(),"PNG",120,200,70,30);
+  d.text("Firma Conductor A",20,235);
+  d.text("Firma Conductor B",120,235);
+
   d.save("HECHOS_GELM_2026.pdf");
 }
 
+/* ===== WORD COMPLETO ===== */
 function exportarWord(){
   const r=db.at(-1); if(!r)return;
+
   const texto=`HECHOS DE TRÁNSITO — GELM 2026
 
 Fecha: ${r.fecha}
 Hora: ${r.hora}
 Tipo: ${r.tipo}
-Vehículo A: ${r.a.placa}
-Vehículo B: ${r.b.placa}
+Dirección: ${r.direccion}
 
-Nota:
-${r.nota}`;
+VEHÍCULO A
+Placa: ${r.a.placa}
+Tipo: ${r.a.tipo}
+Marca: ${r.a.marca}
+Color: ${r.a.color}
+Conductor: ${r.a.nombre}
+Licencia: ${r.a.lic_tipo} ${r.a.licencia}
+Documento: ${r.a.documento}
+
+VEHÍCULO B
+Placa: ${r.b.placa}
+Tipo: ${r.b.tipo}
+Marca: ${r.b.marca}
+Color: ${r.b.color}
+Conductor: ${r.b.nombre}
+Licencia: ${r.b.lic_tipo} ${r.b.licencia}
+Documento: ${r.b.documento}
+
+NOTA / ACUERDO:
+${r.nota}
+`;
+
   const blob=new Blob([texto],{type:"application/msword"});
   const a=document.createElement("a");
   a.href=URL.createObjectURL(blob);
@@ -254,13 +332,36 @@ ${r.nota}`;
   a.click();
 }
 
+/* ===== EXCEL COMPLETO ===== */
 function exportarExcel(){
   if(db.length===0)return;
-  const ws=XLSX.utils.json_to_sheet(db.map(x=>({
-    fecha:x.fecha,hora:x.hora,tipo:x.tipo,
-    vehiculo_a:x.a.placa,vehiculo_b:x.b.placa,
-    nota:x.nota
-  })));
+
+  const data=db.map(r=>({
+    fecha:r.fecha,
+    hora:r.hora,
+    tipo:r.tipo,
+    direccion:r.direccion,
+
+    placa_a:r.a.placa,
+    tipo_a:r.a.tipo,
+    marca_a:r.a.marca,
+    color_a:r.a.color,
+    conductor_a:r.a.nombre,
+    licencia_a:`${r.a.lic_tipo} ${r.a.licencia}`,
+    documento_a:r.a.documento,
+
+    placa_b:r.b.placa,
+    tipo_b:r.b.tipo,
+    marca_b:r.b.marca,
+    color_b:r.b.color,
+    conductor_b:r.b.nombre,
+    licencia_b:`${r.b.lic_tipo} ${r.b.licencia}`,
+    documento_b:r.b.documento,
+
+    nota:r.nota
+  }));
+
+  const ws=XLSX.utils.json_to_sheet(data);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"Hechos");
   XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
@@ -268,7 +369,9 @@ function exportarExcel(){
 
 function borrar(){
   if(confirm("¿Borrar todo?")){
-    db=[]; localStorage.removeItem(KEY); render();
+    db=[];
+    localStorage.removeItem(KEY);
+    render();
   }
 }
 </script>
