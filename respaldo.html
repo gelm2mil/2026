@@ -46,7 +46,6 @@ input,select,textarea{
 
 textarea{min-height:80px}
 
-/* === CANVAS FIRMA (CLAVE PARA MÓVIL) === */
 canvas{
   width:100%;
   height:180px;
@@ -54,7 +53,6 @@ canvas{
   border-radius:12px;
   border:2px dashed #00ffc8;
   touch-action:none;
-  -ms-touch-action:none;
 }
 
 .actions{
@@ -98,7 +96,7 @@ footer{text-align:center;font-size:10px;opacity:.6;margin-top:15px;}
   <div><label>Fecha</label><input type="date" id="fecha"></div>
   <div><label>Hora</label><input type="time" id="hora"></div>
   <div>
-    <label>Tipo de Hecho</label>
+    <label>Tipo</label>
     <select id="tipo">
       <option>Colisión Simple</option>
       <option>Colisión Múltiple</option>
@@ -111,52 +109,26 @@ footer{text-align:center;font-size:10px;opacity:.6;margin-top:15px;}
 <label>Dirección</label>
 <input id="direccion">
 
-<!-- VEHICULO A -->
 <h3>Vehículo A</h3>
 <div class="grid">
   <input id="a_placa" placeholder="Placa">
-  <input id="a_tipo" placeholder="Tipo">
   <input id="a_marca" placeholder="Marca">
-  <input id="a_color" placeholder="Color">
 </div>
 
 <h4>Conductor A</h4>
 <div class="grid">
   <input id="a_nombre" placeholder="Nombre completo">
-  <select id="a_lic_tipo">
-    <option value="">Tipo Licencia</option>
-    <option>A</option>
-    <option>B</option>
-    <option>C</option>
-    <option>M</option>
-    <option>E</option>
-  </select>
-  <input id="a_licencia" placeholder="No. Licencia">
-  <input id="a_documento" placeholder="No. Documento">
 </div>
 
-<!-- VEHICULO B -->
 <h3>Vehículo B</h3>
 <div class="grid">
   <input id="b_placa" placeholder="Placa">
-  <input id="b_tipo" placeholder="Tipo">
   <input id="b_marca" placeholder="Marca">
-  <input id="b_color" placeholder="Color">
 </div>
 
 <h4>Conductor B</h4>
 <div class="grid">
   <input id="b_nombre" placeholder="Nombre completo">
-  <select id="b_lic_tipo">
-    <option value="">Tipo Licencia</option>
-    <option>A</option>
-    <option>B</option>
-    <option>C</option>
-    <option>M</option>
-    <option>E</option>
-  </select>
-  <input id="b_licencia" placeholder="No. Licencia">
-  <input id="b_documento" placeholder="No. Documento">
 </div>
 
 <label>Nota / Acuerdo en el lugar</label>
@@ -188,70 +160,71 @@ footer{text-align:center;font-size:10px;opacity:.6;margin-top:15px;}
 
 <script>
 const KEY="hechos_gelm_2026";
+const URL="https://script.google.com/macros/s/AKfycbxGlZbzWMO46owuATyyDvxIfyFH-dTyqtNGYi7jK-k_P2KcW8ap9hISIgw9A4IB9wQeSA/exec";
+
 let db=JSON.parse(localStorage.getItem(KEY)||"[]");
 
-/* === FIRMA MOUSE + TOUCH (SOLUCIÓN DEFINITIVA) === */
+/* FIRMAS */
 function firma(id){
-  const canvas=document.getElementById(id);
-  const ctx=canvas.getContext("2d");
-
+  const c=document.getElementById(id);
+  const x=c.getContext("2d");
   function resize(){
-    const r=canvas.getBoundingClientRect();
-    canvas.width=r.width;
-    canvas.height=r.height;
-    ctx.lineWidth=2;
-    ctx.lineCap="round";
-    ctx.strokeStyle="#000";
+    const r=c.getBoundingClientRect();
+    c.width=r.width;
+    c.height=r.height;
+    x.lineWidth=2;
+    x.lineCap="round";
   }
   resize();
   window.addEventListener("resize",resize);
 
-  let draw=false;
-
-  canvas.addEventListener("pointerdown",e=>{
-    e.preventDefault();
-    draw=true;
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX,e.offsetY);
+  let d=false;
+  c.addEventListener("pointerdown",e=>{
+    e.preventDefault();d=true;
+    x.beginPath();x.moveTo(e.offsetX,e.offsetY);
   });
-  canvas.addEventListener("pointermove",e=>{
-    if(!draw)return;
+  c.addEventListener("pointermove",e=>{
+    if(!d)return;
     e.preventDefault();
-    ctx.lineTo(e.offsetX,e.offsetY);
-    ctx.stroke();
+    x.lineTo(e.offsetX,e.offsetY);x.stroke();
   });
-  canvas.addEventListener("pointerup",e=>{
-    e.preventDefault();
-    draw=false;
-  });
-  canvas.addEventListener("pointerleave",()=>draw=false);
+  c.addEventListener("pointerup",()=>d=false);
+  c.addEventListener("pointerleave",()=>d=false);
 }
-firma("sigA");
-firma("sigB");
+firma("sigA");firma("sigB");
 
-/* === GUARDAR === */
+/* GUARDAR + RESPALDO */
 function guardar(){
   const r={
     fecha:fecha.value,
     hora:hora.value,
     tipo:tipo.value,
     direccion:direccion.value,
-    a:{
-      placa:a_placa.value,tipo:a_tipo.value,marca:a_marca.value,color:a_color.value,
-      nombre:a_nombre.value,lic_tipo:a_lic_tipo.value,
-      licencia:a_licencia.value,documento:a_documento.value
-    },
-    b:{
-      placa:b_placa.value,tipo:b_tipo.value,marca:b_marca.value,color:b_color.value,
-      nombre:b_nombre.value,lic_tipo:b_lic_tipo.value,
-      licencia:b_licencia.value,documento:b_documento.value
-    },
-    nota:nota.value
+    placa_a:a_placa.value,
+    conductor_a:a_nombre.value,
+    placa_b:b_placa.value,
+    conductor_b:b_nombre.value,
+    nota:nota.value,
+    userAgent:navigator.userAgent
   };
-  if(!r.fecha||!r.a.placa)return alert("Faltan datos obligatorios");
+
+  if(!r.fecha||!r.placa_a){
+    alert("Faltan datos obligatorios");
+    return;
+  }
+
   db.push(r);
   localStorage.setItem(KEY,JSON.stringify(db));
   render();
+
+  /* 🔥 RESPALDO A GOOGLE SHEETS */
+  fetch(URL,{
+    method:"POST",
+    body:JSON.stringify(r),
+    headers:{ "Content-Type":"application/json" }
+  })
+  .then(()=>console.log("✔ Respaldo enviado"))
+  .catch(e=>console.error("Error respaldo",e));
 }
 
 function render(){
@@ -260,47 +233,38 @@ function render(){
       <td>${x.fecha}</td>
       <td>${x.hora}</td>
       <td>${x.tipo}</td>
-      <td>${x.a.placa}</td>
-      <td>${x.b.placa}</td>
+      <td>${x.placa_a}</td>
+      <td>${x.placa_b}</td>
     </tr>`).join("");
 }
 render();
 
-/* === PDF CARTA === */
+/* PDF CARTA */
 function pdf(){
   const {jsPDF}=window.jspdf;
   const r=db.at(-1); if(!r)return;
 
   const d=new jsPDF({format:"letter"});
   let y=20;
-
-  d.setFontSize(14);
   d.text("HECHOS DE TRÁNSITO — GELM 2026",105,y,{align:"center"});
-  y+=15;
-
-  d.setFontSize(10);
-  d.text(`Fecha: ${r.fecha}   Hora: ${r.hora}`,20,y); y+=8;
+  y+=12;
+  d.text(`Fecha: ${r.fecha} Hora: ${r.hora}`,20,y); y+=8;
   d.text(`Tipo: ${r.tipo}`,20,y); y+=8;
   d.text(`Dirección: ${r.direccion}`,20,y); y+=10;
-
-  d.text(`Vehículo A: ${r.a.placa} | ${r.a.tipo} | ${r.a.marca} | ${r.a.color}`,20,y); y+=6;
-  d.text(`Conductor A: ${r.a.nombre} | Lic ${r.a.lic_tipo} ${r.a.licencia}`,20,y); y+=10;
-
-  d.text(`Vehículo B: ${r.b.placa} | ${r.b.tipo} | ${r.b.marca} | ${r.b.color}`,20,y); y+=6;
-  d.text(`Conductor B: ${r.b.nombre} | Lic ${r.b.lic_tipo} ${r.b.licencia}`,20,y); y+=10;
-
+  d.text(`Vehículo A: ${r.placa_a} - ${r.conductor_a}`,20,y); y+=8;
+  d.text(`Vehículo B: ${r.placa_b} - ${r.conductor_b}`,20,y); y+=10;
   d.text("Nota:",20,y); y+=6;
   d.text(r.nota||"",20,y,{maxWidth:170});
 
-  d.addImage(sigA.toDataURL("image/png"),"PNG",20,200,70,30);
-  d.addImage(sigB.toDataURL("image/png"),"PNG",120,200,70,30);
-  d.text("Firma Conductor A",20,235);
-  d.text("Firma Conductor B",120,235);
+  d.addImage(sigA.toDataURL(),"PNG",20,200,70,30);
+  d.addImage(sigB.toDataURL(),"PNG",120,200,70,30);
+  d.text("Firma A",20,235);
+  d.text("Firma B",120,235);
 
   d.save("HECHOS_GELM_2026.pdf");
 }
 
-/* === WORD / EXCEL === */
+/* WORD / EXCEL */
 function word(){
   const r=db.at(-1); if(!r)return;
   const texto=`HECHOS DE TRÁNSITO — GELM 2026
@@ -310,11 +274,8 @@ Hora: ${r.hora}
 Tipo: ${r.tipo}
 Dirección: ${r.direccion}
 
-Vehículo A: ${r.a.placa} ${r.a.marca}
-Conductor A: ${r.a.nombre}
-
-Vehículo B: ${r.b.placa} ${r.b.marca}
-Conductor B: ${r.b.nombre}
+Vehículo A: ${r.placa_a} - ${r.conductor_a}
+Vehículo B: ${r.placa_b} - ${r.conductor_b}
 
 Nota:
 ${r.nota}`;
