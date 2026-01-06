@@ -70,6 +70,28 @@
 .registros th{background:#00ffc8;color:#000;}
 
 footer{text-align:center;font-size:11px;opacity:.6;margin-top:18px;}
+  /* ===== FIX DEFINITIVO – ALTURA REAL EN CONSIGNACIÓN ===== */
+@media (max-width: 600px){
+
+  .consignacion-box .tabla input,
+  .consignacion-box .tabla textarea{
+    min-height: 48px !important;
+    line-height: 1.4;
+  }
+
+  .consignacion-box .tabla textarea{
+    min-height: 70px !important;
+  }
+}
+
+/* ===== EFECTO FOCO (OPCIONAL, RECOMENDADO) ===== */
+.consignacion-box .tabla input:focus,
+.consignacion-box .tabla textarea:focus{
+  box-shadow:
+    0 0 0 1px rgba(0,255,200,.8),
+    inset 0 0 12px rgba(0,255,200,.35);
+}
+
 </style>
 </head>
 
