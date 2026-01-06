@@ -91,6 +91,31 @@ footer{text-align:center;font-size:11px;opacity:.6;margin-top:18px;}
     0 0 0 1px rgba(0,255,200,.8),
     inset 0 0 12px rgba(0,255,200,.35);
 }
+/* ===== FUERZA ALTURA REAL (IGNORA CSS GLOBAL) ===== */
+@media (max-width: 600px){
+
+  .consignacion-box .tabla input{
+    height: 48px !important;
+    max-height: none !important;
+    line-height: 48px !important;
+  }
+
+  .consignacion-box .tabla textarea{
+    height: auto !important;
+    min-height: 80px !important;
+  }
+}
+/* ===== EVITA QUE LA TABLA APLASTE LOS CAMPOS ===== */
+@media (max-width: 600px){
+
+  .consignacion-box .tabla{
+    table-layout: auto !important;
+  }
+
+  .consignacion-box .tabla td{
+    vertical-align: middle;
+  }
+}
 
 </style>
 </head>
