@@ -181,12 +181,24 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 
 <script>
-const KEY = "GELM:HECHOS:2026:PMT";
-const SHEETS_URL = "PEGA_AQUI_TU_SCRIPT_GOOGLE";
+/* ===================== INDEXED DB ===================== */
+const DB_NAME = "GELM_DB_2026";
+const STORE = "hechos_transito";
+let dbi;
 
-let db = JSON.parse(localStorage.getItem(KEY) || "[]");
+const req = indexedDB.open(DB_NAME,1);
+req.onupgradeneeded = e=>{
+  dbi = e.target.result;
+  if(!dbi.objectStoreNames.contains(STORE)){
+    dbi.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
+  }
+};
+req.onsuccess = e=>{
+  dbi = e.target.result;
+  render();
+};
 
-/* ===== FIRMA ===== */
+/* ===================== FIRMAS ===================== */
 function firma(id){
   const c=document.getElementById(id),ctx=c.getContext("2d");
   let d=false;
@@ -198,7 +210,7 @@ function firma(id){
 }
 firma("sigA");firma("sigB");
 
-/* ===== GUARDAR ===== */
+/* ===================== GUARDAR ===================== */
 function guardar(){
   if(!fecha.value||!a_placa.value){alert("Datos obligatorios");return;}
   const r={
@@ -207,56 +219,76 @@ function guardar(){
     b:{placa:b_placa.value,nombre:b_nombre.value},
     agente:{nombre:agente_nombre.value,chapa:agente_chapa.value},
     nota:nota.value,
-    firmaA:sigA.toDataURL(),firmaB:sigB.toDataURL(),
+    firmaA:sigA.toDataURL(),
+    firmaB:sigB.toDataURL(),
     creado:new Date().toISOString()
   };
-  db.push(r);
-  localStorage.setItem(KEY,JSON.stringify(db));
-  render();
-  fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(r)});
+  const tx=dbi.transaction(STORE,"readwrite").objectStore(STORE).add(r);
+  tx.onsuccess=()=>render();
 }
 
-/* ===== TABLA ===== */
+/* ===================== RENDER ===================== */
 function render(){
-  tabla.innerHTML=db.map(x=>`
-    <tr>
-      <td>${x.fecha}</td><td>${x.hora||""}</td>
-      <td>${x.tipo}</td><td>${x.a.placa}</td><td>${x.b.placa}</td>
-    </tr>`).join("");
+  const t=document.getElementById("tabla");
+  t.innerHTML="";
+  const tx=dbi.transaction(STORE).objectStore(STORE).getAll();
+  tx.onsuccess=e=>{
+    e.target.result.forEach(x=>{
+      t.innerHTML+=`
+      <tr>
+        <td>${x.fecha}</td>
+        <td>${x.hora||""}</td>
+        <td>${x.tipo}</td>
+        <td>${x.a.placa}</td>
+        <td>${x.b.placa}</td>
+      </tr>`;
+    });
+  };
 }
-render();
 
-/* ===== EXPORTS ===== */
+/* ===================== EXPORTS ===================== */
 function exportarPDF(){
   const {jsPDF}=window.jspdf;
-  const r=db.at(-1); if(!r)return;
-  const d=new jsPDF(); let y=20;
-  d.text("HECHOS DE TRÁNSITO — GELM 2026",105,y,{align:"center"}); y+=10;
-  d.text(`Fecha: ${r.fecha} Hora: ${r.hora}`,20,y); y+=8;
-  d.text(`Tipo: ${r.tipo}`,20,y); y+=8;
-  d.text(`Dirección: ${r.direccion}`,20,y); y+=8;
-  d.text(`Vehículo A: ${r.a.placa}`,20,y); y+=6;
-  d.text(`Vehículo B: ${r.b.placa}`,20,y); y+=10;
-  d.addImage(r.firmaA,"PNG",20,200,70,30);
-  d.addImage(r.firmaB,"PNG",120,200,70,30);
-  d.save("HECHOS_GELM_2026.pdf");
+  const tx=dbi.transaction(STORE).objectStore(STORE).getAll();
+  tx.onsuccess=e=>{
+    const r=e.target.result.at(-1); if(!r)return;
+    const d=new jsPDF(); let y=20;
+    d.text("HECHOS DE TRÁNSITO — GELM 2026",105,y,{align:"center"}); y+=10;
+    d.text(`Fecha: ${r.fecha} Hora: ${r.hora}`,20,y); y+=8;
+    d.text(`Tipo: ${r.tipo}`,20,y); y+=8;
+    d.text(`Dirección: ${r.direccion}`,20,y); y+=8;
+    d.text(`Vehículo A: ${r.a.placa}`,20,y); y+=6;
+    d.text(`Vehículo B: ${r.b.placa}`,20,y); y+=10;
+    d.addImage(r.firmaA,"PNG",20,200,70,30);
+    d.addImage(r.firmaB,"PNG",120,200,70,30);
+    d.save("HECHOS_GELM_2026.pdf");
+  };
 }
 function exportarWord(){
-  const r=db.at(-1); if(!r)return;
-  const t=`HECHOS DE TRÁNSITO\nFecha:${r.fecha}\nHora:${r.hora}\nTipo:${r.tipo}\n${r.nota}`;
-  const b=new Blob([t],{type:"application/msword"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);a.download="HECHOS_GELM_2026.doc";a.click();
+  const tx=dbi.transaction(STORE).objectStore(STORE).getAll();
+  tx.onsuccess=e=>{
+    const r=e.target.result.at(-1); if(!r)return;
+    const t=`HECHOS DE TRÁNSITO\nFecha:${r.fecha}\nHora:${r.hora}\nTipo:${r.tipo}\n${r.nota}`;
+    const b=new Blob([t],{type:"application/msword"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(b);a.download="HECHOS_GELM_2026.doc";a.click();
+  };
 }
 function exportarExcel(){
-  const ws=XLSX.utils.json_to_sheet(db);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Hechos");
-  XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
+  const tx=dbi.transaction(STORE).objectStore(STORE).getAll();
+  tx.onsuccess=e=>{
+    const ws=XLSX.utils.json_to_sheet(e.target.result);
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,"Hechos");
+    XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
+  };
 }
+
+/* ===================== BORRAR ===================== */
 function borrar(){
   if(confirm("¿BORRAR TODO?")){
-    db=[];localStorage.removeItem(KEY);render();
+    const tx=dbi.transaction(STORE,"readwrite").objectStore(STORE).clear();
+    tx.onsuccess=()=>render();
   }
 }
 </script>
