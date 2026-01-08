@@ -130,16 +130,88 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 
 <!-- ================= JS ================= -->
 <script>
-const KEY="agenda_2026_gelm";
-let data=JSON.parse(localStorage.getItem(KEY)||"[]");
+/* ===============================
+   CONFIGURACIÓN SEGURA
+================================ */
+const LEGACY_KEY = "agenda_2026_gelm"; // respaldo viejo
+const DB_NAME = "GELM_SYSTEM_2026";
+const STORE_NAME = "AGENDA";
+const MIGRATED_FLAG = "GELM_AGENDA_MIGRATED";
+
+let dbIDB = null;
+let data = [];
 
 const f=id=>document.getElementById(id);
 
-function agregar(){
+/* ===============================
+   INDEXEDDB
+================================ */
+function abrirDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains(STORE_NAME)){
+        db.createObjectStore(STORE_NAME,{keyPath:"id",autoIncrement:true});
+      }
+    };
+    req.onsuccess=e=>{dbIDB=e.target.result;resolve(dbIDB)};
+    req.onerror=()=>reject("Error IndexedDB");
+  });
+}
+
+/* ===============================
+   MIGRACIÓN SEGURA
+================================ */
+async function migrar(){
+  if(localStorage.getItem(MIGRATED_FLAG)) return;
+  const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||"[]");
+  if(!legacy.length) return;
+
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
+  const store=tx.objectStore(STORE_NAME);
+  legacy.forEach(r=>store.add(r));
+
+  tx.oncomplete=()=>{
+    localStorage.setItem(MIGRATED_FLAG,"YES");
+    console.log("✔ Migración completada");
+  };
+}
+
+/* ===============================
+   RENDER
+================================ */
+async function render(){
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readonly");
+  const store=tx.objectStore(STORE_NAME);
+  store.getAll().onsuccess=e=>{
+    data=e.target.result||[];
+    const t=f("tabla");t.innerHTML="";
+    f("vacio").style.display=data.length?"none":"block";
+    data.forEach(r=>{
+      t.innerHTML+=`
+        <tr>
+          <td>${r.fecha}</td>
+          <td>${r.hora||""}</td>
+          <td>${r.categoria}</td>
+          <td>${r.apoyo||"-"}</td>
+          <td>${r.lugar||"-"}</td>
+          <td>${r.detalle}</td>
+        </tr>`;
+    });
+  };
+}
+
+/* ===============================
+   AGREGAR
+================================ */
+async function agregar(){
   if(!f("fecha").value||!f("detalle").value){
     alert("Fecha y detalle requeridos");return;
   }
-  const registro={
+  const r={
     fecha:f("fecha").value,
     hora:f("hora").value,
     categoria:f("categoria").value,
@@ -147,58 +219,50 @@ function agregar(){
     lugar:f("lugar").value,
     detalle:f("detalle").value
   };
-  data.push(registro);
-  localStorage.setItem(KEY,JSON.stringify(data));
-  render();
 
-  // 👉 ENVÍO A GOOGLE SHEETS
-  enviarAgendaGoogle(registro);
-
-  f("detalle").value="";
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
+  tx.objectStore(STORE_NAME).add(r);
+  tx.oncomplete=()=>{
+    render();
+    enviarAgendaGoogle(r);
+    f("detalle").value="";
+  };
 }
 
-function render(){
-  const t=f("tabla");t.innerHTML="";
-  f("vacio").style.display=data.length?"none":"block";
-  data.forEach(r=>{
-    t.innerHTML+=`
-    <tr>
-      <td>${r.fecha}</td><td>${r.hora||""}</td>
-      <td>${r.categoria}</td><td>${r.apoyo||"-"}</td>
-      <td>${r.lugar||"-"}</td><td>${r.detalle}</td>
-    </tr>`;
-  });
+/* ===============================
+   BORRAR (CONSCIENTE)
+================================ */
+async function borrar(){
+  if(!confirm("¿Borrar TODO el año 2026?")) return;
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
+  tx.objectStore(STORE_NAME).clear();
+  tx.oncomplete=()=>render();
 }
 
-function borrar(){
-  if(confirm("¿Borrar todo el año 2026?")){
-    data=[];localStorage.removeItem(KEY);render();
-  }
-}
-
+/* ===============================
+   EXPORTACIONES
+================================ */
 function exportarExcel(){
   const ws=XLSX.utils.json_to_sheet(data);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"Agenda");
   XLSX.writeFile(wb,"AGENDA_2026.xlsx");
 }
-
 function exportarPDF(){
   html2pdf().from(document.getElementById("pdfArea"))
     .set({filename:"AGENDA_2026.pdf"}).save();
 }
-
 function exportarWord(){
-  const {Document,Packer,Paragraph,TextRun}=window.docx;
+  const {Document,Packer,Paragraph}=window.docx;
   const doc=new Document({
-    sections:[{
-      children:[
-        new Paragraph({children:[new TextRun({text:"AGENDA PMT 2026",bold:true})]}),
-        ...data.map(r=>new Paragraph(
-          `${r.fecha} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle}`
-        ))
-      ]
-    }]
+    sections:[{children:[
+      new Paragraph("AGENDA PMT 2026"),
+      ...data.map(r=>new Paragraph(
+        `${r.fecha} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle}`
+      ))
+    ]}]
   });
   Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
 }
@@ -207,13 +271,15 @@ function modoAuditoria(){
   document.body.classList.toggle("audit");
 }
 
+/* ===============================
+   INIT
+================================ */
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
-render();
+migrar().then(render);
 </script>
 
-<!-- 🔗 CONEXIÓN GOOGLE SHEETS -->
+<!-- GOOGLE SHEETS -->
 <script src="agen.js"></script>
 
 </body>
 </html>
-
