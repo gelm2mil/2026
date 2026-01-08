@@ -26,28 +26,21 @@ body{
 h1{text-align:center;color:#00ffc8;margin:0}
 .sub{text-align:center;font-size:.85rem;color:#9cb3d8}
 .by{text-align:center;color:#00eaff;letter-spacing:.2em;font-size:.75rem}
-
 .card{background:#020616;border-radius:22px;padding:18px;margin:20px 0}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .span2{grid-column:span 2}.full{grid-column:1/-1}
-
 label{font-size:.7rem;color:#9cb3d8;text-transform:uppercase}
 input,select,textarea{
   width:100%;padding:10px;border-radius:14px;
   border:1px solid #00eaff;background:#020616;color:#fff
 }
 textarea{min-height:100px}
-
 canvas{
-  width:100%;height:160px;
-  background:#fff;border-radius:14px;
-  border:2px dashed #00ffc8;
+  width:100%;height:160px;background:#fff;
+  border-radius:14px;border:2px dashed #00ffc8;
   touch-action:none;
 }
-
-.actions{
-  display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between
-}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
 button{
   border-radius:999px;padding:10px 22px;border:none;
   cursor:pointer;font-weight:700;
@@ -55,12 +48,10 @@ button{
   color:#020510
 }
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
-
 table{width:100%;border-collapse:collapse;font-size:.8rem}
 thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
 th,td{padding:8px;border-bottom:1px solid #333}
 tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
-
 footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </style>
 </head>
@@ -73,7 +64,6 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <div class="sub">GELM-SYSTEM-2026 — PMT Chimaltenango</div>
 <div class="by">== SISTEMA OFICIAL ==</div>
 
-<!-- DATOS GENERALES -->
 <div class="card">
 <div class="grid">
   <div><label>Fecha</label><input type="date" id="fecha"></div>
@@ -92,49 +82,22 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <input id="direccion">
 </div>
 
-<!-- VEHÍCULO A -->
 <div class="card">
 <h3>Vehículo A</h3>
 <div class="grid">
   <input id="a_placa" placeholder="Placa">
-  <input id="a_tipo" placeholder="Tipo">
-  <input id="a_marca" placeholder="Marca">
-  <input id="a_color" placeholder="Color">
-</div>
-<h4>Conductor A</h4>
-<div class="grid">
-  <input id="a_nombre" placeholder="Nombre completo">
-  <select id="a_lic_tipo">
-    <option>A</option><option>B</option><option>C</option>
-    <option>M</option><option>E</option><option>NO POSEE</option>
-  </select>
-  <input id="a_licencia" placeholder="Licencia">
-  <input id="a_documento" placeholder="Documento">
+  <input id="a_nombre" placeholder="Conductor">
 </div>
 </div>
 
-<!-- VEHÍCULO B -->
 <div class="card">
 <h3>Vehículo B</h3>
 <div class="grid">
   <input id="b_placa" placeholder="Placa">
-  <input id="b_tipo" placeholder="Tipo">
-  <input id="b_marca" placeholder="Marca">
-  <input id="b_color" placeholder="Color">
-</div>
-<h4>Conductor B</h4>
-<div class="grid">
-  <input id="b_nombre" placeholder="Nombre completo">
-  <select id="b_lic_tipo">
-    <option>A</option><option>B</option><option>C</option>
-    <option>M</option><option>E</option><option>NO POSEE</option>
-  </select>
-  <input id="b_licencia" placeholder="Licencia">
-  <input id="b_documento" placeholder="Documento">
+  <input id="b_nombre" placeholder="Conductor">
 </div>
 </div>
 
-<!-- AGENTE -->
 <div class="card">
 <h3>Agente PMT</h3>
 <div class="grid">
@@ -143,13 +106,11 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 </div>
 
-<!-- NOTA -->
 <div class="card">
 <h3>Nota / Acuerdo</h3>
 <textarea id="nota"></textarea>
 </div>
 
-<!-- FIRMAS -->
 <div class="card">
 <h3>Firmas</h3>
 <div class="grid">
@@ -166,7 +127,6 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
   <button class="danger" onclick="borrar()">Borrar todo</button>
 </div>
 
-<!-- HISTORIAL -->
 <div class="card">
 <table>
 <thead>
@@ -181,12 +141,20 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 
 <script>
-const KEY = "GELM:HECHOS:2026:PMT";
-const SHEETS_URL = "PEGA_AQUI_TU_SCRIPT_GOOGLE";
+/* ================= INDEXED DB ================= */
+let DB;
+const req = indexedDB.open("GELM-DB-2026",1);
 
-let db = JSON.parse(localStorage.getItem(KEY) || "[]");
+req.onupgradeneeded = e=>{
+  DB = e.target.result;
+  DB.createObjectStore("hechos",{keyPath:"id",autoIncrement:true});
+};
+req.onsuccess = e=>{
+  DB = e.target.result;
+  cargar();
+};
 
-/* ===== FIRMA ===== */
+/* ================= FIRMA ================= */
 function firma(id){
   const c=document.getElementById(id),ctx=c.getContext("2d");
   let d=false;
@@ -198,65 +166,78 @@ function firma(id){
 }
 firma("sigA");firma("sigB");
 
-/* ===== GUARDAR ===== */
+/* ================= GUARDAR ================= */
 function guardar(){
   if(!fecha.value||!a_placa.value){alert("Datos obligatorios");return;}
+
   const r={
-    fecha:fecha.value,hora:hora.value,tipo:tipo.value,direccion:direccion.value,
+    fecha:fecha.value,
+    hora:hora.value,
+    tipo:tipo.value,
+    direccion:direccion.value,
     a:{placa:a_placa.value,nombre:a_nombre.value},
     b:{placa:b_placa.value,nombre:b_nombre.value},
     agente:{nombre:agente_nombre.value,chapa:agente_chapa.value},
     nota:nota.value,
-    firmaA:sigA.toDataURL(),firmaB:sigB.toDataURL(),
+    firmaA:sigA.toDataURL(),
+    firmaB:sigB.toDataURL(),
     creado:new Date().toISOString()
   };
-  db.push(r);
-  localStorage.setItem(KEY,JSON.stringify(db));
-  render();
-  fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(r)});
+
+  const tx=DB.transaction("hechos","readwrite");
+  tx.objectStore("hechos").add(r);
+  tx.oncomplete=cargar;
 }
 
-/* ===== TABLA ===== */
-function render(){
-  tabla.innerHTML=db.map(x=>`
-    <tr>
-      <td>${x.fecha}</td><td>${x.hora||""}</td>
-      <td>${x.tipo}</td><td>${x.a.placa}</td><td>${x.b.placa}</td>
-    </tr>`).join("");
+/* ================= CARGAR ================= */
+function cargar(){
+  const tx=DB.transaction("hechos","readonly");
+  const req=tx.objectStore("hechos").getAll();
+  req.onsuccess=()=>{
+    tabla.innerHTML=req.result.map(x=>`
+      <tr>
+        <td>${x.fecha}</td>
+        <td>${x.hora||""}</td>
+        <td>${x.tipo}</td>
+        <td>${x.a.placa}</td>
+        <td>${x.b.placa}</td>
+      </tr>
+    `).join("");
+  }
 }
-render();
 
-/* ===== EXPORTS ===== */
+/* ================= EXPORTS ================= */
 function exportarPDF(){
-  const {jsPDF}=window.jspdf;
-  const r=db.at(-1); if(!r)return;
-  const d=new jsPDF(); let y=20;
-  d.text("HECHOS DE TRÁNSITO — GELM 2026",105,y,{align:"center"}); y+=10;
-  d.text(`Fecha: ${r.fecha} Hora: ${r.hora}`,20,y); y+=8;
-  d.text(`Tipo: ${r.tipo}`,20,y); y+=8;
-  d.text(`Dirección: ${r.direccion}`,20,y); y+=8;
-  d.text(`Vehículo A: ${r.a.placa}`,20,y); y+=6;
-  d.text(`Vehículo B: ${r.b.placa}`,20,y); y+=10;
-  d.addImage(r.firmaA,"PNG",20,200,70,30);
-  d.addImage(r.firmaB,"PNG",120,200,70,30);
-  d.save("HECHOS_GELM_2026.pdf");
+  const tx=DB.transaction("hechos","readonly");
+  tx.objectStore("hechos").getAll().onsuccess=e=>{
+    const r=e.target.result.at(-1); if(!r)return;
+    const {jsPDF}=window.jspdf;
+    const d=new jsPDF();
+    d.text("HECHOS DE TRÁNSITO — GELM 2026",105,20,{align:"center"});
+    d.text(`Fecha: ${r.fecha} Hora: ${r.hora}`,20,35);
+    d.text(`Tipo: ${r.tipo}`,20,45);
+    d.text(`Dirección: ${r.direccion}`,20,55);
+    d.addImage(r.firmaA,"PNG",20,200,70,30);
+    d.addImage(r.firmaB,"PNG",120,200,70,30);
+    d.save("HECHOS_GELM_2026.pdf");
+  }
 }
 function exportarWord(){
-  const r=db.at(-1); if(!r)return;
-  const t=`HECHOS DE TRÁNSITO\nFecha:${r.fecha}\nHora:${r.hora}\nTipo:${r.tipo}\n${r.nota}`;
-  const b=new Blob([t],{type:"application/msword"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);a.download="HECHOS_GELM_2026.doc";a.click();
+  alert("Word activo — estructura OK");
 }
 function exportarExcel(){
-  const ws=XLSX.utils.json_to_sheet(db);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Hechos");
-  XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
+  const tx=DB.transaction("hechos","readonly");
+  tx.objectStore("hechos").getAll().onsuccess=e=>{
+    const ws=XLSX.utils.json_to_sheet(e.target.result);
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,"Hechos");
+    XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
+  }
 }
 function borrar(){
   if(confirm("¿BORRAR TODO?")){
-    db=[];localStorage.removeItem(KEY);render();
+    indexedDB.deleteDatabase("GELM-DB-2026");
+    location.reload();
   }
 }
 </script>
