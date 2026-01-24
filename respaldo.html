@@ -44,9 +44,17 @@ textarea{min-height:100px}
   grid-template-columns:1fr 1fr;
   gap:14px;
 }
+
+/* En pantallas muy estrechas, una firma por fila */
+@media (max-width: 480px){
+  .firmas-grid{
+    grid-template-columns:1fr;
+  }
+}
+
 .firma-box{
   width:100%;
-  aspect-ratio:3 / 1.6;     /* Siempre horizontal */
+  aspect-ratio:3 / 1.6;
   background:#fff;
   border-radius:14px;
   border:2px dashed #00ffc8;
