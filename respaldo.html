@@ -1,264 +1,167 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Hechos de Tránsito — GELM SYSTEM 2026</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Control de Firmas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- LIBRERÍAS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
 
-<style>
-body{
-  margin:0;
-  font-family:system-ui;
-  background:radial-gradient(circle at top,#24002b,#060012);
-  color:#e9f9ff;
-}
-.shell{max-width:1280px;margin:30px auto;padding:20px}
-.panel{
-  background:rgba(3,5,20,.96);
-  border-radius:28px;
-  padding:26px;
-  box-shadow:0 0 40px rgba(0,234,255,.35)
-}
-h1{text-align:center;color:#00ffc8;margin:0}
-.sub{text-align:center;font-size:.85rem;color:#9cb3d8}
-.by{text-align:center;color:#00eaff;letter-spacing:.2em;font-size:.75rem}
+    .contenedor {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-.card{background:#020616;border-radius:22px;padding:18px;margin:20px 0}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.span2{grid-column:span 2}.full{grid-column:1/-1}
+    h2 {
+      text-align: center;
+    }
 
-label{font-size:.7rem;color:#9cb3d8;text-transform:uppercase}
-input,select,textarea{
-  width:100%;padding:10px;border-radius:14px;
-  border:1px solid #00eaff;background:#020616;color:#fff
-}
-textarea{min-height:100px}
+    .firma-box {
+      width: 100%;
+      height: 220px;
+      border: 2px dashed #444;
+      border-radius: 8px;
+      position: relative;
+      background: #fff;
+    }
 
-canvas{
-  width:100%;height:160px;
-  background:#fff;border-radius:14px;
-  border:2px dashed #00ffc8;
-  touch-action:none;
-}
+    canvas {
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
 
-.actions{
-  display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between
-}
-button{
-  border-radius:999px;padding:10px 22px;border:none;
-  cursor:pointer;font-weight:700;
-  background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);
-  color:#020510
-}
-.danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
+    .botones {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
 
-table{width:100%;border-collapse:collapse;font-size:.8rem}
-thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
-th,td{padding:8px;border-bottom:1px solid #333}
-tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
-</style>
+    .limpiar {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .guardar {
+      background: #2ecc71;
+      color: white;
+    }
+  </style>
 </head>
 
 <body>
-<div class="shell">
-<div class="panel">
+  <div class="contenedor">
+    <h2>Control de Firmas</h2>
 
-<h1>HECHOS DE TRÁNSITO</h1>
-<div class="sub">GELM-SYSTEM-2026 — PMT Chimaltenango</div>
-<div class="by">== SISTEMA OFICIAL ==</div>
+    <div class="firma-box">
+      <canvas id="firma"></canvas>
+    </div>
 
-<!-- DATOS GENERALES -->
-<div class="card">
-<div class="grid">
-  <div><label>Fecha</label><input type="date" id="fecha"></div>
-  <div><label>Hora</label><input type="time" id="hora"></div>
-  <div class="span2">
-    <label>Tipo de Hecho</label>
-    <select id="tipo">
-      <option>Colisión Simple</option>
-      <option>Colisión Múltiple</option>
-      <option>Atropello</option>
-      <option>Daños Materiales</option>
-    </select>
+    <div class="botones">
+      <button class="limpiar" onclick="limpiar()">Limpiar</button>
+      <button class="guardar" onclick="guardar()">Guardar</button>
+    </div>
   </div>
-</div>
-<label>Dirección</label>
-<input id="direccion">
-</div>
 
-<!-- VEHÍCULO A -->
-<div class="card">
-<h3>Vehículo A</h3>
-<div class="grid">
-  <input id="a_placa" placeholder="Placa">
-  <input id="a_tipo" placeholder="Tipo">
-  <input id="a_marca" placeholder="Marca">
-  <input id="a_color" placeholder="Color">
-</div>
-<h4>Conductor A</h4>
-<div class="grid">
-  <input id="a_nombre" placeholder="Nombre completo">
-  <select id="a_lic_tipo">
-    <option>A</option><option>B</option><option>C</option>
-    <option>M</option><option>E</option><option>NO POSEE</option>
-  </select>
-  <input id="a_licencia" placeholder="Licencia">
-  <input id="a_documento" placeholder="Documento">
-</div>
-</div>
+  <script>
+    const canvas = document.getElementById("firma");
+    const ctx = canvas.getContext("2d");
 
-<!-- VEHÍCULO B -->
-<div class="card">
-<h3>Vehículo B</h3>
-<div class="grid">
-  <input id="b_placa" placeholder="Placa">
-  <input id="b_tipo" placeholder="Tipo">
-  <input id="b_marca" placeholder="Marca">
-  <input id="b_color" placeholder="Color">
-</div>
-<h4>Conductor B</h4>
-<div class="grid">
-  <input id="b_nombre" placeholder="Nombre completo">
-  <select id="b_lic_tipo">
-    <option>A</option><option>B</option><option>C</option>
-    <option>M</option><option>E</option><option>NO POSEE</option>
-  </select>
-  <input id="b_licencia" placeholder="Licencia">
-  <input id="b_documento" placeholder="Documento">
-</div>
-</div>
+    function ajustarCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
 
-<!-- AGENTE -->
-<div class="card">
-<h3>Agente PMT</h3>
-<div class="grid">
-  <input id="agente_nombre" placeholder="Nombre del Agente">
-  <input id="agente_chapa" placeholder="Chapa">
-</div>
-</div>
+      canvas.width = rect.width * ratio;
+      canvas.height = rect.height * ratio;
 
-<!-- NOTA -->
-<div class="card">
-<h3>Nota / Acuerdo</h3>
-<textarea id="nota"></textarea>
-</div>
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.strokeStyle = "#000";
+    }
 
-<!-- FIRMAS -->
-<div class="card">
-<h3>Firmas</h3>
-<div class="grid">
-  <canvas id="sigA"></canvas>
-  <canvas id="sigB"></canvas>
-</div>
-</div>
+    window.addEventListener("resize", ajustarCanvas);
+    ajustarCanvas();
 
-<div class="actions">
-  <button onclick="guardar()">Guardar</button>
-  <button onclick="exportarPDF()">PDF</button>
-  <button onclick="exportarWord()">Word</button>
-  <button onclick="exportarExcel()">Excel</button>
-  <button class="danger" onclick="borrar()">Borrar todo</button>
-</div>
+    let dibujando = false;
 
-<!-- HISTORIAL -->
-<div class="card">
-<table>
-<thead>
-<tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Placa A</th><th>Placa B</th></tr>
-</thead>
-<tbody id="tabla"></tbody>
-</table>
-</div>
+    function posicion(e) {
+      const r = canvas.getBoundingClientRect();
+      if (e.touches) {
+        return {
+          x: e.touches[0].clientX - r.left,
+          y: e.touches[0].clientY - r.top
+        };
+      } else {
+        return {
+          x: e.clientX - r.left,
+          y: e.clientY - r.top
+        };
+      }
+    }
 
-<footer>© 2026 — GELM SYSTEM — PMT</footer>
-</div>
-</div>
+    canvas.addEventListener("mousedown", e => {
+      dibujando = true;
+      const p = posicion(e);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+    });
 
-<script>
-const KEY = "GELM:HECHOS:2026:PMT";
-const SHEETS_URL = "PEGA_AQUI_TU_SCRIPT_GOOGLE";
+    canvas.addEventListener("mousemove", e => {
+      if (!dibujando) return;
+      const p = posicion(e);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    });
 
-let db = JSON.parse(localStorage.getItem(KEY) || "[]");
+    window.addEventListener("mouseup", () => dibujando = false);
 
-/* ===== FIRMA ===== */
-function firma(id){
-  const c=document.getElementById(id),ctx=c.getContext("2d");
-  let d=false;
-  function r(){c.width=c.offsetWidth;c.height=c.offsetHeight;ctx.lineWidth=2;}
-  r();window.addEventListener("resize",r);
-  c.onpointerdown=e=>{d=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY)}
-  c.onpointermove=e=>{if(d){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke()}}
-  window.onpointerup=()=>d=false;
-}
-firma("sigA");firma("sigB");
+    canvas.addEventListener("touchstart", e => {
+      e.preventDefault();
+      dibujando = true;
+      const p = posicion(e);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+    });
 
-/* ===== GUARDAR ===== */
-function guardar(){
-  if(!fecha.value||!a_placa.value){alert("Datos obligatorios");return;}
-  const r={
-    fecha:fecha.value,hora:hora.value,tipo:tipo.value,direccion:direccion.value,
-    a:{placa:a_placa.value,nombre:a_nombre.value},
-    b:{placa:b_placa.value,nombre:b_nombre.value},
-    agente:{nombre:agente_nombre.value,chapa:agente_chapa.value},
-    nota:nota.value,
-    firmaA:sigA.toDataURL(),firmaB:sigB.toDataURL(),
-    creado:new Date().toISOString()
-  };
-  db.push(r);
-  localStorage.setItem(KEY,JSON.stringify(db));
-  render();
-  fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(r)});
-}
+    canvas.addEventListener("touchmove", e => {
+      e.preventDefault();
+      if (!dibujando) return;
+      const p = posicion(e);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    });
 
-/* ===== TABLA ===== */
-function render(){
-  tabla.innerHTML=db.map(x=>`
-    <tr>
-      <td>${x.fecha}</td><td>${x.hora||""}</td>
-      <td>${x.tipo}</td><td>${x.a.placa}</td><td>${x.b.placa}</td>
-    </tr>`).join("");
-}
-render();
+    window.addEventListener("touchend", () => dibujando = false);
 
-/* ===== EXPORTS ===== */
-function exportarPDF(){
-  const {jsPDF}=window.jspdf;
-  const r=db.at(-1); if(!r)return;
-  const d=new jsPDF(); let y=20;
-  d.text("HECHOS DE TRÁNSITO — GELM 2026",105,y,{align:"center"}); y+=10;
-  d.text(`Fecha: ${r.fecha} Hora: ${r.hora}`,20,y); y+=8;
-  d.text(`Tipo: ${r.tipo}`,20,y); y+=8;
-  d.text(`Dirección: ${r.direccion}`,20,y); y+=8;
-  d.text(`Vehículo A: ${r.a.placa}`,20,y); y+=6;
-  d.text(`Vehículo B: ${r.b.placa}`,20,y); y+=10;
-  d.addImage(r.firmaA,"PNG",20,200,70,30);
-  d.addImage(r.firmaB,"PNG",120,200,70,30);
-  d.save("HECHOS_GELM_2026.pdf");
-}
-function exportarWord(){
-  const r=db.at(-1); if(!r)return;
-  const t=`HECHOS DE TRÁNSITO\nFecha:${r.fecha}\nHora:${r.hora}\nTipo:${r.tipo}\n${r.nota}`;
-  const b=new Blob([t],{type:"application/msword"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);a.download="HECHOS_GELM_2026.doc";a.click();
-}
-function exportarExcel(){
-  const ws=XLSX.utils.json_to_sheet(db);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Hechos");
-  XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
-}
-function borrar(){
-  if(confirm("¿BORRAR TODO?")){
-    db=[];localStorage.removeItem(KEY);render();
-  }
-}
-</script>
+    function limpiar() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function guardar() {
+      const data = canvas.toDataURL("image/png");
+      console.log(data);
+      alert("Firma capturada correctamente.");
+    }
+  </script>
 </body>
 </html>
