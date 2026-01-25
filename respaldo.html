@@ -148,12 +148,39 @@ let sigAData = null;
 let sigBData = null;
 let guardadoEnSesion = false;
 
+function fitCanvas(c){
+  const rect = c.getBoundingClientRect();
+  const k = window.devicePixelRatio || 1;
+  const ctx = c.getContext('2d');
+  c.width = rect.width * k;
+  c.height = rect.height * k;
+  ctx.setTransform(k,0,0,k,0,0);
+  ctx.lineWidth = 2; ctx.lineCap = 'round';
+}
+
+fitCanvas(sigA); fitCanvas(sigB);
+
+function hookFirma(canvas, which){
+  const ctx = canvas.getContext('2d');
+  let d=false;
+  canvas.addEventListener('pointerdown', e=>{ d=true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); });
+  canvas.addEventListener('pointermove', e=>{
+    if(!d) return;
+    ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke();
+    if(which==='A') sigAData = canvas.toDataURL();
+    if(which==='B') sigBData = canvas.toDataURL();
+  });
+  window.addEventListener('pointerup', ()=>{ d=false; });
+}
+
+hookFirma(sigA,'A'); hookFirma(sigB,'B');
+
 fotos.onchange = () => {
   [...fotos.files].forEach(f=>{
     const r = new FileReader();
     r.onload = e=>{
       fotosData.push(e.target.result);
-      const img = document.createElement("img");
+      const img = document.createElement('img');
       img.src = e.target.result;
       preview.appendChild(img);
     };
@@ -161,36 +188,9 @@ fotos.onchange = () => {
   });
 };
 
-function crearFirma(canvas, which){
-  const ctx = canvas.getContext("2d");
-  let d=false;
-  function ajustar(){
-    const r=canvas.getBoundingClientRect();
-    const k=window.devicePixelRatio||1;
-    canvas.width=r.width*k; canvas.height=r.height*k;
-    ctx.setTransform(k,0,0,k,0,0);
-    ctx.lineWidth=2; ctx.lineCap="round";
-    if(which==="A" && sigAData){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height); img.src=sigAData; }
-    if(which==="B" && sigBData){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height); img.src=sigBData; }
-  }
-  ajustar(); window.addEventListener("resize",ajustar);
-  canvas.onpointerdown=e=>{d=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY)};
-  canvas.onpointermove=e=>{if(d){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke()}};
-  window.addEventListener("pointerup",()=>{
-    if(d){
-      d=false;
-      if(which==="A") sigAData = canvas.toDataURL();
-      if(which==="B") sigBData = canvas.toDataURL();
-    }
-  });
-}
-
-crearFirma(sigA,"A");
-crearFirma(sigB,"B");
-
 function guardarSilencioso(){
-  sigAData = sigA.toDataURL();
-  sigBData = sigB.toDataURL();
+  if(sigA) sigAData = sigA.toDataURL();
+  if(sigB) sigBData = sigB.toDataURL();
   const r={
     fecha:fecha.value,hora:hora.value,tipo:tipo.value,direccion:direccion.value,
     a:{placa:a_placa.value,tipo:a_tipo.value,marca:a_marca.value,color:a_color.value,nombre:a_nombre.value,lic_tipo:a_lic_tipo.value,licencia:a_licencia.value,documento:a_documento.value},
@@ -199,97 +199,79 @@ function guardarSilencioso(){
     nota:nota.value,fotos:fotosData,firmaA:sigAData,firmaB:sigBData
   };
   db.push(r);
-  localStorage.setItem(KEY,JSON.stringify(db));
+  localStorage.setItem(KEY, JSON.stringify(db));
   render();
-  fetch(SHEETS_URL,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"data="+encodeURIComponent(JSON.stringify(r))});
+  fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:'data='+encodeURIComponent(JSON.stringify(r))}).catch(()=>{});
   guardadoEnSesion = true;
 }
 
-function guardar(){
-  if(!fecha.value||!a_placa.value){alert("Datos obligatorios");return;}
-  guardarSilencioso();
-  alert("Hecho guardado.");
-}
+function guardar(){ if(!fecha.value || !a_placa.value) return; guardarSilencioso(); }
 
-function render(){
-  tabla.innerHTML=db.map(x=>`<tr><td>${x.fecha}</td><td>${x.hora||""}</td><td>${x.tipo}</td><td>${x.a.placa}</td><td>${x.b.placa}</td></tr>`).join("");
-}
+function render(){ tabla.innerHTML = db.map(x=>`<tr><td>${x.fecha}</td><td>${x.hora||''}</td><td>${x.tipo}</td><td>${x.a.placa}</td><td>${x.b.placa}</td></tr>`).join(''); }
 render();
 
-function asegurarGuardado(){
-  if(!guardadoEnSesion){
-    if(!fecha.value){alert("Complete los datos primero."); throw new Error("No guardado");}
-    guardarSilencioso();
-  }
-}
+function asegurarGuardado(){ if(!guardadoEnSesion){ if(!fecha.value) throw new Error('No data'); guardarSilencioso(); } }
 
-function exportarPDF(){ asegurarGuardado(); const {jsPDF}=window.jspdf; const r=db.at(-1); const d=new jsPDF(); let y=20;
-  const line=(t)=>{d.text(t,20,y); y+=7; if(y>270){d.addPage(); y=20;}};
-  d.text("HECHOS DE TRÁNSITO — GELM 2026",105,12,{align:"center"});
-  line(`Fecha: ${r.fecha}   Hora: ${r.hora}`); line(`Tipo: ${r.tipo}`); line(`Dirección: ${r.direccion}`); y+=5;
-  line("Vehículo A:"); line(`  Placa: ${r.a.placa}  Tipo: ${r.a.tipo}  Marca: ${r.a.marca}  Color: ${r.a.color}`);
+function downloadBlob(url, name){ const a=document.createElement('a'); a.href=url; a.download=name; document.body.appendChild(a); a.click(); document.body.removeChild(a); }
+
+function exportarPDF(){
+  asegurarGuardado();
+  const {jsPDF}=window.jspdf;
+  const r=db.at(-1);
+  const d=new jsPDF(); let y=20;
+  const line=(t)=>{ d.text(t,20,y); y+=7; if(y>270){ d.addPage(); y=20; } };
+  d.text('HECHOS DE TRÁNSITO — GELM 2026',105,12,{align:'center'});
+  line(`Fecha: ${r.fecha}   Hora: ${r.hora}`);
+  line(`Tipo: ${r.tipo}`);
+  line(`Dirección: ${r.direccion}`); y+=5;
+  line('Vehículo A:');
+  line(`  Placa: ${r.a.placa}  Tipo: ${r.a.tipo}  Marca: ${r.a.marca}  Color: ${r.a.color}`);
   line(`  Conductor: ${r.a.nombre}  Lic: ${r.a.lic_tipo} ${r.a.licencia}  Doc: ${r.a.documento}`); y+=5;
-  line("Vehículo B:"); line(`  Placa: ${r.b.placa}  Tipo: ${r.b.tipo}  Marca: ${r.b.marca}  Color: ${r.b.color}`);
+  line('Vehículo B:');
+  line(`  Placa: ${r.b.placa}  Tipo: ${r.b.tipo}  Marca: ${r.b.marca}  Color: ${r.b.color}`);
   line(`  Conductor: ${r.b.nombre}  Lic: ${r.b.lic_tipo} ${r.b.licencia}  Doc: ${r.b.documento}`); y+=5;
-  line(`Agente PMT: ${r.agente.nombre}  Chapa: ${r.agente.chapa}`); y+=5; line("Nota / Acuerdo:");
-  r.nota.split("\n").forEach(t=>line("  "+t));
-  if(r.fotos && r.fotos.length){ d.addPage(); y=20; r.fotos.forEach(img=>{ if(y>230){d.addPage(); y=20;} d.addImage(img,"JPEG",20,y,80,50); y+=55; }); }
-  d.addPage(); d.text("FIRMAS",105,20,{align:"center"});
-  if(r.firmaA) d.addImage(r.firmaA,"PNG",20,60,70,30);
-  if(r.firmaB) d.addImage(r.firmaB,"PNG",120,60,70,30);
-  d.text("Conductor A",35,100); d.text("Conductor B",135,100);
-  d.save("HECHOS_GELM_2026.pdf");
+  line(`Agente PMT: ${r.agente.nombre}  Chapa: ${r.agente.chapa}`); y+=5;
+  line('Nota / Acuerdo:');
+  (r.nota||'').split('\n').forEach(t=>line('  '+t));
+  if(r.fotos && r.fotos.length){
+    d.addPage(); y=20;
+    r.fotos.forEach(img=>{ if(y>230){ d.addPage(); y=20; } d.addImage(img,'JPEG',20,y,80,50); y+=55; });
+  }
+  d.addPage(); d.text('FIRMAS',105,20,{align:'center'});
+  if(r.firmaA) d.addImage(r.firmaA,'PNG',20,60,70,30);
+  if(r.firmaB) d.addImage(r.firmaB,'PNG',120,60,70,30);
+  const url = d.output('bloburl');
+  downloadBlob(url, 'HECHOS_GELM_2026.pdf');
 }
 
-function exportarWord(){ asegurarGuardado(); const r=db.at(-1);
-  const t=`HECHOS DE TRÁNSITO — GELM 2026
-
-Fecha: ${r.fecha}
-Hora: ${r.hora}
-Tipo: ${r.tipo}
-Dirección: ${r.direccion}
-
-VEHÍCULO A
-Placa: ${r.a.placa}
-Tipo: ${r.a.tipo}
-Marca: ${r.a.marca}
-Color: ${r.a.color}
-Conductor: ${r.a.nombre}
-Licencia: ${r.a.lic_tipo} ${r.a.licencia}
-Documento: ${r.a.documento}
-
-VEHÍCULO B
-Placa: ${r.b.placa}
-Tipo: ${r.b.tipo}
-Marca: ${r.b.marca}
-Color: ${r.b.color}
-Conductor: ${r.b.nombre}
-Licencia: ${r.b.lic_tipo} ${r.b.licencia}
-Documento: ${r.b.documento}
-
-AGENTE PMT
-${r.agente.nombre} — Chapa ${r.agente.chapa}
-
-NOTA / ACUERDO
-${r.nota}
-`;
-  const b=new Blob([t],{type:"application/msword"}); const a=document.createElement("a");
-  a.href=URL.createObjectURL(b); a.download="HECHOS_GELM_2026.doc"; a.click();
+function exportarWord(){
+  asegurarGuardado();
+  const r=db.at(-1);
+  const t=`HECHOS DE TRÁNSITO — GELM 2026\n\nFecha: ${r.fecha}\nHora: ${r.hora}\nTipo: ${r.tipo}\nDirección: ${r.direccion}\n\nVEHÍCULO A\nPlaca: ${r.a.placa}\nTipo: ${r.a.tipo}\nMarca: ${r.a.marca}\nColor: ${r.a.color}\nConductor: ${r.a.nombre}\nLicencia: ${r.a.lic_tipo} ${r.a.licencia}\nDocumento: ${r.a.documento}\n\nVEHÍCULO B\nPlaca: ${r.b.placa}\nTipo: ${r.b.tipo}\nMarca: ${r.b.marca}\nColor: ${r.b.color}\nConductor: ${r.b.nombre}\nLicencia: ${r.b.lic_tipo} ${r.b.licencia}\nDocumento: ${r.b.documento}\n\nAGENTE PMT\n${r.agente.nombre} — Chapa ${r.agente.chapa}\n\nNOTA / ACUERDO\n${r.nota||''}`;
+  const b=new Blob([t],{type:'application/msword'});
+  const url=URL.createObjectURL(b);
+  downloadBlob(url, 'HECHOS_GELM_2026.doc');
 }
 
-function exportarExcel(){ asegurarGuardado();
+function exportarExcel(){
+  asegurarGuardado();
   const ws=XLSX.utils.json_to_sheet(db.map(r=>({fecha:r.fecha,hora:r.hora,tipo:r.tipo,direccion:r.direccion,placaA:r.a.placa,conductorA:r.a.nombre,placaB:r.b.placa,conductorB:r.b.nombre,agente:r.agente.nombre,chapa:r.agente.chapa,nota:r.nota})));
-  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Hechos"); XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Hechos');
+  const out = XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  const url = URL.createObjectURL(new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  downloadBlob(url, 'HECHOS_GELM_2026.xlsx');
 }
 
 function nuevo(){
-  document.querySelectorAll("input, textarea").forEach(i=>i.value=""); tipo.selectedIndex=0;
-  fotosData=[]; preview.innerHTML=""; sigAData=null; sigBData=null; guardadoEnSesion=false;
-  sigA.getContext("2d").clearRect(0,0,sigA.width,sigA.height);
-  sigB.getContext("2d").clearRect(0,0,sigB.width,sigB.height);
+  document.querySelectorAll('input, textarea').forEach(i=>i.value='');
+  tipo.selectedIndex=0; fotosData=[]; preview.innerHTML='';
+  sigAData=null; sigBData=null; guardadoEnSesion=false;
+  sigA.getContext('2d').clearRect(0,0,sigA.width,sigA.height);
+  sigB.getContext('2d').clearRect(0,0,sigB.width,sigB.height);
 }
 
-function borrar(){ if(confirm("¿BORRAR TODO?")){ db=[]; localStorage.removeItem(KEY); render(); } }
+function borrar(){ if(confirm('¿BORRAR TODO?')){ db=[]; localStorage.removeItem(KEY); render(); } }
 </script>
 </body>
 </html>
