@@ -9,66 +9,36 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
-body{
-  margin:0;font-family:system-ui;
-  background:radial-gradient(circle at top,#24002b,#060012);
-  color:#e9f9ff;
-}
+body{margin:0;font-family:system-ui;background:radial-gradient(circle at top,#24002b,#060012);color:#e9f9ff}
 .shell{max-width:1280px;margin:10px auto;padding:12px}
-.panel{
-  background:rgba(3,5,20,.96);
-  border-radius:24px;padding:16px;
-  box-shadow:0 0 30px rgba(0,234,255,.35)
-}
+.panel{background:rgba(3,5,20,.96);border-radius:24px;padding:16px;box-shadow:0 0 30px rgba(0,234,255,.35)}
 h1{text-align:center;color:#00ffc8;margin:0}
 .sub{text-align:center;font-size:.8rem;color:#9cb3d8}
 .by{text-align:center;color:#00eaff;letter-spacing:.15em;font-size:.7rem}
-
 .card{background:#020616;border-radius:18px;padding:14px;margin:12px 0}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 @media (max-width:600px){.grid{grid-template-columns:1fr}}
-
 label{font-size:.7rem;color:#9cb3d8;text-transform:uppercase}
-input,select,textarea{
-  width:100%;padding:12px;border-radius:14px;
-  border:1px solid #00eaff;background:#020616;color:#fff
-}
+input,select,textarea{width:100%;padding:12px;border-radius:14px;border:1px solid #00eaff;background:#020616;color:#fff}
 textarea{min-height:90px}
-
 .firmas-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 @media (max-width:480px){.firmas-grid{grid-template-columns:1fr}}
-
-.firma-box{
-  width:100%;aspect-ratio:3/1.6;background:#fff;
-  border-radius:14px;border:2px dashed #00ffc8
-}
+.firma-box{width:100%;aspect-ratio:3/1.6;background:#fff;border-radius:14px;border:2px dashed #00ffc8}
 .firma-box canvas{width:100%;height:100%;touch-action:none}
-
 .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
-button{
-  border-radius:999px;padding:10px 22px;border:none;
-  cursor:pointer;font-weight:700;
-  background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);
-  color:#020510
-}
+button{border-radius:999px;padding:10px 22px;border:none;cursor:pointer;font-weight:700;background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);color:#020510}
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
-
 .fotos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .fotos-grid img{width:100%;border-radius:10px}
-
 table{width:100%;border-collapse:collapse;font-size:.8rem}
 thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
 th,td{padding:8px;border-bottom:1px solid #333}
 tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
-
 footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:14px}
 </style>
 </head>
-
 <body>
-<div class="shell">
-<div class="panel">
-
+<div class="shell"><div class="panel">
 <h1>HECHOS DE TRÁNSITO</h1>
 <div class="sub">GELM-SYSTEM-2026 — PMT Chimaltenango</div>
 <div class="by">== SISTEMA OFICIAL ==</div>
@@ -77,8 +47,7 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:14px}
 <div class="grid">
   <div><label>Fecha</label><input type="date" id="fecha"></div>
   <div><label>Hora</label><input type="time" id="hora"></div>
-  <div>
-    <label>Tipo</label>
+  <div><label>Tipo</label>
     <select id="tipo">
       <option>Colisión Simple</option>
       <option>Colisión Múltiple</option>
@@ -102,10 +71,7 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:14px}
 <h4>Conductor A</h4>
 <div class="grid">
   <input id="a_nombre" placeholder="Nombre completo">
-  <select id="a_lic_tipo">
-    <option>A</option><option>B</option><option>C</option>
-    <option>M</option><option>E</option><option>NO POSEE</option>
-  </select>
+  <select id="a_lic_tipo"><option>A</option><option>B</option><option>C</option><option>M</option><option>E</option><option>NO POSEE</option></select>
   <input id="a_licencia" placeholder="Licencia">
   <input id="a_documento" placeholder="Documento">
 </div>
@@ -122,10 +88,7 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:14px}
 <h4>Conductor B</h4>
 <div class="grid">
   <input id="b_nombre" placeholder="Nombre completo">
-  <select id="b_lic_tipo">
-    <option>A</option><option>B</option><option>C</option>
-    <option>M</option><option>E</option><option>NO POSEE</option>
-  </select>
+  <select id="b_lic_tipo"><option>A</option><option>B</option><option>C</option><option>M</option><option>E</option><option>NO POSEE</option></select>
   <input id="b_licencia" placeholder="Licencia">
   <input id="b_documento" placeholder="Documento">
 </div>
@@ -168,17 +131,12 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:14px}
 </div>
 
 <div class="card">
-<table>
-<thead>
-<tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Placa A</th><th>Placa B</th></tr>
-</thead>
-<tbody id="tabla"></tbody>
-</table>
+<table><thead><tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Placa A</th><th>Placa B</th></tr></thead>
+<tbody id="tabla"></tbody></table>
 </div>
 
 <footer>© 2026 — GELM SYSTEM — PMT</footer>
-</div>
-</div>
+</div></div>
 
 <script>
 const KEY = "GELM:HECHOS:2026:PMT";
@@ -188,6 +146,7 @@ let db = JSON.parse(localStorage.getItem(KEY) || "[]");
 let fotosData = [];
 let sigAData = null;
 let sigBData = null;
+let guardadoEnSesion = false;
 
 fotos.onchange = () => {
   [...fotos.files].forEach(f=>{
@@ -205,7 +164,6 @@ fotos.onchange = () => {
 function crearFirma(canvas, which){
   const ctx = canvas.getContext("2d");
   let d=false;
-
   function ajustar(){
     const r=canvas.getBoundingClientRect();
     const k=window.devicePixelRatio||1;
@@ -216,7 +174,6 @@ function crearFirma(canvas, which){
     if(which==="B" && sigBData){ const img=new Image(); img.onload=()=>ctx.drawImage(img,0,0,canvas.width,canvas.height); img.src=sigBData; }
   }
   ajustar(); window.addEventListener("resize",ajustar);
-
   canvas.onpointerdown=e=>{d=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY)};
   canvas.onpointermove=e=>{if(d){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke()}};
   window.addEventListener("pointerup",()=>{
@@ -231,8 +188,9 @@ function crearFirma(canvas, which){
 crearFirma(sigA,"A");
 crearFirma(sigB,"B");
 
-function guardar(){
-  if(!fecha.value||!a_placa.value){alert("Datos obligatorios");return;}
+function guardarSilencioso(){
+  sigAData = sigA.toDataURL();
+  sigBData = sigB.toDataURL();
   const r={
     fecha:fecha.value,hora:hora.value,tipo:tipo.value,direccion:direccion.value,
     a:{placa:a_placa.value,tipo:a_tipo.value,marca:a_marca.value,color:a_color.value,nombre:a_nombre.value,lic_tipo:a_lic_tipo.value,licencia:a_licencia.value,documento:a_documento.value},
@@ -243,7 +201,14 @@ function guardar(){
   db.push(r);
   localStorage.setItem(KEY,JSON.stringify(db));
   render();
-  fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(r)});
+  fetch(SHEETS_URL,{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"data="+encodeURIComponent(JSON.stringify(r))});
+  guardadoEnSesion = true;
+}
+
+function guardar(){
+  if(!fecha.value||!a_placa.value){alert("Datos obligatorios");return;}
+  guardarSilencioso();
+  alert("Hecho guardado.");
 }
 
 function render(){
@@ -251,50 +216,32 @@ function render(){
 }
 render();
 
-function exportarPDF(){
-  const {jsPDF}=window.jspdf;
-  const r=db.at(-1); if(!r){alert("No hay datos");return;}
-  const d=new jsPDF(); let y=20;
+function asegurarGuardado(){
+  if(!guardadoEnSesion){
+    if(!fecha.value){alert("Complete los datos primero."); throw new Error("No guardado");}
+    guardarSilencioso();
+  }
+}
+
+function exportarPDF(){ asegurarGuardado(); const {jsPDF}=window.jspdf; const r=db.at(-1); const d=new jsPDF(); let y=20;
   const line=(t)=>{d.text(t,20,y); y+=7; if(y>270){d.addPage(); y=20;}};
   d.text("HECHOS DE TRÁNSITO — GELM 2026",105,12,{align:"center"});
-  line(`Fecha: ${r.fecha}   Hora: ${r.hora}`);
-  line(`Tipo: ${r.tipo}`);
-  line(`Dirección: ${r.direccion}`);
-  y+=5;
-  line("Vehículo A:");
-  line(`  Placa: ${r.a.placa}  Tipo: ${r.a.tipo}  Marca: ${r.a.marca}  Color: ${r.a.color}`);
-  line(`  Conductor: ${r.a.nombre}  Lic: ${r.a.lic_tipo} ${r.a.licencia}  Doc: ${r.a.documento}`);
-  y+=5;
-  line("Vehículo B:");
-  line(`  Placa: ${r.b.placa}  Tipo: ${r.b.tipo}  Marca: ${r.b.marca}  Color: ${r.b.color}`);
-  line(`  Conductor: ${r.b.nombre}  Lic: ${r.b.lic_tipo} ${r.b.licencia}  Doc: ${r.b.documento}`);
-  y+=5;
-  line(`Agente PMT: ${r.agente.nombre}  Chapa: ${r.agente.chapa}`);
-  y+=5;
-  line("Nota / Acuerdo:");
+  line(`Fecha: ${r.fecha}   Hora: ${r.hora}`); line(`Tipo: ${r.tipo}`); line(`Dirección: ${r.direccion}`); y+=5;
+  line("Vehículo A:"); line(`  Placa: ${r.a.placa}  Tipo: ${r.a.tipo}  Marca: ${r.a.marca}  Color: ${r.a.color}`);
+  line(`  Conductor: ${r.a.nombre}  Lic: ${r.a.lic_tipo} ${r.a.licencia}  Doc: ${r.a.documento}`); y+=5;
+  line("Vehículo B:"); line(`  Placa: ${r.b.placa}  Tipo: ${r.b.tipo}  Marca: ${r.b.marca}  Color: ${r.b.color}`);
+  line(`  Conductor: ${r.b.nombre}  Lic: ${r.b.lic_tipo} ${r.b.licencia}  Doc: ${r.b.documento}`); y+=5;
+  line(`Agente PMT: ${r.agente.nombre}  Chapa: ${r.agente.chapa}`); y+=5; line("Nota / Acuerdo:");
   r.nota.split("\n").forEach(t=>line("  "+t));
-
-  if(r.fotos && r.fotos.length){
-    d.addPage(); y=20;
-    r.fotos.forEach(img=>{
-      if(y>230){d.addPage(); y=20;}
-      d.addImage(img,"JPEG",20,y,80,50);
-      y+=55;
-    });
-  }
-
-  d.addPage();
-  d.text("FIRMAS",105,20,{align:"center"});
+  if(r.fotos && r.fotos.length){ d.addPage(); y=20; r.fotos.forEach(img=>{ if(y>230){d.addPage(); y=20;} d.addImage(img,"JPEG",20,y,80,50); y+=55; }); }
+  d.addPage(); d.text("FIRMAS",105,20,{align:"center"});
   if(r.firmaA) d.addImage(r.firmaA,"PNG",20,60,70,30);
   if(r.firmaB) d.addImage(r.firmaB,"PNG",120,60,70,30);
-  d.text("Conductor A",35,100);
-  d.text("Conductor B",135,100);
-
+  d.text("Conductor A",35,100); d.text("Conductor B",135,100);
   d.save("HECHOS_GELM_2026.pdf");
 }
 
-function exportarWord(){
-  const r=db.at(-1); if(!r){alert("No hay datos");return;}
+function exportarWord(){ asegurarGuardado(); const r=db.at(-1);
   const t=`HECHOS DE TRÁNSITO — GELM 2026
 
 Fecha: ${r.fecha}
@@ -326,38 +273,23 @@ ${r.agente.nombre} — Chapa ${r.agente.chapa}
 NOTA / ACUERDO
 ${r.nota}
 `;
-  const b=new Blob([t],{type:"application/msword"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(b);a.download="HECHOS_GELM_2026.doc";a.click();
+  const b=new Blob([t],{type:"application/msword"}); const a=document.createElement("a");
+  a.href=URL.createObjectURL(b); a.download="HECHOS_GELM_2026.doc"; a.click();
 }
 
-function exportarExcel(){
-  if(!db.length){alert("No hay datos");return;}
-  const ws=XLSX.utils.json_to_sheet(db.map(r=>({
-    fecha:r.fecha,hora:r.hora,tipo:r.tipo,direccion:r.direccion,
-    placaA:r.a.placa,conductorA:r.a.nombre,
-    placaB:r.b.placa,conductorB:r.b.nombre,
-    agente:r.agente.nombre,chapa:r.agente.chapa,nota:r.nota
-  })));
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Hechos");
-  XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
+function exportarExcel(){ asegurarGuardado();
+  const ws=XLSX.utils.json_to_sheet(db.map(r=>({fecha:r.fecha,hora:r.hora,tipo:r.tipo,direccion:r.direccion,placaA:r.a.placa,conductorA:r.a.nombre,placaB:r.b.placa,conductorB:r.b.nombre,agente:r.agente.nombre,chapa:r.agente.chapa,nota:r.nota})));
+  const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Hechos"); XLSX.writeFile(wb,"HECHOS_GELM_2026.xlsx");
 }
 
 function nuevo(){
-  document.querySelectorAll("input, textarea").forEach(i=>i.value="");
-  tipo.selectedIndex=0;
-  fotosData=[]; preview.innerHTML="";
-  sigAData=null; sigBData=null;
-  const cA=sigA.getContext("2d"); cA.clearRect(0,0,sigA.width,sigA.height);
-  const cB=sigB.getContext("2d"); cB.clearRect(0,0,sigB.width,sigB.height);
+  document.querySelectorAll("input, textarea").forEach(i=>i.value=""); tipo.selectedIndex=0;
+  fotosData=[]; preview.innerHTML=""; sigAData=null; sigBData=null; guardadoEnSesion=false;
+  sigA.getContext("2d").clearRect(0,0,sigA.width,sigA.height);
+  sigB.getContext("2d").clearRect(0,0,sigB.width,sigB.height);
 }
 
-function borrar(){
-  if(confirm("¿BORRAR TODO?")){
-    db=[];localStorage.removeItem(KEY);render();
-  }
-}
+function borrar(){ if(confirm("¿BORRAR TODO?")){ db=[]; localStorage.removeItem(KEY); render(); } }
 </script>
 </body>
 </html>
