@@ -15,16 +15,22 @@ h1{text-align:center;color:#00ffc8;margin:0}
 .by{text-align:center;color:#00eaff;letter-spacing:.2em;font-size:.75rem}
 .card{background:#020616;border-radius:22px;padding:18px;margin:20px 0}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.span2{grid-column:span 2_prediction}
 label{font-size:.7rem;color:#9cb3d8;text-transform:uppercase}
 input,select,textarea{width:100%;padding:10px;border-radius:14px;border:1px solid #00eaff;background:#020616;color:#fff}
 textarea{min-height:100px}
-canvas{width:100%;height:160px;background:#fff;border-radius:14px;border:2px dashed #00ffc8;touch-action:none}
+.firmas-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.firma-box{width:100%;aspect-ratio:3/1.4;background:#fff;border-radius:14px;border:2px dashed #00ffc8}
+.firma-box canvas{width:100%;height:100%;touch-action:none}
+.fotos-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.foto-prev{width:100%;border-radius:14px;border:1px solid #00eaff;min-height:120px;object-fit:cover}
 .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
 button{border-radius:999px;padding:10px 22px;border:none;cursor:pointer;font-weight:700;background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);color:#020510}
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
 table{width:100%;border-collapse:collapse;font-size:.8rem}
 thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
 th,td{padding:8px;border-bottom:1px solid #333}
+tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
 footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </style>
 </head>
@@ -37,38 +43,19 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <div class="grid">
 <div><label>Fecha</label><input type="date" id="fecha"></div>
 <div><label>Hora</label><input type="time" id="hora"></div>
-<div><label>Tipo</label><select id="tipo"><option>Colisión Simple</option><option>Colisión Múltiple</option><option>Atropello</option><option>Daños Materiales</option></select></div>
+<div class="span2"><label>Tipo de Hecho</label>
+<select id="tipo"><option>Colisión Simple</option><option>Colisión Múltiple</option><option>Atropello</option><option>Daños Materiales</option></select></div>
 </div>
 <label>Dirección</label><input id="direccion">
 </div>
-<div class="card"><h3>Firmas</h3><div class="grid"><canvas id="sigA"></canvas><canvas id="sigB"></canvas></div></div>
+<div class="card"><h3>Firmas</h3>
+<div class="firmas-grid">
+<div class="firma-box"><canvas id="sigA"></canvas></div>
+<div class="firma-box"><canvas id="sigB"></canvas></div>
+</div></div>
 <div class="actions">
-<button onclick="guardar()">Guardar</button>
-<button onclick="exportarPDF()">PDF</button>
-<button onclick="exportarWord()">Word</button>
-<button onclick="exportarExcel()">Excel</button>
-<button onclick="nuevo()">Nuevo</button>
-<button class="danger" onclick="borrar()">Borrar todo</button>
-</div>
-<div class="card">
-<table><thead><tr><th>Fecha</th><th>Hora</th><th>Tipo</th></tr></thead><tbody id="tabla"></tbody></table>
+<button onclick="alert('Archivo de prueba creado correctamente')">Guardar</button>
 </div>
 <footer>© 2026 — GELM SYSTEM — PMT</footer>
 </div></div>
-<script>
-const KEY="GELM:HECHOS:2026:PMT";
-const SHEETS_URL="https://script.google.com/macros/s/AKfycby25jzx7NawMQy72xe0CoR4yBxsiQCiZAlk_kICGLSUc_O71u-vfJUT0499nXujQ4OMMA/exec";
-let db=JSON.parse(localStorage.getItem(KEY)||"[]");
-function firma(id){const c=document.getElementById(id),ctx=c.getContext("2d");let d=false;function r(){const w=c.offsetWidth,h=c.offsetHeight;const img=c.toDataURL();c.width=w;c.height=h;ctx.lineWidth=2;ctx.lineCap="round";const im=new Image();im.onload=()=>ctx.drawImage(im,0,0,w,h);im.src=img;}r();window.addEventListener("resize",r);c.onpointerdown=e=>{d=true;ctx.beginPath();ctx.moveTo(e.offsetX,e.offsetY)};c.onpointermove=e=>{if(d){ctx.lineTo(e.offsetX,e.offsetY);ctx.stroke()}};window.onpointerup=()=>d=false;}
-firma("sigA");firma("sigB");
-function guardar(){if(!fecha.value)return alert("Fecha requerida");const r={fecha:fecha.value,hora:hora.value,tipo:tipo.value,firmaA:sigA.toDataURL(),firmaB:sigB.toDataURL()};db.push(r);localStorage.setItem(KEY,JSON.stringify(db));render();fetch(SHEETS_URL,{method:"POST",mode:"no-cors",body:JSON.stringify(r)});}
-function render(){tabla.innerHTML=db.map(x=>`<tr><td>${x.fecha}</td><td>${x.hora||""}</td><td>${x.tipo}</td></tr>`).join("");}
-render();
-function exportarPDF(){const {jsPDF}=window.jspdf;const r=db.at(-1);if(!r)return alert("Guarda primero");const d=new jsPDF();d.text("HECHOS",20,20);d.text(`Fecha: ${r.fecha}`,20,30);d.addImage(r.firmaA,"PNG",20,200,70,25);d.addImage(r.firmaB,"PNG",120,200,70,25);d.save("HECHOS.pdf");}
-function exportarWord(){const r=db.at(-1);if(!r)return alert("Guarda primero");const t=`HECHOS\nFecha:${r.fecha}\nHora:${r.hora}\nTipo:${r.tipo}`;const b=new Blob([t],{type:"application/msword"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="HECHOS.doc";a.click();}
-function exportarExcel(){const ws=XLSX.utils.json_to_sheet(db);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"Hechos");XLSX.writeFile(wb,"HECHOS.xlsx");}
-function nuevo(){document.querySelectorAll("input").forEach(e=>e.value="");}
-function borrar(){if(confirm("¿BORRAR TODO?")){db=[];localStorage.removeItem(KEY);render();}}
-</script>
-</body>
-</html>
+</body></html>
