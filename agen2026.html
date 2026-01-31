@@ -95,7 +95,7 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </select>
 </div>
 
-<div class="span2"><label>Apoyo (opcional)</label><input id="apoyo"></div>
+<div class="span2"><label>Apoyo</label><input id="apoyo"></div>
 <div class="span2"><label>Lugar / Ruta</label><input id="lugar"></div>
 <div class="full"><label>Detalle</label><textarea id="detalle"></textarea></div>
 </div>
@@ -124,7 +124,10 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <div class="table-wrap">
 <table>
 <thead>
-<tr><th>Fecha</th><th>Hora</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th></tr>
+<tr>
+<th>Fecha</th><th>Hora</th><th>Categoría</th>
+<th>Apoyo</th><th>Lugar</th><th>Detalle</th>
+</tr>
 </thead>
 <tbody id="tabla"></tbody>
 </table>
@@ -141,73 +144,106 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 
 <script>
-const DB_NAME="GELM_SYSTEM_2026",STORE_NAME="AGENDA";
-let dbIDB=null,data=[];
+/* ================= CONFIG ================= */
+const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vROl3F3CXg2pLOvZKbC1hsv3ZC0PrespQKAn6IVKnWNoIdMUE1mYVdNe-1u3sAxeCE1nYYpbiNpBNM9/pub?gid=0&single=true&output=csv";
+const DB_NAME="GELM_SYSTEM_2026",STORE="AGENDA";
+let db,data=[];
 const f=id=>document.getElementById(id);
 
-function abrirDB(){
-  return new Promise((res,rej)=>{
+/* ============ FECHA HUMANA ============ */
+const humanDate=d=>{
+  if(!d) return "";
+  const [y,m,da]=d.split("-");
+  return `${da}/${m}/${y}`;
+};
+
+/* ============ DB ============ */
+function openDB(){
+  return new Promise(res=>{
     const r=indexedDB.open(DB_NAME,1);
     r.onupgradeneeded=e=>{
       const db=e.target.result;
-      if(!db.objectStoreNames.contains(STORE_NAME))
-        db.createObjectStore(STORE_NAME,{keyPath:"id",autoIncrement:true});
+      if(!db.objectStoreNames.contains(STORE))
+        db.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
     };
-    r.onsuccess=e=>{dbIDB=e.target.result;res()};
-    r.onerror=()=>rej();
+    r.onsuccess=e=>{db=e.target.result;res()};
   });
 }
 
 async function render(){
-  await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readonly");
-  tx.objectStore(STORE_NAME).getAll().onsuccess=e=>{
-    data=e.target.result||[];
-    pintar(data);
-  };
+  await openDB();
+  db.transaction(STORE,"readonly").objectStore(STORE)
+    .getAll().onsuccess=e=>{
+      data=e.target.result||[];
+      draw(data);
+    };
 }
 
-function pintar(arr){
+function draw(arr){
   const t=f("tabla");t.innerHTML="";
   f("vacio").style.display=arr.length?"none":"block";
   arr.forEach(r=>{
     t.innerHTML+=`
     <tr>
-      <td>${r.fecha}</td><td>${r.hora||""}</td>
-      <td>${r.categoria}</td><td>${r.apoyo||"-"}</td>
-      <td>${r.lugar||"-"}</td><td>${r.detalle}</td>
+      <td>${humanDate(r.fecha)}</td>
+      <td>${r.hora||""}</td>
+      <td>${r.categoria}</td>
+      <td>${r.apoyo||"-"}</td>
+      <td>${r.lugar||"-"}</td>
+      <td>${r.detalle}</td>
     </tr>`;
   });
 }
 
+/* ============ AGREGAR ============ */
 async function agregar(){
-  if(!f("fecha").value||!f("detalle").value) return alert("Fecha y detalle requeridos");
+  if(!f("fecha").value||!f("detalle").value)
+    return alert("Fecha y detalle requeridos");
   const r={
-    fecha:f("fecha").value,hora:f("hora").value,
-    categoria:f("categoria").value,apoyo:f("apoyo").value,
-    lugar:f("lugar").value,detalle:f("detalle").value
+    fecha:f("fecha").value,
+    hora:f("hora").value,
+    categoria:f("categoria").value,
+    apoyo:f("apoyo").value,
+    lugar:f("lugar").value,
+    detalle:f("detalle").value
   };
-  await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
-  tx.objectStore(STORE_NAME).add(r);
-  tx.oncomplete=()=>{render();enviarAgendaGoogle(r);f("detalle").value=""};
+  await openDB();
+  const tx=db.transaction(STORE,"readwrite");
+  tx.objectStore(STORE).add(r);
+  tx.oncomplete=()=>{render();};
 }
 
-function filtrarFecha(){
-  const fch=f("filtroFecha").value;
-  if(!fch) return render();
-  pintar(data.filter(r=>r.fecha===fch));
+/* ============ BUSCAR ============ */
+async function filtrarFecha(){
+  const fecha=f("filtroFecha").value;
+  if(!fecha) return render();
+
+  const local=data.filter(r=>r.fecha===fecha);
+  if(local.length) return draw(local);
+
+  const res=await fetch(SHEET_URL);
+  const txt=await res.text();
+  const rows=txt.split("\n").slice(1);
+  const rem=rows.map(r=>{
+    const c=r.split(",");
+    return {
+      fecha:c[0],hora:c[1],categoria:c[2],
+      apoyo:c[3],lugar:c[4],detalle:c[5]
+    };
+  }).filter(r=>r.fecha===fecha);
+
+  draw(rem);
 }
 
+/* ============ OTROS ============ */
 function borrar(){
   if(!confirm("¿Borrar TODO el año 2026?")) return;
-  abrirDB().then(()=>{
-    const tx=dbIDB.transaction(STORE_NAME,"readwrite");
-    tx.objectStore(STORE_NAME).clear();
+  openDB().then(()=>{
+    const tx=db.transaction(STORE,"readwrite");
+    tx.objectStore(STORE).clear();
     tx.oncomplete=render;
   });
 }
-
 function exportarExcel(){
   const ws=XLSX.utils.json_to_sheet(data);
   const wb=XLSX.utils.book_new();
@@ -224,13 +260,12 @@ function exportarWord(){
     sections:[{children:[
       new Paragraph("AGENDA PMT 2026"),
       ...data.map(r=>new Paragraph(
-        `${r.fecha} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle}`
+        `${humanDate(r.fecha)} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle}`
       ))
     ]}]
   });
   Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
 }
-
 function modoAuditoria(){
   document.body.classList.toggle("audit");
 }
@@ -239,6 +274,5 @@ f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-
 render();
 </script>
 
-<script src="agen.js"></script>
 </body>
 </html>
