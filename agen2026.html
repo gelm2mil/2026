@@ -1,1 +1,313 @@
-<!DOCTYPE html> <html lang="es"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Agenda 2026 By GELM</title> <!-- LIBRERÍAS --> <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script> <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.umd.js"></script> <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script> <style> body{ margin:0; font-family:system-ui; background:radial-gradient(circle at top,#24002b,#060012); color:#e9f9ff } .shell{max-width:1280px;margin:30px auto;padding:20px} .panel{ background:rgba(3,5,20,.96); border-radius:28px; padding:26px; box-shadow:0 0 40px rgba(0,234,255,.35) } h1{text-align:center;color:#00ffc8;margin:0} .sub{text-align:center;font-size:.85rem;color:#9cb3d8} .by{text-align:center;color:#00eaff;letter-spacing:.2em;font-size:.75rem} .card{background:#020616;border-radius:22px;padding:18px;margin:20px 0} .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px} .span2{grid-column:span 2}.full{grid-column:1/-1} label{font-size:.7rem;color:#9cb3d8;text-transform:uppercase} input,select,textarea{ width:100%;padding:10px;border-radius:999px; border:1px solid #00eaff;background:#020616;color:#fff } textarea{border-radius:14px;min-height:90px} .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:14px} button{ border-radius:999px;padding:10px 22px;border:none; cursor:pointer;font-weight:600; background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff); color:#020510 } .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff} .audit{background:#fff !important;color:#000 !important} table{width:100%;border-collapse:collapse;font-size:.85rem} thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510} th,td{padding:8px} tbody tr:nth-child(even){background:rgba(0,255,200,.05)} footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px} @media(max-width:900px){ .grid{grid-template-columns:1fr} .span2{grid-column:1/-1} .actions{flex-direction:column} } </style> </head> <body> <div class="shell"> <div class="panel" id="pdfArea"> <h1>TRANSPORTES 2026 — PMT CHIMALTENANGO</h1> <div class="sub">Unidad de Transportes — Subcomisario / Jefe</div> <div class="by">== BY GELM ==</div> <div class="card"> <h3>Registrar actividad</h3> <div class="grid"> <div class="span2"><label>Fecha</label><input type="date" id="fecha"></div> <div class="span2"><label>Hora</label><input type="time" id="hora"></div> <div class="span2"> <label>Categoría</label> <select id="categoria"> <option>Operativo</option> <option>Supervisión</option> <option>Regulación</option> <option>Nocturno</option> <option>Apoyo</option> <option>Descanso</option> <option>Administrativo</option> <option>Capacitación</option> <option>Reunión</option> <option>Otros</option> </select> </div> <div class="span2"><label>Apoyo (opcional)</label><input id="apoyo"></div> <div class="span2"><label>Lugar / Ruta</label><input id="lugar"></div> <div class="full"><label>Detalle</label><textarea id="detalle"></textarea></div> </div> <div class="actions"> <button onclick="agregar()">Agregar</button> <button onclick="exportarExcel()">Excel</button> <button onclick="exportarPDF()">PDF</button> <button onclick="exportarWord()">Word</button> <button onclick="modoAuditoria()">Modo Auditoría</button> <button class="danger" onclick="borrar()">Borrar todo</button> </div> </div> <div class="card"> <table> <thead> <tr><th>Fecha</th><th>Hora</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th></tr> </thead> <tbody id="tabla"></tbody> </table> <div id="vacio">No hay actividades.</div> </div> <footer> 2026 | <strong>BY GELM</strong> — PMT Chimaltenango<br> <span id="fechaActual"></span> </footer> </div> </div> <!-- ================= JS ================= --> <script> /* =============================== CONFIGURACIÓN SEGURA ================================ */ const LEGACY_KEY = "agenda_2026_gelm"; // respaldo viejo const DB_NAME = "GELM_SYSTEM_2026"; const STORE_NAME = "AGENDA"; const MIGRATED_FLAG = "GELM_AGENDA_MIGRATED"; let dbIDB = null; let data = []; const f=id=>document.getElementById(id); /* =============================== INDEXEDDB ================================ */ function abrirDB(){ return new Promise((resolve,reject)=>{ const req=indexedDB.open(DB_NAME,1); req.onupgradeneeded=e=>{ const db=e.target.result; if(!db.objectStoreNames.contains(STORE_NAME)){ db.createObjectStore(STORE_NAME,{keyPath:"id",autoIncrement:true}); } }; req.onsuccess=e=>{dbIDB=e.target.result;resolve(dbIDB)}; req.onerror=()=>reject("Error IndexedDB"); }); } /* =============================== MIGRACIÓN SEGURA ================================ */ async function migrar(){ if(localStorage.getItem(MIGRATED_FLAG)) return; const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||"[]"); if(!legacy.length) return; await abrirDB(); const tx=dbIDB.transaction(STORE_NAME,"readwrite"); const store=tx.objectStore(STORE_NAME); legacy.forEach(r=>store.add(r)); tx.oncomplete=()=>{ localStorage.setItem(MIGRATED_FLAG,"YES"); console.log("✔ Migración completada"); }; } /* =============================== RENDER ================================ */ async function render(){ await abrirDB(); const tx=dbIDB.transaction(STORE_NAME,"readonly"); const store=tx.objectStore(STORE_NAME); store.getAll().onsuccess=e=>{ data=e.target.result||[]; const t=f("tabla");t.innerHTML=""; f("vacio").style.display=data.length?"none":"block"; data.forEach(r=>{ t.innerHTML+= <tr> <td>${r.fecha}</td> <td>${r.hora||""}</td> <td>${r.categoria}</td> <td>${r.apoyo||"-"}</td> <td>${r.lugar||"-"}</td> <td>${r.detalle}</td> </tr>; }); }; } /* =============================== AGREGAR ================================ */ async function agregar(){ if(!f("fecha").value||!f("detalle").value){ alert("Fecha y detalle requeridos");return; } const r={ fecha:f("fecha").value, hora:f("hora").value, categoria:f("categoria").value, apoyo:f("apoyo").value, lugar:f("lugar").value, detalle:f("detalle").value }; await abrirDB(); const tx=dbIDB.transaction(STORE_NAME,"readwrite"); tx.objectStore(STORE_NAME).add(r); tx.oncomplete=()=>{ render(); enviarAgendaGoogle(r); f("detalle").value=""; }; } /* =============================== BORRAR (CONSCIENTE) ================================ */ async function borrar(){ if(!confirm("¿Borrar TODO el año 2026?")) return; await abrirDB(); const tx=dbIDB.transaction(STORE_NAME,"readwrite"); tx.objectStore(STORE_NAME).clear(); tx.oncomplete=()=>render(); } /* =============================== EXPORTACIONES ================================ */ function exportarExcel(){ const ws=XLSX.utils.json_to_sheet(data); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Agenda"); XLSX.writeFile(wb,"AGENDA_2026.xlsx"); } function exportarPDF(){ html2pdf().from(document.getElementById("pdfArea")) .set({filename:"AGENDA_2026.pdf"}).save(); } function exportarWord(){ const {Document,Packer,Paragraph}=window.docx; const doc=new Document({ sections:[{children:[ new Paragraph("AGENDA PMT 2026"), ...data.map(r=>new Paragraph( ${r.fecha} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle} )) ]}] }); Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx")); } function modoAuditoria(){ document.body.classList.toggle("audit"); } /* =============================== INIT ================================ */ f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT"); migrar().then(render); </script> <!-- GOOGLE SHEETS --> <script src="agen.js"></script> </body> </html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda 2026 By GELM</title>
+
+<!-- LIBRERÍAS -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:system-ui;
+  background:radial-gradient(circle at top,#24002b,#060012);
+  color:#e9f9ff
+}
+.shell{max-width:1280px;margin:30px auto;padding:20px}
+.panel{
+  background:rgba(3,5,20,.96);
+  border-radius:28px;
+  padding:26px;
+  box-shadow:0 0 40px rgba(0,234,255,.35)
+}
+h1{text-align:center;color:#00ffc8;margin:0}
+.sub{text-align:center;font-size:.85rem;color:#9cb3d8}
+.by{text-align:center;color:#00eaff;letter-spacing:.2em;font-size:.75rem}
+
+.card{background:#020616;border-radius:22px;padding:18px;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.span2{grid-column:span 2}
+.full{grid-column:1/-1}
+
+label{font-size:.7rem;color:#9cb3d8;text-transform:uppercase}
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border-radius:999px;
+  border:1px solid #00eaff;
+  background:#020616;
+  color:#fff
+}
+textarea{border-radius:14px;min-height:90px}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:space-between;
+  margin-top:14px
+}
+button{
+  border-radius:999px;
+  padding:10px 22px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+  background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);
+  color:#020510
+}
+.danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
+.audit{background:#fff !important;color:#000 !important}
+
+/* ===== TABLA ===== */
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
+th,td{padding:8px;vertical-align:top}
+tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
+
+/* ===== CHIP CATEGORÍA ===== */
+.chip{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:.65rem;
+  font-weight:700;
+}
+.Operativo{background:#00eaff;color:#020510}
+.Administrativo{background:#ffd700;color:#000}
+.Supervisión{background:#b300ff;color:#fff}
+.Apoyo{background:#00ffc8;color:#020510}
+.Descanso{background:#ff7a3c;color:#fff}
+.Regulación{background:#00b3ff;color:#020510}
+
+/* ===== MÓVIL: TARJETAS ===== */
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
+  .span2{grid-column:1/-1}
+  .actions{flex-direction:column}
+
+  table thead{display:none}
+  table, tbody, tr, td{display:block;width:100%}
+
+  tbody tr{
+    background:linear-gradient(180deg,rgba(0,40,60,.95),rgba(0,15,25,.95));
+    margin-bottom:14px;
+    border-radius:18px;
+    padding:12px;
+    border-left:4px solid #00ffc8;
+    box-shadow:0 0 12px rgba(0,255,200,.35)
+  }
+
+  td{
+    padding:4px 0;
+  }
+
+  td::before{
+    content:attr(data-label);
+    font-size:.65rem;
+    color:#9cb3d8;
+    display:block;
+    text-transform:uppercase
+  }
+}
+
+footer{
+  text-align:center;
+  font-size:.75rem;
+  color:#9cb3d8;
+  margin-top:20px
+}
+</style>
+</head>
+
+<body>
+<div class="shell">
+<div class="panel" id="pdfArea">
+
+<h1>TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
+<div class="sub">Unidad de Transportes — Subcomisario / Jefe</div>
+<div class="by">== BY GELM ==</div>
+
+<div class="card">
+<h3>Registrar actividad</h3>
+
+<div class="grid">
+<div class="span2"><label>Fecha</label><input type="date" id="fecha"></div>
+<div class="span2"><label>Hora</label><input type="time" id="hora"></div>
+
+<div class="span2">
+<label>Categoría</label>
+<select id="categoria">
+<option>Operativo</option>
+<option>Supervisión</option>
+<option>Regulación</option>
+<option>Nocturno</option>
+<option>Apoyo</option>
+<option>Descanso</option>
+<option>Administrativo</option>
+<option>Capacitación</option>
+<option>Reunión</option>
+<option>Otros</option>
+</select>
+</div>
+
+<div class="span2"><label>Apoyo</label><input id="apoyo"></div>
+<div class="span2"><label>Lugar / Ruta</label><input id="lugar"></div>
+<div class="full"><label>Detalle</label><textarea id="detalle"></textarea></div>
+</div>
+
+<div class="actions">
+<button onclick="agregar()">Agregar</button>
+<button onclick="exportarExcel()">Excel</button>
+<button onclick="exportarPDF()">PDF</button>
+<button onclick="exportarWord()">Word</button>
+<button onclick="modoAuditoria()">Modo Auditoría</button>
+<button class="danger" onclick="borrar()">Borrar todo</button>
+</div>
+</div>
+
+<div class="card">
+<table>
+<thead>
+<tr>
+<th>Fecha</th><th>Hora</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+<div id="vacio">No hay actividades.</div>
+</div>
+
+<footer>
+2026 | <strong>BY GELM</strong> — PMT Chimaltenango<br>
+<span id="fechaActual"></span>
+</footer>
+
+</div>
+</div>
+
+<script>
+const LEGACY_KEY="agenda_2026_gelm";
+const DB_NAME="GELM_SYSTEM_2026";
+const STORE_NAME="AGENDA";
+const MIGRATED_FLAG="GELM_AGENDA_MIGRATED";
+let dbIDB=null;
+let data=[];
+const f=id=>document.getElementById(id);
+
+function humanDate(d){
+  if(!d) return "";
+  const [y,m,dd]=d.split("-");
+  return `${dd}/${m}/${y}`;
+}
+
+function abrirDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=e=>{
+      const db=e.target.result;
+      if(!db.objectStoreNames.contains(STORE_NAME)){
+        db.createObjectStore(STORE_NAME,{keyPath:"id",autoIncrement:true});
+      }
+    };
+    req.onsuccess=e=>{dbIDB=e.target.result;resolve()};
+    req.onerror=()=>reject();
+  });
+}
+
+async function migrar(){
+  if(localStorage.getItem(MIGRATED_FLAG)) return;
+  const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||"[]");
+  if(!legacy.length) return;
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
+  legacy.forEach(r=>tx.objectStore(STORE_NAME).add(r));
+  tx.oncomplete=()=>localStorage.setItem(MIGRATED_FLAG,"YES");
+}
+
+async function render(){
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readonly");
+  tx.objectStore(STORE_NAME).getAll().onsuccess=e=>{
+    data=e.target.result||[];
+    const t=f("tabla");
+    t.innerHTML="";
+    f("vacio").style.display=data.length?"none":"block";
+    data.forEach(r=>{
+      t.innerHTML+=`
+      <tr>
+        <td data-label="Fecha">${humanDate(r.fecha)}</td>
+        <td data-label="Hora">${r.hora||""}</td>
+        <td data-label="Categoría"><span class="chip ${r.categoria}">${r.categoria}</span></td>
+        <td data-label="Apoyo">${r.apoyo||"-"}</td>
+        <td data-label="Lugar">${r.lugar||"-"}</td>
+        <td data-label="Detalle">${r.detalle}</td>
+      </tr>`;
+    });
+  };
+}
+
+async function agregar(){
+  if(!f("fecha").value||!f("detalle").value){
+    alert("Fecha y detalle requeridos");return;
+  }
+  const r={
+    fecha:f("fecha").value,
+    hora:f("hora").value,
+    categoria:f("categoria").value,
+    apoyo:f("apoyo").value,
+    lugar:f("lugar").value,
+    detalle:f("detalle").value
+  };
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
+  tx.objectStore(STORE_NAME).add(r);
+  tx.oncomplete=()=>{render();f("detalle").value=""};
+}
+
+async function borrar(){
+  if(!confirm("¿Borrar TODO el año 2026?")) return;
+  await abrirDB();
+  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
+  tx.objectStore(STORE_NAME).clear();
+  tx.oncomplete=()=>render();
+}
+
+function exportarExcel(){
+  const ws=XLSX.utils.json_to_sheet(data);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,"Agenda");
+  XLSX.writeFile(wb,"AGENDA_2026.xlsx");
+}
+function exportarPDF(){
+  html2pdf().from(document.getElementById("pdfArea"))
+    .set({filename:"AGENDA_2026.pdf"}).save();
+}
+function exportarWord(){
+  const {Document,Packer,Paragraph}=window.docx;
+  const doc=new Document({
+    sections:[{children:[
+      new Paragraph("AGENDA PMT 2026"),
+      ...data.map(r=>new Paragraph(
+        `${humanDate(r.fecha)} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle}`
+      ))
+    ]}]
+  });
+  Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
+}
+function modoAuditoria(){
+  document.body.classList.toggle("audit");
+}
+
+f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
+migrar().then(render);
+</script>
+
+<script src="agen.js"></script>
+</body>
+</html>
