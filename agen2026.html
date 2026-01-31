@@ -44,11 +44,18 @@ button{
 }
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
 
-.table-wrap{padding:10px}
-
-.day-group{
-  margin-bottom:20px;
+.table-wrap{
+  max-height:60vh;
+  overflow:auto;
+  border-radius:18px;
+  border:1px solid rgba(0,234,255,.25)
 }
+
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
+th,td{padding:8px}
+tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
+
 .day-title{
   position:sticky;
   top:0;
@@ -57,17 +64,6 @@ button{
   font-weight:700;
   color:#00ffc8;
   border-left:4px solid #00ffc8;
-  margin-bottom:10px;
-  z-index:10;
-}
-
-.resultado-card{
-  background:linear-gradient(180deg,rgba(0,40,60,.95),rgba(0,15,25,.95));
-  border-radius:18px;
-  padding:14px;
-  margin-bottom:12px;
-  border-left:4px solid #00eaff;
-  box-shadow:0 0 12px rgba(0,255,200,.35);
 }
 
 .chip{
@@ -75,29 +71,27 @@ button{
   padding:2px 8px;
   border-radius:999px;
   font-size:.65rem;
-  font-weight:700;
-  margin-right:6px;
+  font-weight:700
 }
 .Operativo{background:#00eaff;color:#020510}
 .Administrativo{background:#ffd700;color:#000}
 .Supervisión{background:#b300ff;color:#fff}
 .Apoyo{background:#00ffc8;color:#020510}
 .Descanso{background:#ff7a3c;color:#fff}
-.Regulación{background:#00b3ff;color:#020510}
 
-.origen{
-  font-size:.6rem;
-  opacity:.7;
-  float:right
+.origen{font-size:.6rem;opacity:.6}
+
+@media(max-width:700px){
+  table,thead{display:none}
+  .resultado-card{
+    background:linear-gradient(180deg,rgba(0,40,60,.95),rgba(0,15,25,.95));
+    border-radius:18px;
+    padding:14px;
+    margin:12px;
+    border-left:4px solid #00ffc8;
+    box-shadow:0 0 12px rgba(0,255,200,.35)
+  }
 }
-
-.detalle{
-  margin-top:6px;
-  font-size:.85rem;
-  border-top:1px dashed rgba(0,255,200,.35);
-  padding-top:6px
-}
-
 footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </style>
 </head>
@@ -111,9 +105,10 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <div class="by">== BY GELM ==</div>
 
 <div class="card">
+<h3>Buscar por fecha</h3>
 <div class="grid">
-<div class="span2"><label>Fecha</label><input type="date" id="filtroFecha"></div>
-<div class="span2"><label>&nbsp;</label><button onclick="filtrarFecha()">Buscar</button></div>
+<div class="span2"><input type="date" id="filtroFecha"></div>
+<div class="span2"><button onclick="filtrarFecha()">Buscar</button></div>
 </div>
 </div>
 
@@ -131,63 +126,48 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vROl3F3CXg2pLOvZKbC1hsv3ZC0PrespQKAn6IVKnWNoIdMUE1mYVdNe-1u3sAxeCE1nYYpbiNpBNM9/pub?gid=0&single=true&output=csv";
 const DB="GELM_SYSTEM_2026",STORE="AGENDA";
 let db,data=[];
-
-const f=id=>document.getElementById(id);
+const f=i=>document.getElementById(i);
 const human=d=>{const[a,b,c]=d.split("-");return `${c}/${b}/${a}`};
 
 function openDB(){
   return new Promise(r=>{
     const q=indexedDB.open(DB,1);
-    q.onupgradeneeded=e=>{
-      e.target.result.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
-    };
+    q.onupgradeneeded=e=>e.target.result.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
     q.onsuccess=e=>{db=e.target.result;r()};
-  });
-}
-
-async function loadLocal(){
-  await openDB();
-  db.transaction(STORE,"readonly").objectStore(STORE)
-    .getAll().onsuccess=e=>data=e.target.result||[];
-}
-
-function draw(arr,origin){
-  const wrap=f("resultados");
-  wrap.innerHTML="";
-  let lastDate="";
-  arr.forEach(r=>{
-    if(r.fecha!==lastDate){
-      wrap.innerHTML+=`<div class="day-title">${human(r.fecha)}</div>`;
-      lastDate=r.fecha;
-    }
-    wrap.innerHTML+=`
-    <div class="resultado-card">
-      <span class="chip ${r.categoria}">${r.categoria}</span>
-      <span class="origen">${origin}</span>
-      <div><strong>${r.hora||""}</strong> — ${r.lugar||""}</div>
-      <div class="detalle">${r.detalle}</div>
-    </div>`;
   });
 }
 
 async function filtrarFecha(){
   const fecha=f("filtroFecha").value;
-  await loadLocal();
-  const local=data.filter(r=>r.fecha===fecha);
-  if(local.length) return draw(local,"📱 LOCAL");
+  const wrap=f("resultados");wrap.innerHTML="";
+  await openDB();
+  const tx=db.transaction(STORE,"readonly").objectStore(STORE).getAll();
+  tx.onsuccess=async e=>{
+    data=e.target.result.filter(r=>r.fecha===fecha);
+    if(!data.length){
+      const res=await fetch(SHEET_URL);
+      const txt=await res.text();
+      data=txt.split("\n").slice(1).map(r=>{
+        const c=r.split(",");
+        return{fecha:c[0],hora:c[1],categoria:c[2],lugar:c[4],detalle:c[5],origen:"☁️ SHEETS"};
+      }).filter(r=>r.fecha===fecha);
+    }else data.forEach(r=>r.origen="📱 LOCAL");
 
-  const res=await fetch(SHEET_URL);
-  const txt=await res.text();
-  const rows=txt.split("\n").slice(1);
-  const rem=rows.map(r=>{
-    const c=r.split(",");
-    return {fecha:c[0],hora:c[1],categoria:c[2],apoyo:c[3],lugar:c[4],detalle:c[5]};
-  }).filter(r=>r.fecha===fecha);
-
-  draw(rem,"☁️ SHEETS");
+    data.forEach(r=>{
+      wrap.innerHTML+=`
+      <div class="day-title">${human(r.fecha)}</div>
+      <div class="resultado-card">
+        <span class="chip ${r.categoria}">${r.categoria}</span>
+        <span class="origen">${r.origen}</span>
+        <div><strong>${r.hora||""}</strong> — ${r.lugar||""}</div>
+        <div>${r.detalle}</div>
+      </div>`;
+    });
+  };
 }
 
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
 </script>
+
 </body>
 </html>
