@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda 2026 By GELM</title>
 
-<!-- LIBRERÍAS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.umd.js"></script>
@@ -37,7 +36,6 @@ input,select,textarea{
 }
 textarea{border-radius:14px;min-height:90px}
 
-.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:14px}
 button{
   border-radius:999px;padding:10px 22px;border:none;
   cursor:pointer;font-weight:600;
@@ -45,98 +43,84 @@ button{
   color:#020510
 }
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
-.audit{background:#fff !important;color:#000 !important}
 
-.table-wrap{
-  max-height:60vh;
-  overflow-y:auto;
-  border-radius:16px;
-  border:1px solid rgba(0,234,255,.25);
+.table-wrap{padding:10px}
+
+.day-group{
+  margin-bottom:20px;
+}
+.day-title{
+  position:sticky;
+  top:0;
+  background:#020616;
+  padding:6px 12px;
+  font-weight:700;
+  color:#00ffc8;
+  border-left:4px solid #00ffc8;
+  margin-bottom:10px;
+  z-index:10;
 }
 
-table{width:100%;border-collapse:collapse;font-size:.85rem}
-thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
-th,td{padding:8px}
-tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
+.resultado-card{
+  background:linear-gradient(180deg,rgba(0,40,60,.95),rgba(0,15,25,.95));
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
+  border-left:4px solid #00eaff;
+  box-shadow:0 0 12px rgba(0,255,200,.35);
+}
+
+.chip{
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:999px;
+  font-size:.65rem;
+  font-weight:700;
+  margin-right:6px;
+}
+.Operativo{background:#00eaff;color:#020510}
+.Administrativo{background:#ffd700;color:#000}
+.Supervisión{background:#b300ff;color:#fff}
+.Apoyo{background:#00ffc8;color:#020510}
+.Descanso{background:#ff7a3c;color:#fff}
+.Regulación{background:#00b3ff;color:#020510}
+
+.origen{
+  font-size:.6rem;
+  opacity:.7;
+  float:right
+}
+
+.detalle{
+  margin-top:6px;
+  font-size:.85rem;
+  border-top:1px dashed rgba(0,255,200,.35);
+  padding-top:6px
+}
 
 footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
-
-@media(max-width:900px){
-  .grid{grid-template-columns:1fr}
-  .span2{grid-column:1/-1}
-  .actions{flex-direction:column}
-}
 </style>
 </head>
 
 <body>
 <div class="shell">
-<div class="panel" id="pdfArea">
+<div class="panel">
 
 <h1>TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
-<div class="sub">Unidad de Transportes — Subcomisario / Jefe</div>
+<div class="sub">Unidad de Transportes</div>
 <div class="by">== BY GELM ==</div>
 
-<!-- REGISTRO -->
 <div class="card">
-<h3>Registrar actividad</h3>
-<div class="grid">
-<div class="span2"><label>Fecha</label><input type="date" id="fecha"></div>
-<div class="span2"><label>Hora</label><input type="time" id="hora"></div>
-
-<div class="span2">
-<label>Categoría</label>
-<select id="categoria">
-<option>Operativo</option><option>Supervisión</option>
-<option>Regulación</option><option>Nocturno</option>
-<option>Apoyo</option><option>Descanso</option>
-<option>Administrativo</option><option>Capacitación</option>
-<option>Reunión</option><option>Otros</option>
-</select>
-</div>
-
-<div class="span2"><label>Apoyo</label><input id="apoyo"></div>
-<div class="span2"><label>Lugar / Ruta</label><input id="lugar"></div>
-<div class="full"><label>Detalle</label><textarea id="detalle"></textarea></div>
-</div>
-
-<div class="actions">
-<button onclick="agregar()">Agregar</button>
-<button onclick="exportarExcel()">Excel</button>
-<button onclick="exportarPDF()">PDF</button>
-<button onclick="exportarWord()">Word</button>
-<button onclick="modoAuditoria()">Modo Auditoría</button>
-<button class="danger" onclick="borrar()">Borrar todo</button>
-</div>
-</div>
-
-<!-- BUSCADOR -->
-<div class="card">
-<h3>Buscar por fecha</h3>
 <div class="grid">
 <div class="span2"><label>Fecha</label><input type="date" id="filtroFecha"></div>
 <div class="span2"><label>&nbsp;</label><button onclick="filtrarFecha()">Buscar</button></div>
 </div>
 </div>
 
-<!-- TABLA -->
-<div class="card">
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-<th>Fecha</th><th>Hora</th><th>Categoría</th>
-<th>Apoyo</th><th>Lugar</th><th>Detalle</th>
-</tr>
-</thead>
-<tbody id="tabla"></tbody>
-</table>
-</div>
-<div id="vacio">No hay actividades.</div>
-</div>
+<div class="card table-wrap" id="resultados"></div>
 
 <footer>
-2026 | <strong>BY GELM</strong> — PMT Chimaltenango<br>
+2026 | BY GELM — PMT Chimaltenango<br>
 <span id="fechaActual"></span>
 </footer>
 
@@ -144,135 +128,66 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 
 <script>
-/* ================= CONFIG ================= */
 const SHEET_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vROl3F3CXg2pLOvZKbC1hsv3ZC0PrespQKAn6IVKnWNoIdMUE1mYVdNe-1u3sAxeCE1nYYpbiNpBNM9/pub?gid=0&single=true&output=csv";
-const DB_NAME="GELM_SYSTEM_2026",STORE="AGENDA";
+const DB="GELM_SYSTEM_2026",STORE="AGENDA";
 let db,data=[];
+
 const f=id=>document.getElementById(id);
+const human=d=>{const[a,b,c]=d.split("-");return `${c}/${b}/${a}`};
 
-/* ============ FECHA HUMANA ============ */
-const humanDate=d=>{
-  if(!d) return "";
-  const [y,m,da]=d.split("-");
-  return `${da}/${m}/${y}`;
-};
-
-/* ============ DB ============ */
 function openDB(){
-  return new Promise(res=>{
-    const r=indexedDB.open(DB_NAME,1);
-    r.onupgradeneeded=e=>{
-      const db=e.target.result;
-      if(!db.objectStoreNames.contains(STORE))
-        db.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
+  return new Promise(r=>{
+    const q=indexedDB.open(DB,1);
+    q.onupgradeneeded=e=>{
+      e.target.result.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
     };
-    r.onsuccess=e=>{db=e.target.result;res()};
+    q.onsuccess=e=>{db=e.target.result;r()};
   });
 }
 
-async function render(){
+async function loadLocal(){
   await openDB();
   db.transaction(STORE,"readonly").objectStore(STORE)
-    .getAll().onsuccess=e=>{
-      data=e.target.result||[];
-      draw(data);
-    };
+    .getAll().onsuccess=e=>data=e.target.result||[];
 }
 
-function draw(arr){
-  const t=f("tabla");t.innerHTML="";
-  f("vacio").style.display=arr.length?"none":"block";
+function draw(arr,origin){
+  const wrap=f("resultados");
+  wrap.innerHTML="";
+  let lastDate="";
   arr.forEach(r=>{
-    t.innerHTML+=`
-    <tr>
-      <td>${humanDate(r.fecha)}</td>
-      <td>${r.hora||""}</td>
-      <td>${r.categoria}</td>
-      <td>${r.apoyo||"-"}</td>
-      <td>${r.lugar||"-"}</td>
-      <td>${r.detalle}</td>
-    </tr>`;
+    if(r.fecha!==lastDate){
+      wrap.innerHTML+=`<div class="day-title">${human(r.fecha)}</div>`;
+      lastDate=r.fecha;
+    }
+    wrap.innerHTML+=`
+    <div class="resultado-card">
+      <span class="chip ${r.categoria}">${r.categoria}</span>
+      <span class="origen">${origin}</span>
+      <div><strong>${r.hora||""}</strong> — ${r.lugar||""}</div>
+      <div class="detalle">${r.detalle}</div>
+    </div>`;
   });
 }
 
-/* ============ AGREGAR ============ */
-async function agregar(){
-  if(!f("fecha").value||!f("detalle").value)
-    return alert("Fecha y detalle requeridos");
-  const r={
-    fecha:f("fecha").value,
-    hora:f("hora").value,
-    categoria:f("categoria").value,
-    apoyo:f("apoyo").value,
-    lugar:f("lugar").value,
-    detalle:f("detalle").value
-  };
-  await openDB();
-  const tx=db.transaction(STORE,"readwrite");
-  tx.objectStore(STORE).add(r);
-  tx.oncomplete=()=>{render();};
-}
-
-/* ============ BUSCAR ============ */
 async function filtrarFecha(){
   const fecha=f("filtroFecha").value;
-  if(!fecha) return render();
-
+  await loadLocal();
   const local=data.filter(r=>r.fecha===fecha);
-  if(local.length) return draw(local);
+  if(local.length) return draw(local,"📱 LOCAL");
 
   const res=await fetch(SHEET_URL);
   const txt=await res.text();
   const rows=txt.split("\n").slice(1);
   const rem=rows.map(r=>{
     const c=r.split(",");
-    return {
-      fecha:c[0],hora:c[1],categoria:c[2],
-      apoyo:c[3],lugar:c[4],detalle:c[5]
-    };
+    return {fecha:c[0],hora:c[1],categoria:c[2],apoyo:c[3],lugar:c[4],detalle:c[5]};
   }).filter(r=>r.fecha===fecha);
 
-  draw(rem);
-}
-
-/* ============ OTROS ============ */
-function borrar(){
-  if(!confirm("¿Borrar TODO el año 2026?")) return;
-  openDB().then(()=>{
-    const tx=db.transaction(STORE,"readwrite");
-    tx.objectStore(STORE).clear();
-    tx.oncomplete=render;
-  });
-}
-function exportarExcel(){
-  const ws=XLSX.utils.json_to_sheet(data);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"Agenda");
-  XLSX.writeFile(wb,"AGENDA_2026.xlsx");
-}
-function exportarPDF(){
-  html2pdf().from(document.getElementById("pdfArea"))
-    .set({filename:"AGENDA_2026.pdf"}).save();
-}
-function exportarWord(){
-  const {Document,Packer,Paragraph}=window.docx;
-  const doc=new Document({
-    sections:[{children:[
-      new Paragraph("AGENDA PMT 2026"),
-      ...data.map(r=>new Paragraph(
-        `${humanDate(r.fecha)} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle}`
-      ))
-    ]}]
-  });
-  Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
-}
-function modoAuditoria(){
-  document.body.classList.toggle("audit");
+  draw(rem,"☁️ SHEETS");
 }
 
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
-render();
 </script>
-
 </body>
 </html>
