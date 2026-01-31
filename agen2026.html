@@ -13,16 +13,14 @@
 
 <style>
 body{
-  margin:0;
-  font-family:system-ui;
+  margin:0;font-family:system-ui;
   background:radial-gradient(circle at top,#24002b,#060012);
   color:#e9f9ff
 }
 .shell{max-width:1280px;margin:30px auto;padding:20px}
 .panel{
   background:rgba(3,5,20,.96);
-  border-radius:28px;
-  padding:26px;
+  border-radius:28px;padding:26px;
   box-shadow:0 0 40px rgba(0,234,255,.35)
 }
 h1{text-align:center;color:#00ffc8;margin:0}
@@ -49,6 +47,13 @@ button{
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
 .audit{background:#fff !important;color:#000 !important}
 
+.table-wrap{
+  max-height:60vh;
+  overflow-y:auto;
+  border-radius:16px;
+  border:1px solid rgba(0,234,255,.25);
+}
+
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
 th,td{padding:8px}
@@ -72,9 +77,9 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <div class="sub">Unidad de Transportes — Subcomisario / Jefe</div>
 <div class="by">== BY GELM ==</div>
 
+<!-- REGISTRO -->
 <div class="card">
 <h3>Registrar actividad</h3>
-
 <div class="grid">
 <div class="span2"><label>Fecha</label><input type="date" id="fecha"></div>
 <div class="span2"><label>Hora</label><input type="time" id="hora"></div>
@@ -82,16 +87,11 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <div class="span2">
 <label>Categoría</label>
 <select id="categoria">
-<option>Operativo</option>
-<option>Supervisión</option>
-<option>Regulación</option>
-<option>Nocturno</option>
-<option>Apoyo</option>
-<option>Descanso</option>
-<option>Administrativo</option>
-<option>Capacitación</option>
-<option>Reunión</option>
-<option>Otros</option>
+<option>Operativo</option><option>Supervisión</option>
+<option>Regulación</option><option>Nocturno</option>
+<option>Apoyo</option><option>Descanso</option>
+<option>Administrativo</option><option>Capacitación</option>
+<option>Reunión</option><option>Otros</option>
 </select>
 </div>
 
@@ -110,13 +110,25 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 </div>
 
+<!-- BUSCADOR -->
 <div class="card">
+<h3>Buscar por fecha</h3>
+<div class="grid">
+<div class="span2"><label>Fecha</label><input type="date" id="filtroFecha"></div>
+<div class="span2"><label>&nbsp;</label><button onclick="filtrarFecha()">Buscar</button></div>
+</div>
+</div>
+
+<!-- TABLA -->
+<div class="card">
+<div class="table-wrap">
 <table>
 <thead>
 <tr><th>Fecha</th><th>Hora</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th></tr>
 </thead>
 <tbody id="tabla"></tbody>
 </table>
+</div>
 <div id="vacio">No hay actividades.</div>
 </div>
 
@@ -128,122 +140,74 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 </div>
 
-<!-- ================= JS ================= -->
 <script>
-/* ===============================
-   CONFIGURACIÓN SEGURA
-================================ */
-const LEGACY_KEY = "agenda_2026_gelm"; // respaldo viejo
-const DB_NAME = "GELM_SYSTEM_2026";
-const STORE_NAME = "AGENDA";
-const MIGRATED_FLAG = "GELM_AGENDA_MIGRATED";
-
-let dbIDB = null;
-let data = [];
-
+const DB_NAME="GELM_SYSTEM_2026",STORE_NAME="AGENDA";
+let dbIDB=null,data=[];
 const f=id=>document.getElementById(id);
 
-/* ===============================
-   INDEXEDDB
-================================ */
 function abrirDB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(DB_NAME,1);
-    req.onupgradeneeded=e=>{
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,1);
+    r.onupgradeneeded=e=>{
       const db=e.target.result;
-      if(!db.objectStoreNames.contains(STORE_NAME)){
+      if(!db.objectStoreNames.contains(STORE_NAME))
         db.createObjectStore(STORE_NAME,{keyPath:"id",autoIncrement:true});
-      }
     };
-    req.onsuccess=e=>{dbIDB=e.target.result;resolve(dbIDB)};
-    req.onerror=()=>reject("Error IndexedDB");
+    r.onsuccess=e=>{dbIDB=e.target.result;res()};
+    r.onerror=()=>rej();
   });
 }
 
-/* ===============================
-   MIGRACIÓN SEGURA
-================================ */
-async function migrar(){
-  if(localStorage.getItem(MIGRATED_FLAG)) return;
-  const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||"[]");
-  if(!legacy.length) return;
-
-  await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
-  const store=tx.objectStore(STORE_NAME);
-  legacy.forEach(r=>store.add(r));
-
-  tx.oncomplete=()=>{
-    localStorage.setItem(MIGRATED_FLAG,"YES");
-    console.log("✔ Migración completada");
-  };
-}
-
-/* ===============================
-   RENDER
-================================ */
 async function render(){
   await abrirDB();
   const tx=dbIDB.transaction(STORE_NAME,"readonly");
-  const store=tx.objectStore(STORE_NAME);
-  store.getAll().onsuccess=e=>{
+  tx.objectStore(STORE_NAME).getAll().onsuccess=e=>{
     data=e.target.result||[];
-    const t=f("tabla");t.innerHTML="";
-    f("vacio").style.display=data.length?"none":"block";
-    data.forEach(r=>{
-      t.innerHTML+=`
-        <tr>
-          <td>${r.fecha}</td>
-          <td>${r.hora||""}</td>
-          <td>${r.categoria}</td>
-          <td>${r.apoyo||"-"}</td>
-          <td>${r.lugar||"-"}</td>
-          <td>${r.detalle}</td>
-        </tr>`;
-    });
+    pintar(data);
   };
 }
 
-/* ===============================
-   AGREGAR
-================================ */
-async function agregar(){
-  if(!f("fecha").value||!f("detalle").value){
-    alert("Fecha y detalle requeridos");return;
-  }
-  const r={
-    fecha:f("fecha").value,
-    hora:f("hora").value,
-    categoria:f("categoria").value,
-    apoyo:f("apoyo").value,
-    lugar:f("lugar").value,
-    detalle:f("detalle").value
-  };
+function pintar(arr){
+  const t=f("tabla");t.innerHTML="";
+  f("vacio").style.display=arr.length?"none":"block";
+  arr.forEach(r=>{
+    t.innerHTML+=`
+    <tr>
+      <td>${r.fecha}</td><td>${r.hora||""}</td>
+      <td>${r.categoria}</td><td>${r.apoyo||"-"}</td>
+      <td>${r.lugar||"-"}</td><td>${r.detalle}</td>
+    </tr>`;
+  });
+}
 
+async function agregar(){
+  if(!f("fecha").value||!f("detalle").value) return alert("Fecha y detalle requeridos");
+  const r={
+    fecha:f("fecha").value,hora:f("hora").value,
+    categoria:f("categoria").value,apoyo:f("apoyo").value,
+    lugar:f("lugar").value,detalle:f("detalle").value
+  };
   await abrirDB();
   const tx=dbIDB.transaction(STORE_NAME,"readwrite");
   tx.objectStore(STORE_NAME).add(r);
-  tx.oncomplete=()=>{
-    render();
-    enviarAgendaGoogle(r);
-    f("detalle").value="";
-  };
+  tx.oncomplete=()=>{render();enviarAgendaGoogle(r);f("detalle").value=""};
 }
 
-/* ===============================
-   BORRAR (CONSCIENTE)
-================================ */
-async function borrar(){
+function filtrarFecha(){
+  const fch=f("filtroFecha").value;
+  if(!fch) return render();
+  pintar(data.filter(r=>r.fecha===fch));
+}
+
+function borrar(){
   if(!confirm("¿Borrar TODO el año 2026?")) return;
-  await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
-  tx.objectStore(STORE_NAME).clear();
-  tx.oncomplete=()=>render();
+  abrirDB().then(()=>{
+    const tx=dbIDB.transaction(STORE_NAME,"readwrite");
+    tx.objectStore(STORE_NAME).clear();
+    tx.oncomplete=render;
+  });
 }
 
-/* ===============================
-   EXPORTACIONES
-================================ */
 function exportarExcel(){
   const ws=XLSX.utils.json_to_sheet(data);
   const wb=XLSX.utils.book_new();
@@ -271,15 +235,10 @@ function modoAuditoria(){
   document.body.classList.toggle("audit");
 }
 
-/* ===============================
-   INIT
-================================ */
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
-migrar().then(render);
+render();
 </script>
 
-<!-- GOOGLE SHEETS -->
 <script src="agen.js"></script>
-
 </body>
 </html>
