@@ -30,97 +30,50 @@ h1{text-align:center;color:#00ffc8;margin:0}
 .by{text-align:center;color:#00eaff;letter-spacing:.2em;font-size:.75rem}
 
 .card{background:#020616;border-radius:22px;padding:18px;margin:20px 0}
+
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .span2{grid-column:span 2}
 .full{grid-column:1/-1}
 
 label{font-size:.7rem;color:#9cb3d8;text-transform:uppercase}
 input,select,textarea{
-  width:100%;
-  padding:10px;
-  border-radius:999px;
-  border:1px solid #00eaff;
-  background:#020616;
-  color:#fff
+  width:100%;padding:10px;border-radius:999px;
+  border:1px solid #00eaff;background:#020616;color:#fff
 }
 textarea{border-radius:14px;min-height:90px}
 
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:space-between;
-  margin-top:14px
-}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:14px}
 button{
-  border-radius:999px;
-  padding:10px 22px;
-  border:none;
-  cursor:pointer;
-  font-weight:600;
+  border-radius:999px;padding:10px 22px;border:none;
+  cursor:pointer;font-weight:600;
   background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);
   color:#020510
 }
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
-.audit{background:#fff !important;color:#000 !important}
 
-/* ===== TABLA ===== */
 table{width:100%;border-collapse:collapse;font-size:.85rem}
 thead{background:linear-gradient(90deg,#00ffc8,#00eaff);color:#020510}
-th,td{padding:8px;vertical-align:top}
+th,td{padding:8px}
 tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
 
-/* ===== CHIP CATEGORÍA ===== */
-.chip{
-  display:inline-block;
-  padding:2px 8px;
-  border-radius:999px;
-  font-size:.65rem;
-  font-weight:700;
+.meses{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+  margin-bottom:10px
 }
-.Operativo{background:#00eaff;color:#020510}
-.Administrativo{background:#ffd700;color:#000}
-.Supervisión{background:#b300ff;color:#fff}
-.Apoyo{background:#00ffc8;color:#020510}
-.Descanso{background:#ff7a3c;color:#fff}
-.Regulación{background:#00b3ff;color:#020510}
+.meses button{
+  padding:6px 14px;
+  font-size:.75rem
+}
 
-/* ===== MÓVIL: TARJETAS ===== */
+footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
+
 @media(max-width:900px){
   .grid{grid-template-columns:1fr}
   .span2{grid-column:1/-1}
   .actions{flex-direction:column}
-
-  table thead{display:none}
-  table, tbody, tr, td{display:block;width:100%}
-
-  tbody tr{
-    background:linear-gradient(180deg,rgba(0,40,60,.95),rgba(0,15,25,.95));
-    margin-bottom:14px;
-    border-radius:18px;
-    padding:12px;
-    border-left:4px solid #00ffc8;
-    box-shadow:0 0 12px rgba(0,255,200,.35)
-  }
-
-  td{
-    padding:4px 0;
-  }
-
-  td::before{
-    content:attr(data-label);
-    font-size:.65rem;
-    color:#9cb3d8;
-    display:block;
-    text-transform:uppercase
-  }
-}
-
-footer{
-  text-align:center;
-  font-size:.75rem;
-  color:#9cb3d8;
-  margin-top:20px
 }
 </style>
 </head>
@@ -135,47 +88,62 @@ footer{
 
 <div class="card">
 <h3>Registrar actividad</h3>
-
 <div class="grid">
-<div class="span2"><label>Fecha</label><input type="date" id="fecha"></div>
-<div class="span2"><label>Hora</label><input type="time" id="hora"></div>
+  <div class="span2"><label>Fecha</label><input type="date" id="fecha"></div>
+  <div class="span2"><label>Hora</label><input type="time" id="hora"></div>
 
-<div class="span2">
-<label>Categoría</label>
-<select id="categoria">
-<option>Operativo</option>
-<option>Supervisión</option>
-<option>Regulación</option>
-<option>Nocturno</option>
-<option>Apoyo</option>
-<option>Descanso</option>
-<option>Administrativo</option>
-<option>Capacitación</option>
-<option>Reunión</option>
-<option>Otros</option>
-</select>
-</div>
+  <div class="span2">
+    <label>Categoría</label>
+    <select id="categoria">
+      <option>Operativo</option>
+      <option>Supervisión</option>
+      <option>Regulación</option>
+      <option>Apoyo</option>
+      <option>Descanso</option>
+      <option>Administrativo</option>
+      <option>Reunión</option>
+      <option>Otros</option>
+    </select>
+  </div>
 
-<div class="span2"><label>Apoyo</label><input id="apoyo"></div>
-<div class="span2"><label>Lugar / Ruta</label><input id="lugar"></div>
-<div class="full"><label>Detalle</label><textarea id="detalle"></textarea></div>
+  <div class="span2"><label>Apoyo</label><input id="apoyo"></div>
+  <div class="span2"><label>Lugar / Ruta</label><input id="lugar"></div>
+  <div class="full"><label>Detalle</label><textarea id="detalle"></textarea></div>
 </div>
 
 <div class="actions">
-<button onclick="agregar()">Agregar</button>
-<button onclick="exportarExcel()">Excel</button>
-<button onclick="exportarPDF()">PDF</button>
-<button onclick="exportarWord()">Word</button>
-<button onclick="modoAuditoria()">Modo Auditoría</button>
-<button class="danger" onclick="borrar()">Borrar todo</button>
+  <button onclick="agregar()">Agregar</button>
+  <button onclick="exportarExcel()">Excel</button>
+  <button onclick="exportarPDF()">PDF</button>
+  <button onclick="exportarWord()">Word</button>
+  <button class="danger" onclick="borrar()">Borrar todo</button>
 </div>
 </div>
 
 <div class="card">
+<h3 id="tituloMes"></h3>
+
+<div class="meses">
+  <button onclick="render()">Todo</button>
+  <button onclick="render(1)">Enero</button>
+  <button onclick="render(2)">Febrero</button>
+  <button onclick="render(3)">Marzo</button>
+  <button onclick="render(4)">Abril</button>
+  <button onclick="render(5)">Mayo</button>
+  <button onclick="render(6)">Junio</button>
+  <button onclick="render(7)">Julio</button>
+  <button onclick="render(8)">Agosto</button>
+  <button onclick="render(9)">Septiembre</button>
+  <button onclick="render(10)">Octubre</button>
+  <button onclick="render(11)">Noviembre</button>
+  <button onclick="render(12)">Diciembre</button>
+</div>
+
 <table>
 <thead>
 <tr>
-<th>Fecha</th><th>Hora</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th>
+<th>Fecha</th><th>Hora</th><th>Categoría</th>
+<th>Apoyo</th><th>Lugar</th><th>Detalle</th>
 </tr>
 </thead>
 <tbody id="tabla"></tbody>
@@ -192,90 +160,70 @@ footer{
 </div>
 
 <script>
-const LEGACY_KEY="agenda_2026_gelm";
 const DB_NAME="GELM_SYSTEM_2026";
-const STORE_NAME="AGENDA";
-const MIGRATED_FLAG="GELM_AGENDA_MIGRATED";
-let dbIDB=null;
-let data=[];
+const STORE="AGENDA";
+let db,data=[];
+
 const f=id=>document.getElementById(id);
 
-function humanDate(d){
-  if(!d) return "";
-  const [y,m,dd]=d.split("-");
-  return `${dd}/${m}/${y}`;
-}
-
 function abrirDB(){
-  return new Promise((resolve,reject)=>{
-    const req=indexedDB.open(DB_NAME,1);
-    req.onupgradeneeded=e=>{
-      const db=e.target.result;
-      if(!db.objectStoreNames.contains(STORE_NAME)){
-        db.createObjectStore(STORE_NAME,{keyPath:"id",autoIncrement:true});
-      }
+  return new Promise(res=>{
+    const r=indexedDB.open(DB_NAME,1);
+    r.onupgradeneeded=e=>{
+      e.target.result.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
     };
-    req.onsuccess=e=>{dbIDB=e.target.result;resolve()};
-    req.onerror=()=>reject();
+    r.onsuccess=e=>{db=e.target.result;res();}
   });
 }
 
-async function migrar(){
-  if(localStorage.getItem(MIGRATED_FLAG)) return;
-  const legacy=JSON.parse(localStorage.getItem(LEGACY_KEY)||"[]");
-  if(!legacy.length) return;
+async function render(mes){
   await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
-  legacy.forEach(r=>tx.objectStore(STORE_NAME).add(r));
-  tx.oncomplete=()=>localStorage.setItem(MIGRATED_FLAG,"YES");
-}
-
-async function render(){
-  await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readonly");
-  tx.objectStore(STORE_NAME).getAll().onsuccess=e=>{
-    data=e.target.result||[];
-    const t=f("tabla");
-    t.innerHTML="";
-    f("vacio").style.display=data.length?"none":"block";
-    data.forEach(r=>{
+  db.transaction(STORE,"readonly").objectStore(STORE).getAll().onsuccess=e=>{
+    let d=e.target.result||[];
+    if(mes){
+      d=d.filter(r=>new Date(r.fecha).getMonth()+1===mes);
+      f("tituloMes").textContent="Mes: "+nombreMes(mes);
+    }else{
+      f("tituloMes").textContent="Todo el año";
+    }
+    data=d;
+    const t=f("tabla");t.innerHTML="";
+    f("vacio").style.display=d.length?"none":"block";
+    d.forEach(r=>{
       t.innerHTML+=`
       <tr>
-        <td data-label="Fecha">${humanDate(r.fecha)}</td>
-        <td data-label="Hora">${r.hora||""}</td>
-        <td data-label="Categoría"><span class="chip ${r.categoria}">${r.categoria}</span></td>
-        <td data-label="Apoyo">${r.apoyo||"-"}</td>
-        <td data-label="Lugar">${r.lugar||"-"}</td>
-        <td data-label="Detalle">${r.detalle}</td>
+        <td>${r.fecha}</td>
+        <td>${r.hora||""}</td>
+        <td>${r.categoria}</td>
+        <td>${r.apoyo||"-"}</td>
+        <td>${r.lugar||"-"}</td>
+        <td>${r.detalle}</td>
       </tr>`;
     });
   };
 }
 
+function nombreMes(m){
+  return ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m-1];
+}
+
 async function agregar(){
-  if(!f("fecha").value||!f("detalle").value){
-    alert("Fecha y detalle requeridos");return;
-  }
-  const r={
+  if(!f("fecha").value||!f("detalle").value){alert("Fecha y detalle requeridos");return;}
+  await abrirDB();
+  db.transaction(STORE,"readwrite").objectStore(STORE).add({
     fecha:f("fecha").value,
     hora:f("hora").value,
     categoria:f("categoria").value,
     apoyo:f("apoyo").value,
     lugar:f("lugar").value,
     detalle:f("detalle").value
-  };
-  await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
-  tx.objectStore(STORE_NAME).add(r);
-  tx.oncomplete=()=>{render();f("detalle").value=""};
+  }).onsuccess=()=>render(mesActual);
 }
 
-async function borrar(){
-  if(!confirm("¿Borrar TODO el año 2026?")) return;
-  await abrirDB();
-  const tx=dbIDB.transaction(STORE_NAME,"readwrite");
-  tx.objectStore(STORE_NAME).clear();
-  tx.oncomplete=()=>render();
+function borrar(){
+  if(confirm("¿Borrar TODO el año?")){
+    db.transaction(STORE,"readwrite").objectStore(STORE).clear().onsuccess=()=>render(mesActual);
+  }
 }
 
 function exportarExcel(){
@@ -285,29 +233,21 @@ function exportarExcel(){
   XLSX.writeFile(wb,"AGENDA_2026.xlsx");
 }
 function exportarPDF(){
-  html2pdf().from(document.getElementById("pdfArea"))
-    .set({filename:"AGENDA_2026.pdf"}).save();
+  html2pdf().from(document.getElementById("pdfArea")).set({filename:"AGENDA_2026.pdf"}).save();
 }
 function exportarWord(){
   const {Document,Packer,Paragraph}=window.docx;
-  const doc=new Document({
-    sections:[{children:[
-      new Paragraph("AGENDA PMT 2026"),
-      ...data.map(r=>new Paragraph(
-        `${humanDate(r.fecha)} ${r.hora||""} | ${r.categoria} | ${r.lugar||""} | ${r.detalle}`
-      ))
-    ]}]
-  });
+  const doc=new Document({sections:[{children:[
+    new Paragraph("AGENDA PMT 2026"),
+    ...data.map(r=>new Paragraph(`${r.fecha} ${r.categoria} ${r.detalle}`))
+  ]}]});
   Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
 }
-function modoAuditoria(){
-  document.body.classList.toggle("audit");
-}
 
+const mesActual=new Date().getMonth()+1;
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
-migrar().then(render);
+render(mesActual);
 </script>
 
-<script src="agen.js"></script>
 </body>
 </html>
