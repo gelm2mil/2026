@@ -56,56 +56,49 @@ th,td{padding:8px}
 tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
 
 .meses{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  justify-content:center;
-  margin-bottom:10px
+  display:flex;flex-wrap:wrap;gap:8px;
+  justify-content:center;margin-bottom:10px
 }
 .meses button{font-size:.7rem;padding:6px 14px}
 
-footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
+#resumenMes{
+  background:linear-gradient(145deg,#02131f,#020616);
+  border:1px solid rgba(0,255,200,.4);
+  box-shadow:0 0 12px rgba(0,255,200,.3);
+  font-size:.8rem;
+}
+#resumenMes strong{color:#00ffc8}
 
-/* ================= TARJETAS MÓVIL ================= */
 #cards{display:none;margin-top:15px}
 
 .dia-header{
-  position:sticky;
-  top:0;
-  z-index:5;
-  background:#02131f;
-  padding:8px 14px;
-  border-radius:14px;
-  margin:18px 0 8px;
-  font-size:.8rem;
-  color:#00ffc8;
+  position:sticky;top:0;z-index:5;
+  background:#02131f;padding:8px 14px;
+  border-radius:14px;margin:18px 0 8px;
+  font-size:.8rem;color:#00ffc8;
   box-shadow:0 0 14px rgba(0,255,200,.4);
 }
 
 .card-registro{
   background:linear-gradient(145deg,#02131f,#020616);
   border:1px solid rgba(0,255,200,.5);
-  border-radius:18px;
-  padding:14px;
+  border-radius:18px;padding:14px;
   margin-bottom:12px;
-  box-shadow:0 0 14px rgba(0,255,200,.35), inset 0 0 20px rgba(0,0,0,.9);
+  box-shadow:0 0 14px rgba(0,255,200,.35),
+             inset 0 0 20px rgba(0,0,0,.9);
 }
-
 .fila{margin-bottom:6px;font-size:.8rem}
 .lbl{color:#00ffc8;font-size:.65rem;text-transform:uppercase}
 .val{color:#e9f9ff}
 
 .badge{
-  display:inline-block;
-  padding:3px 10px;
-  border-radius:999px;
-  font-size:.65rem;
-  font-weight:600;
-  margin-top:4px
+  display:inline-block;padding:3px 10px;
+  border-radius:999px;font-size:.65rem;
+  font-weight:600;margin-top:4px
 }
 .badge.Operativo{background:#00ffc8;color:#000}
-.badge.Supervisión{background:#00b3ff;color:#000}
 .badge.Administrativo{background:#ffdf5e;color:#000}
+.badge.Supervisión{background:#00b3ff;color:#000}
 .badge.Descanso{background:#ff5e5e;color:#000}
 .badge.Apoyo{background:#a66bff;color:#000}
 
@@ -113,6 +106,8 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
   table{display:none}
   #cards{display:block}
 }
+
+footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </style>
 </head>
 
@@ -134,11 +129,10 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
     <label>Categoría</label>
     <select id="categoria">
       <option>Operativo</option>
-      <option>Supervisión</option>
       <option>Administrativo</option>
+      <option>Supervisión</option>
       <option>Apoyo</option>
       <option>Descanso</option>
-      <option>Otros</option>
     </select>
   </div>
 
@@ -157,6 +151,7 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 
 <div class="card">
 <h3 id="tituloMes"></h3>
+<div id="resumenMes"></div>
 
 <div class="meses">
   <button onclick="render()">Todo</button>
@@ -201,6 +196,12 @@ const DB="GELM_SYSTEM_2026", STORE="AGENDA";
 let db,data=[];
 const f=id=>document.getElementById(id);
 
+function fechaLatina(iso){
+  if(!iso) return "";
+  const [y,m,d]=iso.split("-");
+  return `${d}/${m}/${y}`;
+}
+
 function abrirDB(){
   return new Promise(res=>{
     const r=indexedDB.open(DB,1);
@@ -221,27 +222,34 @@ async function render(m){
     }else f("tituloMes").textContent="Todo el año";
 
     data=d;
-    const t=f("tabla"); t.innerHTML="";
-    const cards=f("cards"); cards.innerHTML="";
+    f("tabla").innerHTML="";
+    f("cards").innerHTML="";
     f("vacio").style.display=d.length?"none":"block";
 
-    let diaActual="";
+    const resumen={};
+    d.forEach(r=>resumen[r.categoria]=(resumen[r.categoria]||0)+1);
+
+    let html=`<strong>Resumen mensual</strong><br>Total: <strong>${d.length}</strong><br>`;
+    for(const c in resumen){html+=`• ${c}: <strong>${resumen[c]}</strong><br>`;}
+    f("resumenMes").innerHTML=html;
+
+    let dia="";
     d.forEach(r=>{
-      t.innerHTML+=`<tr>
-        <td>${r.fecha}</td><td>${r.hora||""}</td><td>${r.categoria}</td>
-        <td>${r.apoyo||"-"}</td><td>${r.lugar||"-"}</td><td>${r.detalle}</td>
+      f("tabla").innerHTML+=`<tr>
+        <td>${fechaLatina(r.fecha)}</td><td>${r.hora||""}</td>
+        <td>${r.categoria}</td><td>${r.apoyo||"-"}</td>
+        <td>${r.lugar||"-"}</td><td>${r.detalle}</td>
       </tr>`;
 
-      if(r.fecha!==diaActual){
-        diaActual=r.fecha;
-        cards.innerHTML+=`<div class="dia-header">📅 ${diaActual}</div>`;
+      if(r.fecha!==dia){
+        dia=r.fecha;
+        f("cards").innerHTML+=`<div class="dia-header">📅 ${fechaLatina(dia)}</div>`;
       }
-
-      cards.innerHTML+=`
+      f("cards").innerHTML+=`
       <div class="card-registro">
         <div class="fila"><span class="lbl">Hora</span><span class="val">${r.hora||""}</span></div>
         <div class="fila"><span class="lbl">Categoría</span>
-          <span class="badge ${r.categoria}">${r.categoria}</span></div>
+        <span class="badge ${r.categoria}">${r.categoria}</span></div>
         <div class="fila"><span class="lbl">Apoyo</span><span class="val">${r.apoyo||"-"}</span></div>
         <div class="fila"><span class="lbl">Lugar</span><span class="val">${r.lugar||"-"}</span></div>
         <div class="fila"><span class="lbl">Detalle</span><span class="val">${r.detalle}</span></div>
@@ -263,13 +271,13 @@ async function agregar(){
   };
   db.transaction(STORE,"readwrite").objectStore(STORE).add(r).onsuccess=()=>{
     enviarAgendaGoogle(r);
-    render(mesActual);
+    render(new Date(r.fecha).getMonth()+1);
   };
 }
 
 function borrar(){
   if(confirm("¿Borrar TODO el año?")){
-    db.transaction(STORE,"readwrite").objectStore(STORE).clear().onsuccess=()=>render(mesActual);
+    db.transaction(STORE,"readwrite").objectStore(STORE).clear().onsuccess=()=>render();
   }
 }
 
@@ -284,7 +292,7 @@ function exportarWord(){
   const {Document,Packer,Paragraph}=window.docx;
   const doc=new Document({sections:[{children:[
     new Paragraph("AGENDA PMT 2026"),
-    ...data.map(r=>new Paragraph(`${r.fecha} ${r.categoria} ${r.detalle}`))
+    ...data.map(r=>new Paragraph(`${fechaLatina(r.fecha)} ${r.categoria} ${r.detalle}`))
   ]}]});
   Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
 }
