@@ -7,7 +7,6 @@
 
 <!-- LIBRERÍAS -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
@@ -69,21 +68,15 @@ tbody tr:nth-child(even){background:rgba(0,255,200,.05)}
 }
 
 footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
-
-@media(max-width:900px){
-  .grid{grid-template-columns:1fr}
-  .span2{grid-column:1/-1}
-  .actions{flex-direction:column}
-}
 </style>
 </head>
 
 <body>
 <div class="shell">
-<div class="panel" id="pdfArea">
+<div class="panel">
 
 <h1>TRANSPORTES 2026 — PMT CHIMALTENANGO</h1>
-<div class="sub">Unidad de Transportes — Subcomisario / Jefe</div>
+<div class="sub">Unidad de Transportes</div>
 <div class="by">== BY GELM ==</div>
 
 <div class="card">
@@ -114,7 +107,6 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 <div class="actions">
   <button onclick="agregar()">Agregar</button>
   <button onclick="exportarExcel()">Excel</button>
-  <button onclick="exportarPDF()">PDF</button>
   <button onclick="exportarWord()">Word</button>
   <button class="danger" onclick="borrar()">Borrar todo</button>
 </div>
@@ -160,15 +152,13 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 
 <script>
-const DB_NAME="GELM_SYSTEM_2026";
-const STORE="AGENDA";
+const DB="GELM_SYSTEM_2026", STORE="AGENDA";
 let db,data=[];
-
 const f=id=>document.getElementById(id);
 
 function abrirDB(){
   return new Promise(res=>{
-    const r=indexedDB.open(DB_NAME,1);
+    const r=indexedDB.open(DB,1);
     r.onupgradeneeded=e=>{
       e.target.result.createObjectStore(STORE,{keyPath:"id",autoIncrement:true});
     };
@@ -176,48 +166,41 @@ function abrirDB(){
   });
 }
 
-async function render(mes){
+async function render(m){
   await abrirDB();
   db.transaction(STORE,"readonly").objectStore(STORE).getAll().onsuccess=e=>{
     let d=e.target.result||[];
-    if(mes){
-      d=d.filter(r=>new Date(r.fecha).getMonth()+1===mes);
-      f("tituloMes").textContent="Mes: "+nombreMes(mes);
-    }else{
-      f("tituloMes").textContent="Todo el año";
-    }
+    if(m){
+      d=d.filter(r=>new Date(r.fecha).getMonth()+1===m);
+      f("tituloMes").textContent="Mes: "+["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m-1];
+    }else f("tituloMes").textContent="Todo el año";
     data=d;
     const t=f("tabla");t.innerHTML="";
     f("vacio").style.display=d.length?"none":"block";
     d.forEach(r=>{
-      t.innerHTML+=`
-      <tr>
-        <td>${r.fecha}</td>
-        <td>${r.hora||""}</td>
-        <td>${r.categoria}</td>
-        <td>${r.apoyo||"-"}</td>
-        <td>${r.lugar||"-"}</td>
-        <td>${r.detalle}</td>
+      t.innerHTML+=`<tr>
+      <td>${r.fecha}</td><td>${r.hora||""}</td><td>${r.categoria}</td>
+      <td>${r.apoyo||"-"}</td><td>${r.lugar||"-"}</td><td>${r.detalle}</td>
       </tr>`;
     });
   };
 }
 
-function nombreMes(m){
-  return ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m-1];
-}
-
 async function agregar(){
-  if(!f("fecha").value||!f("detalle").value){alert("Fecha y detalle requeridos");return;}
+  if(!f("fecha").value||!f("detalle").value)return alert("Fecha y detalle requeridos");
   await abrirDB();
-  db.transaction(STORE,"readwrite").objectStore(STORE).add({
+  const r={
     fecha:f("fecha").value,
     hora:f("hora").value,
     categoria:f("categoria").value,
     apoyo:f("apoyo").value,
     lugar:f("lugar").value,
     detalle:f("detalle").value
-  }).onsuccess=()=>render(mesActual);
+  };
+  db.transaction(STORE,"readwrite").objectStore(STORE).add(r).onsuccess=()=>{
+    enviarAgendaGoogle(r);
+    render(mesActual);
+  };
 }
 
 function borrar(){
@@ -232,9 +215,7 @@ function exportarExcel(){
   XLSX.utils.book_append_sheet(wb,ws,"Agenda");
   XLSX.writeFile(wb,"AGENDA_2026.xlsx");
 }
-function exportarPDF(){
-  html2pdf().from(document.getElementById("pdfArea")).set({filename:"AGENDA_2026.pdf"}).save();
-}
+
 function exportarWord(){
   const {Document,Packer,Paragraph}=window.docx;
   const doc=new Document({sections:[{children:[
@@ -249,5 +230,6 @@ f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-
 render(mesActual);
 </script>
 
+<script src="agen.js"></script>
 </body>
 </html>
