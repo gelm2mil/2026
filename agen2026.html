@@ -10,7 +10,6 @@
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
 <style>
-/* === ESTILOS ORIGINALES (SIN CAMBIOS) === */
 body{margin:0;font-family:system-ui;background:radial-gradient(circle at top,#24002b,#060012);color:#e9f9ff}
 .shell{max-width:1280px;margin:30px auto;padding:20px}
 .panel{background:rgba(3,5,20,.96);border-radius:28px;padding:26px;box-shadow:0 0 40px rgba(0,234,255,.35)}
@@ -74,6 +73,37 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div>
 </div>
 
+<div class="card">
+<h3 id="tituloMes"></h3>
+<div id="resumenMes"></div>
+
+<div class="meses">
+  <button onclick="render()">Todo</button>
+  <button onclick="render(1)">Enero</button>
+  <button onclick="render(2)">Febrero</button>
+  <button onclick="render(3)">Marzo</button>
+  <button onclick="render(4)">Abril</button>
+  <button onclick="render(5)">Mayo</button>
+  <button onclick="render(6)">Junio</button>
+  <button onclick="render(7)">Julio</button>
+  <button onclick="render(8)">Agosto</button>
+  <button onclick="render(9)">Septiembre</button>
+  <button onclick="render(10)">Octubre</button>
+  <button onclick="render(11)">Noviembre</button>
+  <button onclick="render(12)">Diciembre</button>
+</div>
+
+<table>
+<thead>
+<tr><th>Fecha</th><th>Hora</th><th>Categoría</th><th>Apoyo</th><th>Lugar</th><th>Detalle</th></tr>
+</thead>
+<tbody id="tabla"></tbody>
+</table>
+
+<div id="cards"></div>
+<div id="vacio">No hay actividades.</div>
+</div>
+
 <footer>
 2026 | <strong>BY GELM</strong> — PMT Chimaltenango<br>
 <span id="fechaActual"></span>
@@ -86,18 +116,12 @@ const DB="GELM_SYSTEM_2026", STORE="AGENDA";
 let db,data=[];
 const f=id=>document.getElementById(id);
 
-// ✅ TU URL REAL (CORRECTA)
 const GOOGLE_SHEETS_URL="https://script.google.com/macros/s/AKfycbw-Q49T1BURxDYXEeI-Hsq4cZ9XG1HOllkccOQu-19jjtWIjnw-le4_ThU5c2u1TWi6/exec";
 
-// ✅ ENVÍO CORRECTO + REINTENTO
 function enviarAgendaGoogle(r,intentos=3){
-  const params=new URLSearchParams({...r,creado:new Date().toISOString()});
-  fetch(GOOGLE_SHEETS_URL,{
-    method:"POST",
-    mode:"no-cors",
-    headers:{"Content-Type":"application/x-www-form-urlencoded"},
-    body:params.toString()
-  }).catch(()=>{ if(intentos>0) setTimeout(()=>enviarAgendaGoogle(r,intentos-1),3000); });
+  const p=new URLSearchParams({...r,creado:new Date().toISOString()});
+  fetch(GOOGLE_SHEETS_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:p})
+    .catch(()=>{if(intentos>0)setTimeout(()=>enviarAgendaGoogle(r,intentos-1),3000);});
 }
 
 function abrirDB(){
@@ -108,28 +132,48 @@ function abrirDB(){
   });
 }
 
+async function render(m){
+  await abrirDB();
+  db.transaction(STORE,"readonly").objectStore(STORE).getAll().onsuccess=e=>{
+    let d=e.target.result||[];
+    if(m){
+      d=d.filter(r=>new Date(r.fecha).getMonth()+1===m);
+      f("tituloMes").textContent="Mes: "+["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m-1];
+    }else f("tituloMes").textContent="Todo el año";
+
+    data=d;
+    f("tabla").innerHTML="";
+    f("cards").innerHTML="";
+    f("vacio").style.display=d.length?"none":"block";
+
+    const resumen={};
+    d.forEach(r=>resumen[r.categoria]=(resumen[r.categoria]||0)+1);
+    f("resumenMes").innerHTML=`<strong>Resumen</strong><br>Total: <strong>${d.length}</strong><br>`+
+      Object.entries(resumen).map(([k,v])=>`• ${k}: <strong>${v}</strong>`).join("<br>");
+
+    d.forEach(r=>{
+      f("tabla").innerHTML+=`<tr><td>${r.fecha}</td><td>${r.hora||""}</td><td>${r.categoria}</td><td>${r.apoyo||"-"}</td><td>${r.lugar||"-"}</td><td>${r.detalle}</td></tr>`;
+    });
+  };
+}
+
 async function agregar(){
   if(!f("fecha").value||!f("detalle").value) return alert("Fecha y detalle requeridos");
   await abrirDB();
-  const r={
-    fecha:f("fecha").value,
-    hora:f("hora").value,
-    categoria:f("categoria").value,
-    apoyo:f("apoyo").value,
-    lugar:f("lugar").value,
-    detalle:f("detalle").value
-  };
+  const r={fecha:f("fecha").value,hora:f("hora").value,categoria:f("categoria").value,apoyo:f("apoyo").value,lugar:f("lugar").value,detalle:f("detalle").value};
   db.transaction(STORE,"readwrite").objectStore(STORE).add(r).onsuccess=()=>{
     enviarAgendaGoogle(r);
+    render(new Date(r.fecha).getMonth()+1);
   };
 }
 
 function borrar(){
   if(confirm("¿Borrar TODO el año?"))
-    db.transaction(STORE,"readwrite").objectStore(STORE).clear();
+    db.transaction(STORE,"readwrite").objectStore(STORE).clear().onsuccess=()=>render();
 }
 
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
+render(new Date().getMonth()+1);
 </script>
 
 </body>
