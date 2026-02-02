@@ -216,10 +216,23 @@ async function render(m){
   await abrirDB();
   db.transaction(STORE,"readonly").objectStore(STORE).getAll().onsuccess=e=>{
     let d=e.target.result||[];
-    if(m){
-      d=d.filter(r=>new Date(r.fecha).getMonth()+1===m);
-      f("tituloMes").textContent="Mes: "+["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m-1];
+    const mes=m?parseInt(m,10):null;
+
+    if(mes){
+      d=d.filter(r=>{
+        const fch=new Date(r.fecha+"T00:00:00");
+        return fch.getMonth()+1===mes;
+      });
+      f("tituloMes").textContent="Mes: "+
+        ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
+         "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][mes-1];
     }else f("tituloMes").textContent="Todo el año";
+
+    d.sort((a,b)=>{
+      const fa=new Date(a.fecha+" "+(a.hora||"00:00"));
+      const fb=new Date(b.fecha+" "+(b.hora||"00:00"));
+      return fa-fb;
+    });
 
     data=d;
     f("tabla").innerHTML="";
@@ -230,21 +243,26 @@ async function render(m){
     d.forEach(r=>resumen[r.categoria]=(resumen[r.categoria]||0)+1);
 
     let html=`<strong>Resumen mensual</strong><br>Total: <strong>${d.length}</strong><br>`;
-    for(const c in resumen){html+=`• ${c}: <strong>${resumen[c]}</strong><br>`;}
+    for(const c in resumen) html+=`• ${c}: <strong>${resumen[c]}</strong><br>`;
     f("resumenMes").innerHTML=html;
 
     let dia="";
     d.forEach(r=>{
-      f("tabla").innerHTML+=`<tr>
-        <td>${fechaLatina(r.fecha)}</td><td>${r.hora||""}</td>
-        <td>${r.categoria}</td><td>${r.apoyo||"-"}</td>
-        <td>${r.lugar||"-"}</td><td>${r.detalle}</td>
+      f("tabla").innerHTML+=`
+      <tr>
+        <td>${fechaLatina(r.fecha)}</td>
+        <td>${r.hora||""}</td>
+        <td>${r.categoria}</td>
+        <td>${r.apoyo||"-"}</td>
+        <td>${r.lugar||"-"}</td>
+        <td>${r.detalle}</td>
       </tr>`;
 
       if(r.fecha!==dia){
         dia=r.fecha;
         f("cards").innerHTML+=`<div class="dia-header">📅 ${fechaLatina(dia)}</div>`;
       }
+
       f("cards").innerHTML+=`
       <div class="card-registro">
         <div class="fila"><span class="lbl">Hora</span><span class="val">${r.hora||""}</span></div>
@@ -259,7 +277,8 @@ async function render(m){
 }
 
 async function agregar(){
-  if(!f("fecha").value||!f("detalle").value) return alert("Fecha y detalle requeridos");
+  if(!f("fecha").value||!f("detalle").value)
+    return alert("Fecha y detalle requeridos");
   await abrirDB();
   const r={
     fecha:f("fecha").value,
@@ -270,7 +289,6 @@ async function agregar(){
     detalle:f("detalle").value
   };
   db.transaction(STORE,"readwrite").objectStore(STORE).add(r).onsuccess=()=>{
-    enviarAgendaGoogle(r);
     render(new Date(r.fecha).getMonth()+1);
   };
 }
@@ -293,7 +311,7 @@ function exportarWord(){
   const doc=new Document({sections:[{children:[
     new Paragraph("AGENDA PMT 2026"),
     ...data.map(r=>new Paragraph(`${fechaLatina(r.fecha)} ${r.categoria} ${r.detalle}`))
-  ]}]});
+  ]}]} );
   Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
 }
 
@@ -302,6 +320,5 @@ f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-
 render(mesActual);
 </script>
 
-<script src="agen.js"></script>
 </body>
 </html>
