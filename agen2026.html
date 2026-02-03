@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Agenda 2026 By GELM</title>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docx@8.2.2/build/index.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
@@ -67,8 +66,8 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 
 <div class="actions">
   <button onclick="agregar()">Agregar</button>
-  <button onclick="exportarExcel()">Excel</button>
-  <button onclick="exportarWord()">Word</button>
+  <button onclick="exportarInformeMensual()">Informe mensual</button>
+  <button onclick="exportarWord()">Word completo</button>
   <button class="danger" onclick="borrar()">Borrar todo</button>
 </div>
 </div>
@@ -112,7 +111,7 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 </div></div>
 
 <script>
-const DB="GELM_SYSTEM_2026", STORE="AGENDA";
+const DB="GELM_SYSTEM_2026", STORE "AGENDA";
 let db,data=[];
 const f=id=>document.getElementById(id);
 
@@ -141,6 +140,8 @@ async function render(m){
       f("tituloMes").textContent="Mes: "+["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m-1];
     }else f("tituloMes").textContent="Todo el año";
 
+    d.sort((a,b)=>new Date(a.fecha+" "+(a.hora||"00:00"))-new Date(b.fecha+" "+(b.hora||"00:00")));
+
     data=d;
     f("tabla").innerHTML="";
     f("cards").innerHTML="";
@@ -151,6 +152,7 @@ async function render(m){
     f("resumenMes").innerHTML=`<strong>Resumen</strong><br>Total: <strong>${d.length}</strong><br>`+
       Object.entries(resumen).map(([k,v])=>`• ${k}: <strong>${v}</strong>`).join("<br>");
 
+    let dia="";
     d.forEach(r=>{
       f("tabla").innerHTML+=`<tr><td>${r.fecha}</td><td>${r.hora||""}</td><td>${r.categoria}</td><td>${r.apoyo||"-"}</td><td>${r.lugar||"-"}</td><td>${r.detalle}</td></tr>`;
     });
@@ -165,6 +167,19 @@ async function agregar(){
     enviarAgendaGoogle(r);
     render(new Date(r.fecha).getMonth()+1);
   };
+}
+
+function exportarInformeMensual(){
+  const {Document,Packer,Paragraph}=window.docx;
+  const doc=new Document({sections:[{children:[
+    new Paragraph("INFORME MENSUAL PMT 2026"),
+    ...data.map(r=>new Paragraph(`${r.fecha} ${r.hora||""} | ${r.categoria} | ${r.detalle}`))
+  ]}]});
+  Packer.toBlob(doc).then(b=>saveAs(b,"INFORME_MENSUAL_PM_2026.docx"));
+}
+
+function exportarWord(){
+  exportarInformeMensual();
 }
 
 function borrar(){
