@@ -25,27 +25,11 @@ textarea{border-radius:14px;min-height:90px}
 .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
 button{border-radius:999px;padding:10px 22px;border:none;cursor:pointer;font-weight:600;background:linear-gradient(135deg,#00eaff,#00ffc8,#b300ff);color:#020510}
 .danger{background:linear-gradient(135deg,#ff0044,#ff7a3c);color:#fff}
-
 .meses{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:10px}
 .meses button{font-size:.7rem;padding:6px 14px}
 
-.dia-header{
-  background:#02131f;
-  padding:8px 14px;
-  border-radius:14px;
-  margin:18px 0 8px;
-  font-size:.8rem;
-  color:#00ffc8;
-}
-
-.card-registro{
-  background:#020616;
-  border-radius:18px;
-  padding:12px;
-  margin-bottom:10px;
-  border:1px solid rgba(0,255,200,.4)
-}
-
+.dia-header{background:#02131f;padding:8px 14px;border-radius:14px;margin:18px 0 8px;font-size:.8rem;color:#00ffc8}
+.card-registro{background:#020616;border-radius:18px;padding:12px;margin-bottom:10px;border:1px solid rgba(0,255,200,.4)}
 .fila{font-size:.8rem;margin-bottom:4px}
 .lbl{color:#00ffc8;font-size:.65rem;text-transform:uppercase}
 .val{color:#e9f9ff}
@@ -123,8 +107,24 @@ footer{text-align:center;font-size:.75rem;color:#9cb3d8;margin-top:20px}
 
 <script>
 const DB="GELM_SYSTEM_2026", STORE="AGENDA";
-let db=[], data=[], mesActual=new Date().getMonth()+1;
+let db,data=[], mesActual=new Date().getMonth()+1;
 const f=id=>document.getElementById(id);
+
+/* ====== GOOGLE SHEETS (NO TOCAR) ====== */
+const GOOGLE_SHEETS_URL="https://script.google.com/macros/s/AKfycbw-Q49T1BURxDYXEeI-Hsq4cZ9XG1HOllkccOQu-19jjtWIjnw-le4_ThU5c2u1TWi6/exec";
+
+function enviarAgendaGoogle(r,intentos=3){
+  const p=new URLSearchParams({...r,creado:new Date().toISOString()});
+  fetch(GOOGLE_SHEETS_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:p
+  }).catch(()=>{
+    if(intentos>0) setTimeout(()=>enviarAgendaGoogle(r,intentos-1),3000);
+  });
+}
+/* ==================================== */
 
 function abrirDB(){
   return new Promise(res=>{
@@ -173,7 +173,10 @@ async function agregar(){
   if(!f("fecha").value||!f("detalle").value) return alert("Fecha y detalle requeridos");
   await abrirDB();
   const r={fecha:f("fecha").value,hora:f("hora").value,categoria:f("categoria").value,apoyo:f("apoyo").value,lugar:f("lugar").value,detalle:f("detalle").value};
-  db.transaction(STORE,"readwrite").objectStore(STORE).add(r).onsuccess=()=>render(new Date(r.fecha).getMonth()+1);
+  db.transaction(STORE,"readwrite").objectStore(STORE).add(r).onsuccess=()=>{
+    enviarAgendaGoogle(r);   // 👈 AQUÍ SE ENVÍA A GOOGLE
+    render(new Date(r.fecha).getMonth()+1);
+  };
 }
 
 function borrar(){
@@ -183,13 +186,11 @@ function borrar(){
 
 function exportarWord(){
   const {Document,Packer,Paragraph}=window.docx;
-  const doc=new Document({sections:[{children:data.map(r=>new Paragraph(`${r.fecha} ${r.hora||""} - ${r.categoria}: ${r.detalle}`))}]});
+  const doc=new Document({sections:[{children:data.map(r=>new Paragraph(`${r.fecha} ${r.hora||""} - ${r.categoria}: ${r.detalle}`))}]} );
   Packer.toBlob(doc).then(b=>saveAs(b,"AGENDA_2026.docx"));
 }
 
-function informeMensual(){
-  exportarWord();
-}
+function informeMensual(){ exportarWord(); }
 
 f("fechaActual").textContent="Fecha actual: "+new Date().toLocaleDateString("es-GT");
 render(mesActual);
